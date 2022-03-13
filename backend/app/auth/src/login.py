@@ -38,14 +38,14 @@ class LoginApi(Resource):
         if not user:
             return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
 
+        if not check_password_hash(user['password'], password):
+            return {'message': 'Invalid password'}, HTTPStatus.UNAUTHORIZED
+
         if not user['account_verified']:
             return {'message': 'Account not verified'}, HTTPStatus.NOT_FOUND
 
         if not user['user_type_verification']:
             return {'message': 'User type not verified'}, HTTPStatus.NOT_FOUND
-
-        if not check_password_hash(user.password, password):
-            return {'message': 'Invalid password'}, HTTPStatus.UNAUTHORIZED
 
         self.rds.update_user_last_login(user_id=user['user_id'])
 
