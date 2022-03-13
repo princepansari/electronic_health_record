@@ -40,17 +40,33 @@ class RDS:
         conn_str = f"host={host} dbname={database} user={user} password={password} port={port}"
         return conn_str
 
-    def get_user_by_email(self, email):
+    def get_user_by_email(self, *, email):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
-        query = "SELECT * FROM users WHERE personal_email=%s"
+        query = "SELECT * FROM users WHERE email=%s"
         cursor.execute(query, [email])
         user = cursor.fetchone()
         cursor.close()
         return user
 
-    def update_user_last_login(self, user_id):
+    def update_user_last_login(self, *, user_id):
         cursor = self.connection.cursor()
         query = "UPDATE users SET last_login=%s WHERE id=%s"
         cursor.execute(query, [datetime.now(timezone.utc), user_id])
+        self.connection.commit()
+        cursor.close()
+
+    #TODO: add user
+    def create_user(self, *, user_type, email, guardian_email, name, password, dob, phone, allergy):
+        pass
+
+    #TODO: add schedule
+    def create_schedule(self, *, user_id, schedule, slot_duration):
+        pass
+
+    def save_otp(self, *, user_id, email_otp, guardian_email_otp):
+        cursor = self.connection.cursor()
+        query = "INSERT INTO signup_verification (user_id, email_otp, guardian_email_otp) VALUES (%s, %s, %s) " \
+                "ON CONFLICT (user_id) DO UPDATE SET email_otp=%s, guardian_email_otp=%s"
+        cursor.execute(query, [user_id, email_otp, guardian_email_otp, email_otp, guardian_email_otp])
         self.connection.commit()
         cursor.close()
