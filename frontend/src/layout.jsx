@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import { useTheme } from "@emotion/react";
+import { Container } from "@mui/material";
 import NavBar from "./navbar/navbar";
 
 
@@ -25,7 +26,9 @@ export default function Layout({ children }) {
             <NavBar />
             <div sx={classes.page}>
                 <div sx={classes.toolbar}></div>
-                {children}
+                <Container sx={{ marginTop: 5 }}>
+                    {children}
+                </Container>
             </div>
         </div>
 

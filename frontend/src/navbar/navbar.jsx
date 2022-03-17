@@ -9,9 +9,8 @@ import { Button } from "@mui/material";
 import { Box } from "@mui/system";
 
 const links = [
-  { children: 'Expenses', to: '/expenses' },
-  { children: 'Expenses', to: '/login' },
-  { children: 'Expenses', to: '/expenses2' },
+  { children: 'Home', to: '/' },
+  { children: 'Case', to: '/case' },
 ]
 
 const navLinkStyle = { my: 2, color: 'white', display: 'block' }
