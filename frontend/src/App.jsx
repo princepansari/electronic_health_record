@@ -5,6 +5,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AuthContext from "./auth/AuthContext";
 import { useState } from "react";
 import Layout from "./layout";
+import MyPrescriptionsPage from "./MyPrescriptionsPage/MyPrescriptionsPage";
+import UpcomingAppointmentsPage from "./UpcomingAppointmentsPage/UpcomingAppointmentsPage";
 const theme = createTheme({ palette: { mode: "light" } });
 
 function App() {
@@ -22,6 +24,8 @@ function App() {
               <Route path="/login" element={"bye"} />
               <Route path="/expenses" element={"bye"} />
               <Route path="/expenses2" element={"bye"} />
+              <Route path="/prescriptions" element={<MyPrescriptionsPage/>} />
+              <Route path="/appointments" element={<UpcomingAppointmentsPage/>} />
             </Routes>
           </Layout>
         </BrowserRouter>
