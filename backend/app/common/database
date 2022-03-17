@@ -1,14 +1,14 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE user_type (
-	id SERIAL PRIMARY KEY,
-	type  VARCHAR ( 15 ) UNIQUE NOT NULL
+    id SERIAL PRIMARY KEY,
+    type  VARCHAR ( 15 ) UNIQUE NOT NULL
 );
 
 CREATE TABLE users (
-	user_id uuid DEFAULT uuid_generate_v4()  PRIMARY KEY,
+    user_id uuid DEFAULT uuid_generate_v4()  PRIMARY KEY,
     user_type_id int NOT NULL,
-    personal_email VARCHAR ( 255 ) UNIQUE NOT NULL,
+    email VARCHAR ( 255 ) UNIQUE NOT NULL,
     guardian_email VARCHAR ( 255 ),
     name VARCHAR ( 255 ) NOT NULL,
     password VARCHAR ( 255 ) NOT NULL,
@@ -24,10 +24,11 @@ CREATE TABLE users (
 );
 
 CREATE TABLE signup_verification(
-	user_id uuid PRIMARY KEY,
-	otp VARCHAR (6) NOT NULL,
-	created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	FOREIGN KEY (user_id) REFERENCES users (user_id)
+    user_id uuid PRIMARY KEY,
+    email_otp VARCHAR (6) NOT NULL,
+    guardian_email_otp VARCHAR (6),
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 CREATE TABLE staff_schedule(
