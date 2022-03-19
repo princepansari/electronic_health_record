@@ -15,6 +15,7 @@ const links = [
   { children: 'Expenses', to: '/expenses2' },
   { children: 'My Cases', to: '/prescriptions' },
   { children: 'Upcoming Appointments', to: '/appointments' },
+  { children: 'Sign In', to: '/signin' },
 ]
 
 const navLinkStyle = { m: 2, color: 'white', display: 'block', textTransform: 'none', fontSize: '1.01em', '&.active': {color: 'red'} }

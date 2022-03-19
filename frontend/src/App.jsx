@@ -7,6 +7,7 @@ import { useState } from "react";
 import Layout from "./layout";
 import MyPrescriptionsPage from "./MyPrescriptionsPage/MyPrescriptionsPage";
 import UpcomingAppointmentsPage from "./UpcomingAppointmentsPage/UpcomingAppointmentsPage";
+import SignIn from "./SignIn";
 const theme = createTheme({ palette: { mode: "light" } });
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
               <Route path="/expenses2" element={"bye"} />
               <Route path="/prescriptions" element={<MyPrescriptionsPage/>} />
               <Route path="/appointments" element={<UpcomingAppointmentsPage/>} />
+              <Route path="/signin" element={<SignIn/>} />
             </Routes>
           </Layout>
         </BrowserRouter>
