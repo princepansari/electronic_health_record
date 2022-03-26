@@ -63,7 +63,22 @@ class RDS:
         self.connection.commit()
         cursor.close()
 
-    # TODO: add user
+    def get_user_otp(self, *, user_id): 
+        cursor = self.connection.cursor()
+        query = "SELECT email_otp AND guardian_email_otp FROM signup_verification WHERE user_id=%s"
+        cursor.execute(query, [user_id])
+        valid_otp, valid_guardian_otp = cursor.fetchone()
+        cursor.close()
+        return valid_otp, valid_guardian_otp
+
+    def update_verification_status(self, *, email):
+        cursor = self.connection.cursor()
+        query = "UPDATE users SET account_verfied='TRUE' WHERE email=%s"
+        cursor.execute(query, [email])
+        self.connection.commit()
+        cursor.close()
+    
+    #TODO: add user
     def create_user(self, *, user_type, email, guardian_email, name, password, dob, phone, allergy):
         pass
 
