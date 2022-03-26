@@ -16,7 +16,7 @@ class Config:
 
     # RDS config
     REGION = os.environ.get("REGION") or "ap-south-1"
-    RDS_ENDPOINT = os.environ.get("RDS_ENDPOINT") or "mydatabase.cpzjlut3r44b.ap-south-1.rds.amazonaws.com"
+    RDS_ENDPOINT = os.environ.get("RDS_ENDPOINT") or "database-1.cpzjlut3r44b.ap-south-1.rds.amazonaws.com"
     PORT = os.environ.get("PORT") or "5432"
     DBUSER = os.environ.get("DBUSER") or "unicorn"
     DATABASE = os.environ.get("DATABASE") or "unicorn_db"
