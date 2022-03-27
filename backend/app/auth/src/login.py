@@ -50,5 +50,6 @@ class LoginApi(Resource):
         self.rds.update_user_last_login(user_id=user['user_id'])
 
         expires = datetime.timedelta(days=Config.EXPIRE_AFTER_DAYS)
-        access_token = create_access_token(identity=str(user['email']), expires_delta=expires)
+        access_token = create_access_token(identity=str(user['user_id']), additional_claims=user['email'],
+                                           expires_delta=expires)
         return {'access_token': access_token}, HTTPStatus.OK
