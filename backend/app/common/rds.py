@@ -99,7 +99,8 @@ class RDS:
     def get_all_cases_by_staff(self, *, created_by_id):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
         query = "SELECT cases.case_id, users.name as patient_id, cases.problem, cases.created_at, cases.updated_at " \
-                "FROM cases INNER JOIN users ON cases.patient_id=users.user_id WHERE cases.created_by_id=%s"
+                "FROM cases INNER JOIN users ON cases.patient_id=users.user_id INNER JOIN prescriptions " \
+                "ON prescriptions.created_by_id=cases.created_by_id WHERE prescriptions.created_by_id=%s"
         cursor.execute(query, [created_by_id])
         cases = cursor.fetchall()
         cursor.close()
