@@ -10,6 +10,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from app.auth.routes import auth_routes
+from app.case.routes import case_routes
 
 app = Flask(__name__)
 
@@ -19,3 +20,4 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
 auth_routes(api)
+case_routes(api)

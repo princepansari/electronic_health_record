@@ -48,6 +48,14 @@ class RDS:
         cursor.close()
         return user
 
+    def get_user_by_user_id(self, *, user_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT * FROM users WHERE user_id=%s"
+        cursor.execute(query, [user_id])
+        user = cursor.fetchone()
+        cursor.close()
+        return user
+
     def update_user_last_login(self, *, user_id):
         cursor = self.connection.cursor()
         query = "UPDATE users SET last_login=%s WHERE id=%s"
@@ -55,11 +63,11 @@ class RDS:
         self.connection.commit()
         cursor.close()
 
-    #TODO: add user
+    # TODO: add user
     def create_user(self, *, user_type, email, guardian_email, name, password, dob, phone, allergy):
         pass
 
-    #TODO: add schedule
+    # TODO: add schedule
     def create_schedule(self, *, user_id, schedule, slot_duration):
         pass
 
@@ -70,3 +78,65 @@ class RDS:
         cursor.execute(query, [user_id, email_otp, guardian_email_otp, email_otp, guardian_email_otp])
         self.connection.commit()
         cursor.close()
+
+    def get_user_type(self, *, user_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT type FROM user_type INNER JOIN users ON user_type.id=users.user_type_id WHERE users.user_id=%s"
+        cursor.execute(query, [user_id])
+        user_type = cursor.fetchone()
+        cursor.close()
+        return user_type
+
+    def get_all_cases_by_patient(self, *, patient_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT cases.case_id, users.name as created_by, cases.problem, cases.created_at, cases.updated_at " \
+                "FROM cases INNER JOIN users ON cases.created_by_id=users.user_id WHERE cases.patient_id=%s"
+        cursor.execute(query, [patient_id])
+        cases = cursor.fetchall()
+        cursor.close()
+        return cases
+
+    def get_all_cases_by_staff(self, *, created_by_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT cases.case_id, users.name as patient_id, cases.problem, cases.created_at, cases.updated_at " \
+                "FROM cases INNER JOIN users ON cases.patient_id=users.user_id WHERE cases.created_by_id=%s"
+        cursor.execute(query, [created_by_id])
+        cases = cursor.fetchall()
+        cursor.close()
+        return cases
+
+    def get_case_by_staff(self, *, case_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT * from cases WHERE case_id=%s"
+        cursor.execute(query, [case_id])
+        case = cursor.fetchone()
+        cursor.close()
+        if not case:
+            return None
+        case['patient_name'] = self.get_user_by_user_id(user_id=case['patient_id'])['name']
+        case['created_by'] = self.get_user_by_user_id(user_id=case['created_by_id'])['name']
+        return case
+
+    def get_case_by_patient(self, *, case_id, user_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT * from cases WHERE case_id=%s"
+        cursor.execute(query, [case_id])
+        case = cursor.fetchone()
+        cursor.close()
+        if not case:
+            return True, None
+        if case['patient_id'] != user_id:
+            return False, None
+        case['patient_name'] = self.get_user_by_user_id(user_id=case['patient_id'])['name']
+        case['created_by'] = self.get_user_by_user_id(user_id=case['created_by_id'])['name']
+        return case
+
+    def get_prescriptions_by_case(self, *, case_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT prescriptions.prescription_id , prescriptions.prescription, prescriptions.created_at, " \
+                "prescriptions.updated_at, users.name as created_by from prescriptions INNER JOIN users ON " \
+                "prescriptions.created_by_id=users.user_id WHERE case_id=%s"
+        cursor.execute(query, [case_id])
+        prescriptions = cursor.fetchall()
+        cursor.close()
+        return prescriptions
