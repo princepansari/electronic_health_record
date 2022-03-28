@@ -1,4 +1,4 @@
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from flask_restful import Resource
 from http import HTTPStatus
 
@@ -18,7 +18,7 @@ class GetAllCases(Resource):
     def get(self):
         user_id = get_jwt_identity()
         user = self.rds.get_user_by_user_id(user_id=user_id)
-        user_type = self.rds.get_user_type(user_id=user_id)
+        user_type = get_jwt()['user_type']
         data = {}
         if user_type == 'doctor' or user_type == 'nurse':
             cases = self.rds.get_all_cases_by_staff(created_by_id=user_id)

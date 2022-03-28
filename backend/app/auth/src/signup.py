@@ -31,9 +31,9 @@ class SignupApi(Resource):
             'password': And(str, Use(bleach.clean), Utils.validate_password),
             'dob': And(str, Use(bleach.clean), lambda x: datetime.datetime.strptime(x, '%Y-%m-%d')),
             'phone': And(str, Use(bleach.clean)),
-            'allergy': And(str, Use(bleach.clean)),
-            'schedule': And(json, Use(bleach.clean)),
-            'slot_duration': And(int, Use(bleach.clean))
+            Optional('allergy'): And(str, Use(bleach.clean)),
+            Optional('schedule'): And(json, Use(bleach.clean)),
+            Optional('slot_duration'): And(int, Use(bleach.clean))
         })
 
     def post(self):
@@ -50,6 +50,10 @@ class SignupApi(Resource):
             if domain_guardian_email not in Config.IIT_DOMAIN:
                 return {'message': 'Invalid email'}, HTTPStatus.BAD_REQUEST
 
+        if data['user_type'] == 'doctor' or data['user_type'] == 'nurse':
+            if 'schedule' not in data or 'slot_duration' not in data:
+                return {'message': 'Invalid request'}, HTTPStatus.BAD_REQUEST
+
         user_id = self.rds.create_user(user_type=data['user_type'],
                                        email=data['email'],
                                        guardian_email=data.get('guardian_email'),
@@ -61,8 +65,8 @@ class SignupApi(Resource):
 
         if user_id is None:
             return {'message': 'User already exists'}, HTTPStatus.BAD_REQUEST
-
-        self.rds.create_schedule(user_id=user_id, schedule=data['schedule'], slot_duration=data['slot_duration'])
+        if data['user_type'] == 'doctor' or data['user_type'] == 'nurse':
+            self.rds.create_schedule(user_id=user_id, schedule=data['schedule'], slot_duration=data['slot_duration'])
 
         self.initiate_user_verification(user_id=user_id, email=data['email'], guardian_email=data.get('guardian_email'))
         return {'message': 'User created successfully'}, HTTPStatus.OK
