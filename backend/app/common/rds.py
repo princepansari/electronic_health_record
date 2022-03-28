@@ -141,3 +141,12 @@ class RDS:
         prescriptions = cursor.fetchall()
         cursor.close()
         return prescriptions
+
+    def create_case(self, *, patient_id, created_by_id, problem):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "INSERT INTO cases (patient_id, created_by_id, problem) VALUES (%s, %s, %s) RETURNING case_id"
+        cursor.execute(query, [patient_id, created_by_id, problem])
+        self.connection.commit()
+        case_id = cursor.fetchone()['case_id']
+        cursor.close()
+        return case_id
