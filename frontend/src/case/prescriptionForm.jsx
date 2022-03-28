@@ -37,7 +37,6 @@ export default function PrescriptionForm({ cancel, ...props }) {
         resolver: yupResolver(schema)
     });
 
-
     const [audioURL, audioBlob, isRecording, startRecording, stopRecording, resetRecording] = useRecorder();
 
     return (
