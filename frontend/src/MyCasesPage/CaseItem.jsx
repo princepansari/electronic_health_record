@@ -1,6 +1,7 @@
 import { Button, Typography, Modal } from '@mui/material';
 import { Box } from '@mui/system';
-import { React, useState } from 'react';
+import { React } from 'react';
+import { Link } from 'react-router-dom';
 
 const boxStyle = {
     display: 'flex',
@@ -8,7 +9,7 @@ const boxStyle = {
     alignItems: 'center'
 };
 
-const PrescriptionItem = ({ prescription }) => {
+const CaseItem = ({ caseObj }) => {
 
     return (
         <div>
@@ -19,7 +20,7 @@ const PrescriptionItem = ({ prescription }) => {
                         fontWeight: 'bold'
                     }}
                 >
-                    Case : {prescription.case}
+                    Case : {caseObj.caseId}
                 </Typography>
 
                 <Typography variant='p' component='div'
@@ -28,19 +29,19 @@ const PrescriptionItem = ({ prescription }) => {
                         color: '#757a79'
                     }}
                 >
-                    {new Date(prescription.date).toLocaleDateString()}
+                    {new Date(caseObj.date).toLocaleDateString()}
                 </Typography>
             </Box>
 
             <Box sx={{mt: 1,...boxStyle, justifyContent: 'start'}} >
                 <Typography variant='p' component='div' sx={{ ml: 5, fontSize: '1.1em' }} >
                     <strong> Created by : </strong>
-                    {prescription.doctorName}
+                    {caseObj.doctorName}
                 </Typography>
 
                 <Typography variant='p' component='div' sx={{ ml: 5, fontSize: '1.1em' }} >
                     <strong> Patient Name : </strong>
-                    {prescription.patientName}
+                    {caseObj.patientName}
                 </Typography>
             </Box>
 
@@ -52,14 +53,15 @@ const PrescriptionItem = ({ prescription }) => {
                     }}
                 >
                     <strong>Issue : </strong>
-                    {prescription.problem}
+                    {caseObj.problem}
                 </Typography>
 
                 <Button
                     variant='contained'
                     color='success'
                     sx={{ mr: 4, fontSize: {xs: '0.6em', md: '1em' }, textTransform: 'none' }}
-                    href='/case'
+                    component={Link}
+                    to={`/case/${caseObj.caseId}`}
                 >
                     See Details
                 </Button>
@@ -70,4 +72,4 @@ const PrescriptionItem = ({ prescription }) => {
     )
 }
 
-export default PrescriptionItem
+export default CaseItem

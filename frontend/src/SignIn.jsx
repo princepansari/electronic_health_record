@@ -1,8 +1,27 @@
 import { Avatar, Button, Paper, TextField, Typography } from '@mui/material';
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import React from 'react';
+import React, { useState } from 'react';
 
 const SignIn = () => {
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    function handleSubmit(event)
+    {
+        event.preventDefault();
+
+        const signinData = {
+            email,
+            password,
+        };
+        console.log(signinData);
+
+        setEmail('');
+        setPassword('');
+    }
+
+
   return (
     <div
         style={{
@@ -31,7 +50,7 @@ const SignIn = () => {
                 Sign In
             </Typography>
 
-            <form noValidate style={{ width: '95%' }}>
+            <form noValidate style={{ width: '95%' }} onSubmit={(e) => handleSubmit(e)}>
                 <TextField
                     variant='outlined'
                     margin='normal'
@@ -39,6 +58,8 @@ const SignIn = () => {
                     fullWidth
                     id="email"
                     label="Email Address"
+                    value={email}
+                    onChange={(e) => setEmail(e.currentTarget.value)}
                     autoComplete="email"
                     autoFocus
                 />
@@ -51,6 +72,8 @@ const SignIn = () => {
                     type="password"
                     id="password"
                     label="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.currentTarget.value)}
                     autoComplete="current-password"
                     autoFocus
                 />
@@ -60,7 +83,7 @@ const SignIn = () => {
                     fullWidth
                     variant="contained"
                     color="primary"
-                    sx={{ my: 2 }}
+                    sx={{ my: 2 }}                
                 >
                     Submit
                 </Button>
