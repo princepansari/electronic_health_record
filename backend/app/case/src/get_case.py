@@ -1,4 +1,4 @@
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from flask_restful import Resource
 from schema import Schema, And, Use
 from http import HTTPStatus
@@ -26,7 +26,7 @@ class GetCase(Resource):
         case_id = self.schema.validate(case_id)
         user_id = get_jwt_identity()
 
-        user_type = self.rds.get_user_type(user_id=user_id)
+        user_type = get_jwt()['user_type']
         case = None
         if user_type == 'doctor' or user_type == 'nurse':
             case = self.rds.get_case_by_staff(case_id=case_id)
