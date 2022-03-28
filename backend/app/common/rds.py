@@ -78,9 +78,11 @@ class RDS:
         self.connection.commit()
         cursor.close()
     
-    #TODO: add user
+    # TODO: add user
     def create_user(self, *, user_type, email, guardian_email, name, password, dob, phone, allergy):
-        pass
+        cursor = self.connection.cursor()
+        query = "INSERT INTO users(user_id, user_type_id, email, guardian_email, name, password, phone_number, dob, allergy, user_type_verification, created_at, updated_at, account_verfied, last_login)"
+        VALUES (check, user_type, email, guardian_email, name, password, phone, dob, allergy )
 
     # TODO: add schedule
     def create_schedule(self, *, user_id, schedule, slot_duration):
