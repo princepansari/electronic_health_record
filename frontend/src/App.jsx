@@ -8,10 +8,10 @@ import Layout from "./layout";
 import MyCasesPage from "./MyCasesPage/MyCasesPage";
 import UpcomingAppointmentsPage from "./UpcomingAppointmentsPage/UpcomingAppointmentsPage";
 import SignIn from "./SignIn";
+import Signup from "./auth/signUp";
 import Prescription from "./case/prescription";
 import Case from "./case/case";
 import PrescriptionForm from "./case/prescriptionForm";
-
 const theme = createTheme({ palette: { mode: "light" } });
 
 function App() {
@@ -27,12 +27,7 @@ function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<h1>hello</h1>} />
-              <Route path="/login" element={"bye"} />
-              <Route path="/expenses" element={"bye"} />
-              <Route path="/expenses2" element={"bye"} />
-              <Route path="/prescriptions" element={<MyCasesPage/>} />
-              <Route path="/appointments" element={<UpcomingAppointmentsPage/>} />
-              <Route path="/signin" element={<SignIn/>} />
+              <Route path="/login" element={<Signup />} />
               <Route path="/case" element={<Case />} />
             </Routes>
           </Layout>

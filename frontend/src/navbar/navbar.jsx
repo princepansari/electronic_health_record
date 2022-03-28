@@ -20,7 +20,7 @@ const links = [
   { children: 'Case', to: '/case' },
 ]
 
-const navLinkStyle = { m: 2, color: 'white', display: 'block', textTransform: 'none', fontSize: '1.01em', '&.active': {color: 'red'} }
+const navLinkStyle = { m: 2, color: 'white', display: 'block', textTransform: 'none', fontSize: '1.01em', '&.active': { color: 'red' } }
 
 export default function NavBar() {
   const { auth, setAuth } = React.useContext(AuthContext);
@@ -46,11 +46,11 @@ export default function NavBar() {
       elevation={0}
     >
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ 
-            marginRight: 15, 
-            display: { xs: 'none', md: 'flex' },
-            fontWeight: 'bold'
-          }} >
+        <Typography variant="h6" component="div" sx={{
+          marginRight: 15,
+          display: { xs: 'none', md: 'flex' },
+          fontWeight: 'bold'
+        }} >
           LOGO
         </Typography>
 
@@ -92,15 +92,15 @@ export default function NavBar() {
         </Box>
 
         <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, fontWeight: 'bold' }}
-          >
-            LOGO
-          </Typography>
+          variant="h6"
+          noWrap
+          component="div"
+          sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, fontWeight: 'bold' }}
+        >
+          LOGO
+        </Typography>
 
-        <Box sx={{ flexGrow: 1, display: {xs: 'none', md: 'flex'} }}>
+        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
           {links.map((link) => (
             <Button
               key={link.to}
@@ -118,6 +118,8 @@ export default function NavBar() {
               </Button>
               :
               <Button
+                component={Link}
+                to='/login'
                 sx={navLinkStyle}>
                 Login
               </Button>

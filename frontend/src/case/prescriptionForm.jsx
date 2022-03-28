@@ -4,6 +4,10 @@ import MedicineForm from './medicineForm'
 import LabTestsForm from './labTestsForm'
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
+import useRecorder from './useRecorder';
+import Recorder from './audioRecorder'
+import { createPrescription } from './apis'
+
 import * as yup from "yup";
 
 const schema = yup.object({
@@ -34,13 +38,19 @@ export default function PrescriptionForm({ cancel, ...props }) {
     });
 
 
+    const [audioURL, audioBlob, isRecording, startRecording, stopRecording, resetRecording] = useRecorder();
 
     return (
         <Paper elevation={10} sx={{ padding: 5 }} >
             <Container >
-
-                <form onSubmit={handleSubmit(data => console.log(data))} >
-                    <Typography variant="h5" >New Prescription</Typography>
+                <form onSubmit={handleSubmit(data => createPrescription("tokennn", audioBlob, data))} >
+                    <Typography sx={{ marginBottom: 4 }} variant="h5" >New Prescription</Typography>
+                    <Recorder
+                        audioURL={audioURL}
+                        isRecording={isRecording}
+                        startRecording={startRecording}
+                        stopRecording={stopRecording}
+                        resetRecording={resetRecording} />
                     <MedicineForm control={control} errors={errors} />
                     <div style={{ marginBottom: 20 }}></div>
                     <LabTestsForm control={control} errors={errors} />
