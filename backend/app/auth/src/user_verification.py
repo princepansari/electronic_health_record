@@ -12,8 +12,8 @@ class UserVerification(Resource):
     def __init__(self):
         self.rds = RDS()
         self.schema = Schema({
-            'otp': And(int, lambda otp: 000000 <= otp <= 999999),
-            'guardian_otp': And(int, lambda otp: 000000 <= otp <= 999999),
+            'otp': And(int, lambda otp: len(otp)==6),
+            'guardian_otp': And(str, lambda guardian_otp: len(guardian_otp)==6),
             'email': And(str, Use(bleach.clean), Utils.validate_email)
         }, ignore_extra_keys=True)
 
