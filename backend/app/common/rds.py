@@ -147,7 +147,7 @@ class RDS:
         case['created_by'] = self.get_user_by_user_id(user_id=case['created_by_id'])['name']
         return case
 
-    def get_case_by_patient(self, *, case_id, user_id):
+    def get_case_by_patient(self, *, case_id, patient_id):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
         query = "SELECT * from cases WHERE case_id=%s"
         cursor.execute(query, [case_id])
@@ -155,11 +155,11 @@ class RDS:
         cursor.close()
         if not case:
             return True, None
-        if case['patient_id'] != user_id:
+        if case['patient_id'] != patient_id:
             return False, None
         case['patient_name'] = self.get_user_by_user_id(user_id=case['patient_id'])['name']
         case['created_by'] = self.get_user_by_user_id(user_id=case['created_by_id'])['name']
-        return case
+        return True, case
 
     def get_prescriptions_by_case(self, *, case_id):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
@@ -179,3 +179,42 @@ class RDS:
         case_id = cursor.fetchone()['case_id']
         cursor.close()
         return case_id
+
+    def create_prescription(self, *, case_id, created_by_id, prescription):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT MAX(prescription_id) as prescription_id from prescriptions where case_id=%s"
+        cursor.execute(query, [case_id])
+        prescription_id = cursor.fetchone()['prescription_id']
+        if not prescription_id:
+            prescription_id = 1
+        else:
+            prescription_id += 1
+        query = "INSERT INTO prescriptions (prescription_id, case_id, created_by_id, prescription) " \
+                "VALUES (%s, %s, %s, %s) RETURNING *"
+        cursor.execute(query, [prescription_id, case_id, created_by_id, prescription])
+        self.connection.commit()
+        prescription_info = cursor.fetchone()
+        cursor.close()
+        return prescription_info
+
+    def add_note(self, *, prescription_id, note, created_by_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT prescription from prescriptions WHERE prescription_id=%s and created_by_id=%s"
+        cursor.execute(query, [prescription_id, created_by_id])
+        prescription = cursor.fetchone()['prescription']
+        if not prescription:
+            return False, None
+        if 'note' not in prescription:
+            prescription['note'] = []
+        prescription['note'].append(note)
+        query = "UPDATE prescriptions SET prescription=%s WHERE prescription_id=%s and created_by_id=%s"
+        cursor.execute(query, [prescription, prescription_id, created_by_id])
+        self.connection.commit()
+        cursor.close()
+        return True, prescription
+
+    def add_report_by_staff(self, *, prescription_id,  report):
+        pass
+
+    def add_report_by_patient(self, *, prescription_id,  report, patient_id):
+        pass

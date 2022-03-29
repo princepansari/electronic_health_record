@@ -80,7 +80,6 @@ CREATE TABLE prescriptions(
     prescription_id int PRIMARY KEY,
     case_id int NOT NULL,
     created_by_id uuid NOT NULL,
-    patient_id uuid NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL,
     prescription json NOT NULL,
