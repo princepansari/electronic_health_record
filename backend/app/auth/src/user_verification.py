@@ -26,6 +26,7 @@ class UserVerification(Resource):
         if not verified:
             return {'error': 'Wrong OTP'}, HTTPStatus.BAD_REQUEST
         self.rds.update_verification_status(email=email)
+        return {'message': 'Verified'}, HTTPStatus.OK
 
     def check_otp(self, *, given_otp, guardian_otp, email):
         user = self.rds.get_user_by_email(email=email)

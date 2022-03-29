@@ -55,4 +55,8 @@ class LoginApi(Resource):
         access_token = create_access_token(identity=str(user['user_id']),
                                            additional_claims=additional_claims,
                                            expires_delta=expires)
-        return {'access_token': access_token}, HTTPStatus.OK
+        return {'token': access_token,
+                'name': user['name'],
+                'email': user['email'],
+                'user_id': user['user_id'],
+                'user_type': user_type}, HTTPStatus.OK

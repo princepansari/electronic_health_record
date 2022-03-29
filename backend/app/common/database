@@ -9,6 +9,10 @@ CREATE TABLE user_type (
     type  VARCHAR ( 15 ) UNIQUE NOT NULL
 );
 
+INSERT INTO user_type (type) VALUES ('doctor');
+INSERT INTO user_type (type) VALUES ('nurse');
+INSERT INTO user_type (type) VALUES ('patient');
+
 CREATE TABLE users (
     user_id uuid DEFAULT uuid_generate_v4()  PRIMARY KEY,
     user_type_id int NOT NULL,
