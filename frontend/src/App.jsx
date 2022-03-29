@@ -29,6 +29,7 @@ function App() {
               <Route path="/" element={<h1>hello</h1>} />
               <Route path="/login" element={<Signup />} />
               <Route path="/case" element={<Case />} />
+              <Route path="/case/{caseId}" element={<Case />} />
             </Routes>
           </Layout>
         </BrowserRouter>
