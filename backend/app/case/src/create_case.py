@@ -14,7 +14,7 @@ from app.common.rds import RDS
 from app.common.utilities import Utils
 
 
-class GetAllCases(Resource):
+class CreateCase(Resource):
     def __init__(self):
         self.rds = RDS()
         self.schema = Schema({
