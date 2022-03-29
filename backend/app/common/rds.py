@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 import boto3
 import psycopg2
 from psycopg2.extras import RealDictCursor
-
+import json
 import os
 import sys
 
@@ -58,14 +58,14 @@ class RDS:
 
     def update_user_last_login(self, *, user_id):
         cursor = self.connection.cursor()
-        query = "UPDATE users SET last_login=%s WHERE id=%s"
+        query = "UPDATE users SET last_login=%s WHERE user_id=%s"
         cursor.execute(query, [datetime.now(timezone.utc), user_id])
         self.connection.commit()
         cursor.close()
 
     def get_user_otp(self, *, user_id): 
         cursor = self.connection.cursor()
-        query = "SELECT email_otp AND guardian_email_otp FROM signup_verification WHERE user_id=%s"
+        query = "SELECT email_otp, guardian_email_otp FROM signup_verification WHERE user_id=%s"
         cursor.execute(query, [user_id])
         valid_otp, valid_guardian_otp = cursor.fetchone()
         cursor.close()
@@ -73,7 +73,7 @@ class RDS:
 
     def update_verification_status(self, *, email):
         cursor = self.connection.cursor()
-        query = "UPDATE users SET account_verfied='TRUE' WHERE email=%s"
+        query = "UPDATE users SET account_verified='TRUE' WHERE email=%s"
         cursor.execute(query, [email])
         self.connection.commit()
         cursor.close()
@@ -82,11 +82,13 @@ class RDS:
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
         query = "SELECT id FROM user_type WHERE type=%s"
         cursor.execute(query, [user_type])
-        user_type_id = cursor.fetchone()
+        user_type_id = cursor.fetchone()['id']
         query = "INSERT INTO users(user_type_id, email, guardian_email, name, password, phone_number, dob, " \
                 "allergy) VALUES (%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (email) DO NOTHING RETURNING user_id"
         cursor.execute(query, [user_type_id, email, guardian_email, name, password, phone, dob, allergy])
         self.connection.commit()
+        if cursor.rowcount == 0:
+            return None
         user_id = cursor.fetchone()['user_id']
         cursor.close()
         return user_id
@@ -94,7 +96,7 @@ class RDS:
     def create_schedule(self, *, user_id, schedule, slot_duration):
         cursor = self.connection.cursor()
         query = "INSERT INTO staff_schedule(staff_id, slot_duration, schedule) VALUES (%s, %s, %s)"
-        cursor.execute(query, [user_id, slot_duration, schedule])
+        cursor.execute(query, [user_id, slot_duration, json.dumps(schedule)])
         self.connection.commit()
         cursor.close()
 
@@ -110,7 +112,7 @@ class RDS:
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
         query = "SELECT type FROM user_type INNER JOIN users ON user_type.id=users.user_type_id WHERE users.user_id=%s"
         cursor.execute(query, [user_id])
-        user_type = cursor.fetchone()
+        user_type = cursor.fetchone()['type']
         cursor.close()
         return user_type
 

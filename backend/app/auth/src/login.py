@@ -44,13 +44,14 @@ class LoginApi(Resource):
         if not user['account_verified']:
             return {'message': 'Account not verified'}, HTTPStatus.NOT_FOUND
 
-        if not user['user_type_verification']:
-            return {'message': 'User type not verified'}, HTTPStatus.NOT_FOUND
+        user_type = self.rds.get_user_type(user_id=user['user_id'])
+        if user_type == 'doctor' or user_type == 'nurse':
+            if not user['user_type_verification']:
+                return {'message': 'User type not verified'}, HTTPStatus.NOT_FOUND
 
         self.rds.update_user_last_login(user_id=user['user_id'])
 
         expires = datetime.timedelta(days=Config.EXPIRE_AFTER_DAYS)
-        user_type = self.rds.get_user_type(user_id=user['user_id'])
         additional_claims = {'email': user['email'], 'name': user['name'], 'user_type': user_type}
         access_token = create_access_token(identity=str(user['user_id']),
                                            additional_claims=additional_claims,

@@ -26,7 +26,7 @@ CREATE TABLE users (
     user_type_verification BOOLEAN DEFAULT FALSE NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    account_verfied BOOLEAN DEFAULT FALSE NOT NULL,
+    account_verified BOOLEAN DEFAULT FALSE NOT NULL,
     last_login TIMESTAMPTZ,
     FOREIGN KEY (user_type_id) REFERENCES user_type (id)
 );

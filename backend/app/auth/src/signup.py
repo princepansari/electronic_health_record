@@ -32,8 +32,8 @@ class SignupApi(Resource):
             'dob': And(str, Use(bleach.clean), lambda x: datetime.datetime.strptime(x, '%Y-%m-%d')),
             'phone': And(str, Use(bleach.clean)),
             Optional('allergy'): And(str, Use(bleach.clean)),
-            Optional('schedule'): And(json, Use(bleach.clean)),
-            Optional('slot_duration'): And(int, Use(bleach.clean))
+            Optional('schedule'): And(dict),
+            Optional('slot_duration'): And(int, lambda x: x > 0)
         })
 
     def post(self):
@@ -61,7 +61,7 @@ class SignupApi(Resource):
                                        password=SignupApi.hash_password(password=data['password']),
                                        dob=data['dob'],
                                        phone=data['phone'],
-                                       allergy=data['allergy'])
+                                       allergy=data.get('allergy'))
 
         if user_id is None:
             return {'message': 'User already exists'}, HTTPStatus.BAD_REQUEST
@@ -79,17 +79,17 @@ class SignupApi(Resource):
         if guardian_email is None:
             otp = self.get_otp()
             self.rds.save_otp(user_id=user_id, email_otp=otp, guardian_email_otp=None)
-            SignupApi.send_email(to=email,
+            SignupApi.send_email(to=[email],
                                  subject='Verify your account',
                                  message=f'Your OTP is {otp}')
         else:
             email_otp = self.get_otp()
             guardian_email_otp = self.get_otp()
             self.rds.save_otp(user_id=user_id, email_otp=email_otp, guardian_email_otp=guardian_email_otp)
-            SignupApi.send_email(to=email,
+            SignupApi.send_email(to=[email],
                                  subject='Verify your account',
                                  message=f'Your OTP is {email_otp}')
-            SignupApi.send_email(to=guardian_email,
+            SignupApi.send_email(to=[guardian_email],
                                  subject='Verify your account',
                                  message=f'Your OTP is {guardian_email_otp}')
 

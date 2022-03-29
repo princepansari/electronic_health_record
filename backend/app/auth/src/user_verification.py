@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 from app.common.utilities import Utils
 from app.common.rds import RDS
-from schema import Schema, And, Use
+from schema import Schema, And, Use, Optional
 from http import HTTPStatus
 import bleach
 
@@ -13,7 +13,7 @@ class UserVerification(Resource):
         self.rds = RDS()
         self.schema = Schema({
             'otp': And(str, Utils.validate_otp),
-            'guardian_otp': And(str, Utils.validate_otp),
+            Optional('guardian_otp'): And(str, Utils.validate_otp),
             'email': And(str, Use(bleach.clean), Utils.validate_email)
         })
 
@@ -22,7 +22,7 @@ class UserVerification(Resource):
             return {'message': 'Invalid request'}, HTTPStatus.BAD_REQUEST
         data = self.schema.validate(request.get_json())
         email = data['email']
-        verified = self.check_otp(given_otp=data['otp'], guardian_otp=data['guardian_otp'], email=email)
+        verified = self.check_otp(given_otp=data['otp'], guardian_otp=data.get('guardian_otp'), email=email)
         if not verified:
             return {'error': 'Wrong OTP'}, HTTPStatus.BAD_REQUEST
         self.rds.update_verification_status(email=email)

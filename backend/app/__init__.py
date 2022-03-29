@@ -14,6 +14,8 @@ from app.case.routes import case_routes
 
 app = Flask(__name__)
 
+app.config.from_object('config')
+
 api = Api(app)
 cors = CORS(app)
 bcrypt = Bcrypt(app)
