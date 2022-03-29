@@ -31,7 +31,7 @@ class GetCase(Resource):
         if user_type == 'doctor' or user_type == 'nurse':
             case = self.rds.get_case_by_staff(case_id=case_id)
         elif user_type == 'patient':
-            access, case = self.rds.get_case_by_patient(case_id=case_id, user_id=user_id)
+            access, case = self.rds.get_case_by_patient(case_id=case_id, patient_id=user_id)
             if not access:
                 return {'message': 'You do not have access to this case'}, HTTPStatus.FORBIDDEN
         if not case:
