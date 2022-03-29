@@ -8,15 +8,20 @@ import Layout from "./layout";
 import MyCasesPage from "./MyCasesPage/MyCasesPage";
 import UpcomingAppointmentsPage from "./UpcomingAppointmentsPage/UpcomingAppointmentsPage";
 import SignIn from "./SignIn";
+import Prescription from "./case/prescription";
+import Case from "./case/case";
+import PrescriptionForm from "./case/prescriptionForm";
+
 const theme = createTheme({ palette: { mode: "light" } });
 
 function App() {
   const [auth, setAuth] = useState(false);
+  const [user, setUser] = useState({ usertype: "doctor" }); //TODO: should be replaced with {}
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AuthContext.Provider value={{ "auth": auth, "setAuth": setAuth }}>
+      <AuthContext.Provider value={{ "auth": auth, "setAuth": setAuth, "user": user, "setUser": setUser }}>
 
         <BrowserRouter>
           <Layout>
@@ -28,6 +33,7 @@ function App() {
               <Route path="/prescriptions" element={<MyCasesPage/>} />
               <Route path="/appointments" element={<UpcomingAppointmentsPage/>} />
               <Route path="/signin" element={<SignIn/>} />
+              <Route path="/case" element={<Case />} />
             </Routes>
           </Layout>
         </BrowserRouter>

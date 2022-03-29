@@ -1,0 +1,86 @@
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+GRANT ALL ON SCHEMA public TO public;
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE user_type (
+    id SERIAL PRIMARY KEY,
+    type  VARCHAR ( 15 ) UNIQUE NOT NULL
+);
+
+CREATE TABLE users (
+    user_id uuid DEFAULT uuid_generate_v4()  PRIMARY KEY,
+    user_type_id int NOT NULL,
+    email VARCHAR ( 255 ) UNIQUE NOT NULL,
+    guardian_email VARCHAR ( 255 ),
+    name VARCHAR ( 255 ) NOT NULL,
+    password VARCHAR ( 255 ) NOT NULL,
+    phone_number VARCHAR ( 255 ) NOT NULL,
+    dob DATE NOT NULL,
+    allergy TEXT,
+    user_type_verification BOOLEAN DEFAULT FALSE NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    account_verfied BOOLEAN DEFAULT FALSE NOT NULL,
+    last_login TIMESTAMPTZ,
+    FOREIGN KEY (user_type_id) REFERENCES user_type (id)
+);
+
+CREATE TABLE signup_verification(
+    user_id uuid PRIMARY KEY,
+    email_otp VARCHAR (6) NOT NULL,
+    guardian_email_otp VARCHAR (6),
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (user_id)
+);
+
+CREATE TABLE staff_schedule(
+    staff_id uuid PRIMARY KEY,
+    slot_duration int NOT NULL,
+    schedule json NOT NULL,
+    FOREIGN KEY (staff_id) REFERENCES users (user_id)
+);
+
+CREATE TABLE leaves(
+    id SERIAL PRIMARY KEY,
+    staff_id uuid NOT NULL,
+    leave_from TIMESTAMPTZ NOT NULL,
+    leave_to TIMESTAMPTZ NOT NULL,
+    FOREIGN KEY (staff_id) REFERENCES users (user_id)
+);
+
+CREATE TABLE appointment_table(
+    id uuid DEFAULT uuid_generate_v4()  PRIMARY KEY,
+    doctor_id uuid NOT NULL,
+    patient_id uuid NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    appointment_time TIMESTAMPTZ NOT NULL,
+    followup_case_id int,
+    FOREIGN KEY (doctor_id) REFERENCES users (user_id),
+    FOREIGN KEY (patient_id) REFERENCES users (user_id)
+);
+
+CREATE TABLE cases(
+    case_id SERIAL PRIMARY KEY,
+    patient_id uuid NOT NULL,
+    created_by_id uuid NOT NULL,
+    problem TEXT,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL,
+    FOREIGN KEY (created_by_id) REFERENCES users (user_id),
+    FOREIGN KEY (patient_id) REFERENCES users (user_id)
+);
+
+CREATE TABLE prescriptions(
+    prescription_id int PRIMARY KEY,
+    case_id int NOT NULL,
+    created_by_id uuid NOT NULL,
+    patient_id uuid NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL,
+    prescription json NOT NULL,
+    FOREIGN KEY (created_by_id) REFERENCES users (user_id),
+    FOREIGN KEY (patient_id) REFERENCES users (user_id),
+    FOREIGN KEY (case_id) REFERENCES cases (case_id)
+);
