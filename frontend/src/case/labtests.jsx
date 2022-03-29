@@ -8,6 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button'
+import { uploadReport } from './apis';
 
 const columns = [
     { id: 'testname', label: 'Test Name' },
@@ -28,22 +29,12 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 
 export default function LabTests({ labTests, ...rest }) {
-    const [selectedFile, setSelectedFile] = React.useState();
 
-    const fileChangeHandler = (event) => {
-        setSelectedFile(event.target.files[0]);
-    };
 
-    const onReportUpload = () => {
-        const formData = new FormData();
-
-        formData.append('File', selectedFile);
-        //TODO: api call
-        // uploadFile(formData)
-        console.log(formData);
-        for (var p of formData) {
-            console.log(p);
-        }
+    const handleFileUpload = (e) => {
+        e.preventDefault();
+        const report = e.target.files[0];
+        const res = uploadReport("token", report);
     };
 
     return (
@@ -81,19 +72,18 @@ export default function LabTests({ labTests, ...rest }) {
                                                 {/* TODO: use link component to open a link of our website in new tab */}
                                             </Button>
                                             :
-                                            <>
+                                            <form onSubmit={handleFileUpload}>
                                                 <input type="file"
                                                     name={"report" + labTest.id}
                                                     accept="image/*"
-                                                    id={"report" + labTest.id}
-                                                    onChange={fileChangeHandler} />
-                                                <Button type={'submit'}
+                                                    id={"report" + labTest.id} />
+                                                <Button
+                                                    type="submit"
                                                     variant='contained'
-                                                    size='small'
-                                                    onClick={onReportUpload}>
+                                                    size='small'>
                                                     Upload
                                                 </Button>
-                                            </>
+                                            </form>
 
 
                                         }
@@ -105,6 +95,6 @@ export default function LabTests({ labTests, ...rest }) {
                     </TableBody>
                 </Table>
             </TableContainer>
-        </Paper>
+        </Paper >
     );
 }

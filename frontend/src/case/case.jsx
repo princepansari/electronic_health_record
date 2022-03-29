@@ -101,6 +101,7 @@ export default function Case(props) {
                     :
                     <>
                         <Grid container sx={{ marginBottom: 10 }}>
+                            {console.log(caseObj)}
                             {briefInfoFields.map((field) => (
                                 <Grid item key={field} sm={6} md={4} >
                                     <Typography variant="h6" component='span'>
@@ -109,9 +110,10 @@ export default function Case(props) {
                                 </Grid>
                             ))}
                         </Grid>
+                        {console.log(user.user_type)}
                         {!isDisplayForm
                             ?
-                            (['doctor', 'nurse'].includes(user.usertype) &&
+                            (['doctor', 'nurse'].includes(user.user_type) &&
                                 <Button variant="contained" sx={{ marginBottom: 2 }} onClick={() => { setIsDisplayForm(true); }}>
                                     Add a prescription
                                 </Button>)
