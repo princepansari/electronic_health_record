@@ -81,12 +81,25 @@ class RDS:
     # TODO: add user
     def create_user(self, *, user_type, email, guardian_email, name, password, dob, phone, allergy):
         cursor = self.connection.cursor()
-        query = "INSERT INTO users(user_id, user_type_id, email, guardian_email, name, password, phone_number, dob, allergy, user_type_verification, created_at, updated_at, account_verfied, last_login)"
-        VALUES (check, user_type, email, guardian_email, name, password, phone, dob, allergy )
+        query = "SELECT id FROM user_type WHERE type=%s"
+        cursor.execute(query, [user_type])
+        user_type_id = cursor.fetchone()
+        query = "INSERT INTO users(user_type_id, email, guardian_email, name, password, phone_number, dob, allergy) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"  \
+                "ON CONFLICT (email)"\
+                "DO NOTHING"
+        cursor.execute(query, [user_type_id, email, guardian_email, name, password, phone, dob, allergy])
+        self.connection.commit()
+        user_id = cursor.fetchone()['user_id']
+        cursor.close()
+        return user_id
 
     # TODO: add schedule
     def create_schedule(self, *, user_id, schedule, slot_duration):
-        pass
+        cursor = self.connection.cursor()
+        query = "INSERT INTO staff_schedule(staff_id, slot_duration, schedule) VALUES (%s, %s, %s)"
+        cursor.execute(query, [user_id, slot_duration, schedule])
+        self.connection.commit()
+        cursor.close()
 
     def save_otp(self, *, user_id, email_otp, guardian_email_otp):
         cursor = self.connection.cursor()
