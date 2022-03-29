@@ -24,3 +24,12 @@ class Utils:
             if lower and upper and digit and special and lower + upper + digit + special == len(password):
                 return True
         return False
+
+    @staticmethod
+    def validate_otp(otp):
+        if len(otp) != 6:
+            return False
+        for i in range(6):
+            if not otp[i].isdigit():
+                return False
+        return True

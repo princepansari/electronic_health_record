@@ -77,23 +77,20 @@ class RDS:
         cursor.execute(query, [email])
         self.connection.commit()
         cursor.close()
-    
-    # TODO: add user
+
     def create_user(self, *, user_type, email, guardian_email, name, password, dob, phone, allergy):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
         query = "SELECT id FROM user_type WHERE type=%s"
         cursor.execute(query, [user_type])
         user_type_id = cursor.fetchone()
-        query = "INSERT INTO users(user_type_id, email, guardian_email, name, password, phone_number, dob, allergy) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"  \
-                "ON CONFLICT (email)"\
-                "DO NOTHING"
+        query = "INSERT INTO users(user_type_id, email, guardian_email, name, password, phone_number, dob, " \
+                "allergy) VALUES (%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (email) DO NOTHING RETURNING user_id"
         cursor.execute(query, [user_type_id, email, guardian_email, name, password, phone, dob, allergy])
         self.connection.commit()
         user_id = cursor.fetchone()['user_id']
         cursor.close()
         return user_id
 
-    # TODO: add schedule
     def create_schedule(self, *, user_id, schedule, slot_duration):
         cursor = self.connection.cursor()
         query = "INSERT INTO staff_schedule(staff_id, slot_duration, schedule) VALUES (%s, %s, %s)"
