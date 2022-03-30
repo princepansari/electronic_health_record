@@ -127,10 +127,12 @@ class RDS:
 
     def get_all_cases_by_staff(self, *, created_by_id):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
-        query = "SELECT cases.case_id, users.name as patient_id, cases.problem, cases.created_at, cases.updated_at " \
-                "FROM cases INNER JOIN users ON cases.patient_id=users.user_id INNER JOIN prescriptions " \
-                "ON prescriptions.created_by_id=cases.created_by_id WHERE prescriptions.created_by_id=%s"
-        cursor.execute(query, [created_by_id])
+        query = "SELECT DISTINCT cases.case_id, users.name as patient_name, cases.problem, cases.created_at, " \
+                "cases.updated_at FROM cases INNER JOIN users ON cases.patient_id=users.user_id INNER JOIN " \
+                "prescriptions ON prescriptions.case_id=cases.case_id WHERE prescriptions.created_by_id=%s UNION " \
+                "SELECT cases.case_id, users.name as patient_name, cases.problem, cases.created_at, cases.updated_at " \
+                "FROM cases INNER JOIN users ON cases.patient_id=users.user_id where cases.created_by_id=%s"
+        cursor.execute(query, [created_by_id, created_by_id])
         cases = cursor.fetchall()
         cursor.close()
         return cases
@@ -143,7 +145,9 @@ class RDS:
         cursor.close()
         if not case:
             return None
-        case['patient_name'] = self.get_user_by_user_id(user_id=case['patient_id'])['name']
+        patient = self.get_user_by_user_id(user_id=case['patient_id'])
+        case['patient_name'] = patient['name']
+        case['patient_allergy'] = patient['allergy']
         case['created_by'] = self.get_user_by_user_id(user_id=case['created_by_id'])['name']
         return case
 
@@ -157,7 +161,9 @@ class RDS:
             return True, None
         if case['patient_id'] != patient_id:
             return False, None
-        case['patient_name'] = self.get_user_by_user_id(user_id=case['patient_id'])['name']
+        patient = self.get_user_by_user_id(user_id=case['patient_id'])
+        case['patient_name'] = patient['name']
+        case['patient_allergy'] = patient['allergy']
         case['created_by'] = self.get_user_by_user_id(user_id=case['created_by_id'])['name']
         return True, case
 
@@ -180,6 +186,23 @@ class RDS:
         cursor.close()
         return case_id
 
+    def update_case_updated_at(self, *, case_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "UPDATE cases SET updated_at=now() WHERE case_id=%s"
+        cursor.execute(query, [case_id])
+        self.connection.commit()
+        cursor.close()
+
+    def is_case_exists(self, *, case_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT * FROM cases WHERE case_id=%s"
+        cursor.execute(query, [case_id])
+        case = cursor.fetchone()
+        cursor.close()
+        if not case:
+            return False
+        return True
+
     def create_prescription(self, *, case_id, created_by_id, prescription):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
         query = "SELECT MAX(prescription_id) as prescription_id from prescriptions where case_id=%s"
@@ -191,24 +214,32 @@ class RDS:
             prescription_id += 1
         query = "INSERT INTO prescriptions (prescription_id, case_id, created_by_id, prescription) " \
                 "VALUES (%s, %s, %s, %s) RETURNING *"
-        cursor.execute(query, [prescription_id, case_id, created_by_id, prescription])
+        cursor.execute(query, [prescription_id, case_id, created_by_id, json.dumps(prescription)])
         self.connection.commit()
-        prescription_info = cursor.fetchone()
+        prescription = cursor.fetchone()
         cursor.close()
+        prescription_info = {
+            'prescription_id': prescription['prescription_id'],
+            'case_id': prescription['case_id'],
+            'prescription': prescription['prescription'],
+            'created_at': prescription['created_at'].isoformat(),
+            'updated_at': prescription['updated_at'].isoformat(),
+        }
         return prescription_info
 
-    def add_note(self, *, prescription_id, note, created_by_id):
+    def add_correction(self, *, case_id, prescription_id, correction, created_by_id):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
-        query = "SELECT prescription from prescriptions WHERE prescription_id=%s and created_by_id=%s"
-        cursor.execute(query, [prescription_id, created_by_id])
-        prescription = cursor.fetchone()['prescription']
-        if not prescription:
+        query = "SELECT prescription from prescriptions WHERE prescription_id=%s and created_by_id=%s and case_id=%s"
+        cursor.execute(query, [prescription_id, created_by_id, case_id])
+        if cursor.rowcount == 0:
             return False, None
-        if 'note' not in prescription:
-            prescription['note'] = []
-        prescription['note'].append(note)
-        query = "UPDATE prescriptions SET prescription=%s WHERE prescription_id=%s and created_by_id=%s"
-        cursor.execute(query, [prescription, prescription_id, created_by_id])
+        prescription = cursor.fetchone()['prescription']
+        if 'corrections' not in prescription:
+            prescription['corrections'] = []
+        prescription['corrections'].append(correction)
+        query = "UPDATE prescriptions SET prescription=%s, updated_at=now() WHERE prescription_id=%s and " \
+                "created_by_id=%s and case_id=%s"
+        cursor.execute(query, [json.dumps(prescription), prescription_id, created_by_id, case_id])
         self.connection.commit()
         cursor.close()
         return True, prescription

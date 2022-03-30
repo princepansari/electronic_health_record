@@ -14,9 +14,7 @@ from app.common.rds import RDS
 class GetCase(Resource):
     def __init__(self):
         self.rds = RDS()
-        self.schema = Schema({
-            'case_id': And(Use(int), lambda n: n > 0)
-        })
+        self.schema = Schema(And(Use(int), lambda n: n > 0))
 
     @jwt_required()
     def get(self, case_id):
@@ -38,12 +36,19 @@ class GetCase(Resource):
             return {'message': 'Case not found'}, HTTPStatus.NOT_FOUND
 
         prescriptions = self.rds.get_prescriptions_by_case(case_id=case_id)
-
-        data = {'case_id': case_id,
+        prescriptions_data = []
+        for prescription in prescriptions:
+            prescription['prescription']['id'] = prescription['prescription_id']
+            prescription['prescription']['created_by'] = prescription['created_by']
+            prescription['prescription']['updated_at'] = prescription['updated_at'].isoformat()
+            prescription['prescription']['created_at'] = prescription['created_at'].isoformat()
+            prescriptions_data.append(prescription['prescription'])
+        data = {'id': case_id,
                 'patient_name': case['patient_name'],
+                'patient_allergy': case['patient_allergy'],
                 'created_by': case['created_by'],
                 'problem': case['problem'],
-                'created_at': case['created_at'],
-                'updated_at': case['updated_at'],
-                'prescriptions': prescriptions}
+                'created_at': case['created_at'].isoformat(),
+                'updated_at': case['updated_at'].isoformat(),
+                'prescriptions': prescriptions_data}
         return data, HTTPStatus.OK

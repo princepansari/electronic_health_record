@@ -1,5 +1,5 @@
 import re
-
+import uuid
 
 class Utils:
 
@@ -33,3 +33,7 @@ class Utils:
             if not otp[i].isdigit():
                 return False
         return True
+
+    @staticmethod
+    def get_uuid():
+        return str(uuid.uuid4())

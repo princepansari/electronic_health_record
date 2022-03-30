@@ -22,6 +22,10 @@ class Config:
     DATABASE = os.environ.get("DATABASE") or "unicorn_db"
     PASSWORD = os.environ.get("PASSWORD") or "welcome123"
 
+    # S3 config
+    S3_BUCKET = os.environ.get("S3_BUCKET") or "unicorn-ehr"
+    BUCKET_URL = os.environ.get("BUCKET_URL") or "https://unicorn-ehr.s3.ap-south-1.amazonaws.com/"
+
     # email config
     FROM_EMAIL = "shortify.tech@gmail.com"
     GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID") or \
