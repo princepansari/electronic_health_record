@@ -13,12 +13,13 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 from app.common.rds import RDS
 
 
-class AddNote(Resource):
+class AddCorrection(Resource):
     def __init__(self):
         self.rds = RDS()
         self.schema = Schema({
+            'case_id': And(Use(int), lambda n: n > 0),
             'prescription_id': And(Use(int), lambda n: n > 0),
-            'note': And(Use(str), lambda n: len(n) > 0)
+            'correction': And(dict)
         })
 
     @jwt_required()
@@ -28,9 +29,11 @@ class AddNote(Resource):
 
         data = self.schema.validate(request.get_json())
         user_id = get_jwt_identity()
-        added, prescription = self.rds.add_note(prescription_id=data['prescription_id'],
-                                                note=data['note'],
-                                                created_by_id=user_id)
+        added = self.rds.add_correction(case_id=data['case_id'],
+                                        prescription_id=data['prescription_id'],
+                                        correction=data['correction'],
+                                        created_by_id=user_id)
         if not added:
             return {'message': 'Invalid request'}, HTTPStatus.BAD_REQUEST
-        return {'prescription': prescription}, HTTPStatus.OK
+        self.rds.update_case_updated_at(case_id=data['case_id'])
+        return HTTPStatus.OK
