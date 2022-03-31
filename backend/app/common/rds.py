@@ -84,11 +84,11 @@ class RDS:
         cursor.execute(query, [user_type])
         user_type_id = cursor.fetchone()['id']
         query = "INSERT INTO users(user_type_id, email, guardian_email, name, password, phone_number, dob, " \
-                "allergy) VALUES (%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (email) DO NOTHING RETURNING user_id"
-        cursor.execute(query, [user_type_id, email, guardian_email, name, password, phone, dob, allergy])
+                "allergy) VALUES (%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (email) DO UPDATE SET " \
+                "user_type_id=%s, guardian_email=%s, name=%s, password=%s, phone_number=%s, dob=%s RETURNING user_id"
+        cursor.execute(query, [user_type_id, email, guardian_email, name, password, phone, dob, allergy,
+                               user_type_id, guardian_email, name, password, phone, dob])
         self.connection.commit()
-        if cursor.rowcount == 0:
-            return None
         user_id = cursor.fetchone()['user_id']
         cursor.close()
         return user_id

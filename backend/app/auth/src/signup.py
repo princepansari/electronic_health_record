@@ -29,7 +29,7 @@ class SignupApi(Resource):
             Optional('guardian_email'): And(str, Use(bleach.clean), Utils.validate_email),
             'name': And(str, Use(bleach.clean)),
             'password': And(str, Use(bleach.clean), Utils.validate_password),
-            'dob': And(str, Use(bleach.clean), lambda x: datetime.datetime.strptime(x, '%Y-%m-%d')),
+            'dob': And(str, Use(bleach.clean), lambda x: datetime.datetime.strptime(x, '%d/%m/%Y')),
             'phone': And(str, Use(bleach.clean)),
             Optional('allergy'): And(str, Use(bleach.clean)),
             Optional('schedule'): And(dict),
@@ -54,17 +54,19 @@ class SignupApi(Resource):
             if 'schedule' not in data or 'slot_duration' not in data:
                 return {'message': 'Invalid request'}, HTTPStatus.BAD_REQUEST
 
+        user = self.rds.get_user_by_email(email=data['email'])
+        if user and user['account_verified']:
+            return {'message': 'User already exists'}, HTTPStatus.BAD_REQUEST
+
         user_id = self.rds.create_user(user_type=data['user_type'],
                                        email=data['email'],
                                        guardian_email=data.get('guardian_email'),
                                        name=data['name'],
                                        password=SignupApi.hash_password(password=data['password']),
-                                       dob=data['dob'],
+                                       dob=datetime.datetime.strptime(data['dob'], '%d/%m/%Y').strftime("%Y-%m-%d"),
                                        phone=data['phone'],
                                        allergy=data.get('allergy'))
 
-        if user_id is None:
-            return {'message': 'User already exists'}, HTTPStatus.BAD_REQUEST
         if data['user_type'] == 'doctor' or data['user_type'] == 'nurse':
             self.rds.create_schedule(user_id=user_id, schedule=data['schedule'], slot_duration=data['slot_duration'])
 
