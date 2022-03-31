@@ -4,6 +4,8 @@ import Typography from '@mui/material/Typography'
 import { Grid, Skeleton, Button } from "@mui/material";
 import PrescriptionForm from "./prescriptionForm";
 import AuthContext from "../auth/AuthContext";
+import { useParams } from "react-router-dom";
+import { getCase } from "./apis";
 
 function createMedicine(medicine, dosage) {
     return { medicine, dosage };
@@ -21,13 +23,13 @@ function createCorrection(id, description) {
 function createPrescription(id, medicines, labtests, corrections) {
     return {
         id,
-        doctor: "Dr MJ Memon",
-        issue: "Cold and cough",
+        created_by: "Dr MJ Memon",
         created_at: (new Date()).toLocaleString(),
         updated_at: (new Date()).toLocaleString(),
+        problem: "Cold and cough",
         medicines,
         labtests,
-        corrections
+        corrections,
     };
 }
 
@@ -37,9 +39,11 @@ function createCase(id, prescriptions) {
         id,
         created_by: "Dr. MJ Memon",
         created_at: (new Date()).toLocaleString(),
+        updated_at: (new Date()).toLocaleString(),
         patient_name: "Joe",
         patient_age: 21,
-        patient_allergies: "allergic to azithromycin",
+        patient_allergy: "allergic to azithromycin",
+        problem: "Cold and Cough",
         prescriptions
     }
 }
@@ -64,33 +68,39 @@ export default function Case(props) {
     const [caseObj, setCaseObj] = useState(null);
     const [isDisplayForm, setIsDisplayForm] = useState(false);
     const { user } = useContext(AuthContext);
+    let params = useParams();
+    const caseId = params.caseId;
 
-    const fetchCase = () => {
+    const reFetchCase = () => {
         //TODO: api call
+        // setCaseObj(getCase(user.token, caseId));
     }
 
     useEffect(() => {
-        //TODO: api call to fetch the case
-        // setCaseObj(fetchCase());
+        // setCaseObj(getCase(user.token, caseId));
         setCaseObj(createCase(1, [p1]));
-    }, [props.caseId])
+    }, [])
 
     const briefInfoFields = [
         'id',
         'created_by',
         'created_at',
+        'updated_at',
         'patient_name',
         'patient_age',
-        'patient_allergies'
+        'patient_allergy',
+        'problem',
     ]
 
     const displayName = {
         id: "Case Id: ",
         created_by: "Created By: ",
-        created_at: "Opened On: ",
+        created_at: "Created On: ",
         patient_name: "Patient Name: ",
         patient_age: "Patient Age: ",
-        patient_allergies: "Allergies: "
+        patient_allergy: "Allergy: ",
+        updated_at: "Updated On:",
+        problem: "Problem: "
     }
 
     return (
@@ -117,11 +127,11 @@ export default function Case(props) {
                                 <Button variant="contained" sx={{ marginBottom: 2 }} onClick={() => { setIsDisplayForm(true); }}>
                                     Add a prescription
                                 </Button>)
-                            : <PrescriptionForm cancel={() => { setIsDisplayForm(false); }} />}
+                            : <PrescriptionForm caseId={caseObj.id} reFetchCase={reFetchCase} cancel={() => { setIsDisplayForm(false); }} />}
                         <div style={{ marginBottom: 10 }}></div>
                         <Typography variant="h5" sx={{ marginTop: 5, marginBottom: 2 }}>Old Prescriptions</Typography>
                         {caseObj.prescriptions !== undefined && caseObj.prescriptions.map((prescription) => (
-                            <Prescription key={prescription.id} reFetchCase={fetchCase} prescription={prescription} />
+                            <Prescription key={prescription.id} caseId={caseObj.id} reFetchCase={reFetchCase} prescription={prescription} />
                         ))}
                     </>
             }

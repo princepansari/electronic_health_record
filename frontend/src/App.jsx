@@ -5,37 +5,33 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AuthContext from "./auth/AuthContext";
 import { useEffect, useState } from "react";
 import Layout from "./layout";
-import MyCasesPage from "./MyCasesPage/MyCasesPage";
-import UpcomingAppointmentsPage from "./UpcomingAppointmentsPage/UpcomingAppointmentsPage";
+import MyCases from "./case/MyCasesPage";
+import UpcomingAppointments from "./UpcomingAppointmentsPage/UpcomingAppointmentsPage";
 import SignIn from "./auth/SignIn";
 import SignUp from "./auth/signUp";
 import Case from "./case/case";
-import { authCheckState } from "./auth/apis";
-
+import RequireAuth from "./auth/requireAuth";
 const theme = createTheme({ palette: { mode: "light" } });
 
 function App() {
     const [auth, setAuth] = useState(false);
     const [user, setUser] = useState({ user_type: 'doctor' }); //TODO: should be replaced with {}
 
-    // useEffect(() => {
-    //     const authUser = authCheckState(auth, setAuth, setUser);
-    // }, [])
-
 
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <AuthContext.Provider value={{ "auth": auth, "setAuth": setAuth, "user": user, "setUser": setUser }}>
-
                 <BrowserRouter>
                     <Layout>
                         <Routes>
                             <Route path="/" element={<h1>hello</h1>} />
                             <Route path="/signup" element={<SignUp />} />
                             <Route path="/login" element={<SignIn />} />
-                            <Route path="/case" element={<Case />} />
-                            <Route path="/case/{caseId}" element={<Case />} />
+                            <Route path="/myCases" element={<RequireAuth children={<MyCases />} />} />
+                            <Route path="/appointments" element={<RequireAuth children={<UpcomingAppointments />} />} />
+                            <Route path="/case" element={<RequireAuth children={<Case />} />} />
+                            <Route path="/case/:caseId" element={<RequireAuth children={<Case />} />} />
                         </Routes>
                     </Layout>
                 </BrowserRouter>

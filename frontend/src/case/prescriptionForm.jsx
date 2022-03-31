@@ -1,16 +1,18 @@
-import React from 'react';
-import { Button, Stack, Typography, Paper, Container } from '@mui/material';
+import React, { useContext, useState } from 'react';
+import { Button, Stack, Typography, Paper, Container, Snackbar, TextField } from '@mui/material';
 import MedicineForm from './medicineForm'
 import LabTestsForm from './labTestsForm'
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import useRecorder from './useRecorder';
 import Recorder from './audioRecorder'
 import { createPrescription } from './apis'
 
 import * as yup from "yup";
+import AuthContext from '../auth/AuthContext';
 
 const schema = yup.object({
+    problem: yup.string().required("Problem description should not be empty"),
     medicines: yup.array()
         .of(
             yup.object().shape({
@@ -27,49 +29,83 @@ const schema = yup.object({
 });
 
 
-export default function PrescriptionForm({ cancel, ...props }) {
+export default function PrescriptionForm({ cancel, caseId, reFetchCase, ...props }) {
 
-    const { control, handleSubmit, formState: { errors } } = useForm({
+    const { control, handleSubmit: RHFhandleSubmit, formState: { errors } } = useForm({
         defaultValues: {
             medicines: [],
-            labtests: []
+            labtests: [],
+            problem: ''
         },
         resolver: yupResolver(schema)
     });
 
+    const { user } = useContext(AuthContext);
     const [audioURL, audioBlob, isRecording, startRecording, stopRecording, resetRecording] = useRecorder();
 
+    const [isSuccess, setIsSuccess] = useState(false);
+    const handleSubmit = (data) => {
+        createPrescription(user.token, caseId, audioBlob, data).then((res) => {
+            setIsSuccess(true);
+            reFetchCase();
+        }).catch((err) => { console.log(err) })
+    }
+
+
     return (
-        <Paper elevation={10} sx={{ padding: 5 }} >
-            <Container >
-                <form onSubmit={handleSubmit(data => createPrescription("tokennn", audioBlob, data))} >
-                    <Typography sx={{ marginBottom: 4 }} variant="h5" >New Prescription</Typography>
-                    <Recorder
-                        audioURL={audioURL}
-                        isRecording={isRecording}
-                        startRecording={startRecording}
-                        stopRecording={stopRecording}
-                        resetRecording={resetRecording} />
-                    <MedicineForm control={control} errors={errors} />
-                    <div style={{ marginBottom: 20 }}></div>
-                    <LabTestsForm control={control} errors={errors} />
-                    <Stack direction='row' spacing={2} sx={{ marginTop: 5 }}>
-                        <Button
-                            type='submit'
-                            variant="contained"
-                            color="primary">
-                            Submit
-                        </Button>
-                        <Button
-                            onClick={cancel}
-                            variant="outlined"
-                            color="error">
-                            Cancel
-                        </Button>
-                    </Stack>
-                    {console.log("errors=", errors)}
-                </form >
-            </Container>
-        </Paper>
+        <>
+            <Snackbar
+                open={isSuccess}
+                autoHideDuration={6000}
+                message="Successfully created a prescription"
+            />
+            <Paper elevation={10} sx={{ padding: 5 }} >
+                <Container >
+                    <form onSubmit={RHFhandleSubmit(handleSubmit)} >
+                        <Typography sx={{ marginBottom: 4 }} variant="h5" >New Prescription</Typography>
+                        <Recorder
+                            audioURL={audioURL}
+                            isRecording={isRecording}
+                            startRecording={startRecording}
+                            stopRecording={stopRecording}
+                            resetRecording={resetRecording} />
+                        <Typography variant="h6" sx={{ marginBottom: 2 }} > Problem Description</Typography>
+                        <Controller
+                            render={({ field }) => <TextField
+                                sx={{ marginBottom: 2 }}
+                                fullWidth
+                                minRows={3}
+                                multiline
+                                required
+                                {...field}
+                                label="Describe problem in detail"
+                                error={errors?.problem}
+                                helperText={errors?.problem?.message} />}
+                            name={'problem'}
+                            control={control}
+
+                        />
+                        <MedicineForm control={control} errors={errors} />
+                        <div style={{ marginBottom: 20 }}></div>
+                        <LabTestsForm control={control} errors={errors} />
+                        <Stack direction='row' spacing={2} sx={{ marginTop: 5 }}>
+                            <Button
+                                type='submit'
+                                variant="contained"
+                                color="primary">
+                                Submit
+                            </Button>
+                            <Button
+                                onClick={cancel}
+                                variant="outlined"
+                                color="error">
+                                Cancel
+                            </Button>
+                        </Stack>
+                        {console.log("errors=", errors)}
+                    </form >
+                </Container>
+            </Paper >
+        </>
     );
 }

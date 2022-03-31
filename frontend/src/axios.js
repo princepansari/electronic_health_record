@@ -1,7 +1,6 @@
 import axios from "axios";
 const customAxios = axios.create({
-    //     baseURL: 'https://assignment-explorer.herokuapp.com/'
-    baseURL: 'http://localhost:3000/'
+    baseURL: 'http://127.0.0.1:8080/'
 });
 
 export default customAxios;

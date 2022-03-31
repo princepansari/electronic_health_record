@@ -11,7 +11,7 @@ import { Box } from "@mui/system";
 import { authLogout } from "../auth/apis";
 
 const links = [
-  { children: 'My Cases', to: '/mycases' },
+  { children: 'My Cases', to: '/myCases' },
   { children: 'Upcoming Appointments', to: '/appointments' },
   { children: 'Sign Up', to: '/signup' },
   { children: 'Home', to: '/' },
@@ -113,6 +113,7 @@ export default function NavBar() {
                 onClick={() => {
                   authLogout(setAuth, setUser);
                   navigate('/login');
+                  return;
                 }}
                 sx={navLinkStyle}>
                 Logout

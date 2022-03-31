@@ -22,6 +22,18 @@ export default function LabTestsForm({ control, errors, ...props }) {
                             name={`labtests.${index}.testname`}
                             control={control}
                         />
+                        <Controller
+                            defaultValue={index}
+                            render={({ field }) => <TextField type='number' sx={{ display: 'none' }} {...field} />}
+                            name={`labtests.${index}.id`}
+                            control={control}
+                        />
+                        <Controller
+                            defaultValue={''}
+                            render={({ field }) => <TextField sx={{ display: 'none' }} {...field} />}
+                            name={`labtests.${index}.reportLink`}
+                            control={control}
+                        />
                         <IconButton onClick={() => { remove(index) }} ><RemoveCircleIcon /></IconButton>
                     </Stack>
                 ))}

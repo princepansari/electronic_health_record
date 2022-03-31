@@ -1,11 +1,12 @@
 import { Avatar, Button, Paper, TextField, Typography } from '@mui/material';
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { authLogin } from './apis';
 import { useNavigate } from "react-router-dom";
+import AuthContext from './AuthContext';
 
 
-const SignIn = () => {
+const SignIn = (props) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -13,8 +14,10 @@ const SignIn = () => {
     let navigate = useNavigate();
 
     useEffect(() => {
-        if (auth)
-            navigate('/');
+        if (auth) {
+            navigate(props.from || '/');
+            return;
+        }
     }, [auth])
 
 
@@ -26,12 +29,14 @@ const SignIn = () => {
             password,
         };
         console.log(signinData);
-        authUser = authLogin(email, password);
-        setUser(authUser);
-        setAuth(true);
-        setEmail('');
-        setPassword('');
-        history.push('/');
+        authLogin(email, password, setUser, setAuth)
+            .then(() => {
+                setEmail('');
+                setPassword('');
+                navigate(props.from || '/');
+            })
+            .catch((err) => { console.log(err) }); // TODO: i want to navigate to other page only after i receive response
+
     }
 
 
