@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react"
 import Prescription from "./prescription";
 import Typography from '@mui/material/Typography'
-import { Grid, Skeleton, Button } from "@mui/material";
+import { Grid, Skeleton, Button, CircularProgress } from "@mui/material";
 import PrescriptionForm from "./prescriptionForm";
 import AuthContext from "../auth/AuthContext";
 import { useParams } from "react-router-dom";
@@ -111,7 +111,8 @@ export default function Case(props) {
         <>
             {
                 caseObj === null ?
-                    <Skeleton variant="rectangular" height={500} />
+                    // <Skeleton variant="rectangular" height={500} />
+                    <CircularProgress />
                     :
                     <>
                         <Grid container sx={{ marginBottom: 10 }}>

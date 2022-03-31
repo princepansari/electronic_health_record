@@ -1,5 +1,27 @@
 import axios from "./../axios";
 
+export const createCase = (token, patientEmail, problem) => {
+
+    const caseData = {
+        'patient_email': patientEmail,
+        'problem': problem,
+    }
+
+    axios.defaults.headers = {
+        'Content-Type': `application/json`,
+        Authorization: `Token ${token}`
+    };
+
+    return axios
+        .post(`/api/case/create_case`, caseData)
+        .then(res => {
+            return res.data.case_id;
+        })
+
+
+};
+
+
 
 export const createPrescription = (token, caseId, recordingBlob, prescriptionData) => {
 
@@ -14,14 +36,11 @@ export const createPrescription = (token, caseId, recordingBlob, prescriptionDat
         Authorization: `Token ${token}`
     };
 
-    axios
+    return axios
         .post(`/api/case/create_prescription`, prescription)
         .then(res => {
             return res.data;
         })
-        .catch(err => {
-            console.log(err);
-        });
 
 };
 
@@ -41,14 +60,12 @@ export const addCorrection = (token, caseId, prescriptionId, correctionId, corre
         Authorization: `Token ${token}`
     };
 
-    axios
+    return axios
         .post(`/api/case/add_correction`, correctionData)
         .then(res => {
             return res.data;
         })
-        .catch(err => {
-            console.log(err);
-        });
+
 
 };
 

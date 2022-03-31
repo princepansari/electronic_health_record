@@ -21,7 +21,7 @@ const links = [
 const navLinkStyle = { m: 2, color: 'white', display: 'block', textTransform: 'none', fontSize: '1.01em', '&.active': { color: 'red' } }
 
 export default function NavBar() {
-  const { auth, setAuth } = React.useContext(AuthContext);
+  const { auth, setAuth, setUser } = React.useContext(AuthContext);
   let navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
@@ -112,6 +112,7 @@ export default function NavBar() {
               <Button
                 onClick={() => {
                   authLogout(setAuth, setUser);
+                  console.log("in logout")
                   navigate('/login');
                   return;
                 }}
