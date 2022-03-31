@@ -18,6 +18,7 @@ const links = [
   { children: 'Sign In', to: '/signin' },
   { children: 'Home', to: '/' },
   { children: 'Case', to: '/case' },
+  { children: 'OTP', to: '/otpverification' },
 ]
 
 const navLinkStyle = { m: 2, color: 'white', display: 'block', textTransform: 'none', fontSize: '1.01em', '&.active': {color: 'red'} }

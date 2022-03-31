@@ -11,6 +11,7 @@ import SignIn from "./SignIn";
 import Prescription from "./case/prescription";
 import Case from "./case/case";
 import PrescriptionForm from "./case/prescriptionForm";
+import OTPverification from "./OTPverification";
 
 const theme = createTheme({ palette: { mode: "light" } });
 
@@ -34,6 +35,7 @@ function App() {
               <Route path="/appointments" element={<UpcomingAppointmentsPage/>} />
               <Route path="/signin" element={<SignIn/>} />
               <Route path="/case" element={<Case />} />
+              <Route path="/otpverification" element={<OTPverification />} />
             </Routes>
           </Layout>
         </BrowserRouter>

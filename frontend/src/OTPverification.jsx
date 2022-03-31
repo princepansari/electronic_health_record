@@ -1,24 +1,26 @@
-import { Avatar, Button, Paper, TextField, Typography } from '@mui/material';
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import React, { useState } from 'react';
+import LockClockIcon from '@mui/icons-material/LockClock';
+import { Avatar, Button, Paper, TextField, Typography } from '@mui/material';
 
-const SignIn = () => {
+const cond = true;
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+const OTPverification = () => {
+    
+    const [guardianOTP, setGuardianOTP] = useState('');
+    const [normalOTP, setNormalOTP] = useState('');
 
     function handleSubmit(event)
     {
         event.preventDefault();
 
-        const signinData = {
-            email,
-            password,
+        const otpData = {
+            guardianOTP,
+            normalOTP,
         };
-        console.log(signinData);
+        console.log(otpData);
 
-        setEmail('');
-        setPassword('');
+        setGuardianOTP('');
+        setNormalOTP('');
     }
 
 
@@ -43,25 +45,15 @@ const SignIn = () => {
             elevation={2}
         >
             <Avatar sx={{backgroundColor: 'secondary.main'}}>
-                <LockOutlinedIcon/>
+                <LockClockIcon/>
             </Avatar>
 
             <Typography variant='h5' component='h1' sx={{ mt: 3 }}>
-                Sign In
+                Verify OTP
             </Typography>
 
             <form noValidate style={{ width: '95%' }} onSubmit={(e) => handleSubmit(e)}>
-                <TextField
-                    variant='outlined'
-                    margin='normal'
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    value={email}
-                    onChange={(e) => setEmail(e.currentTarget.value)}
-                    autoComplete="email"
-                />
+                
 
                 <TextField
                     variant='outlined'
@@ -69,12 +61,29 @@ const SignIn = () => {
                     required
                     fullWidth
                     type="password"
-                    id="password"
-                    label="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.currentTarget.value)}
+                    id="normalOTP"
+                    label="OTP sent on Normal email"
+                    value={normalOTP}
+                    onChange={(e) => setNormalOTP(e.currentTarget.value)}
                     autoComplete="current-password"
                 />
+
+                {
+                    cond && (
+                        <TextField
+                            variant='outlined'
+                            margin='normal'
+                            required
+                            fullWidth
+                            type="password"
+                            id="guardianOTP"
+                            label="OTP sent on Guardian email"
+                            value={guardianOTP}
+                            onChange={(e) => setGuardianOTP(e.currentTarget.value)}
+                            autoComplete="off"
+                        />
+                    )
+                }
 
                 <Button
                     type="submit"
@@ -91,4 +100,4 @@ const SignIn = () => {
     )
 }
 
-export default SignIn;
+export default OTPverification;
