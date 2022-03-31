@@ -244,8 +244,19 @@ class RDS:
         cursor.close()
         return True, prescription
 
-    def add_report_by_staff(self, *, prescription_id,  report):
-        pass
+    def get_prescription(self, case_id, prescription_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT * FROM prescriptions WHERE prescription_id=%s and case_id=%s"
+        cursor.execute(query, [prescription_id, case_id])
+        prescription = cursor.fetchone()
+        cursor.close()
+        if not prescription:
+            return None
+        return prescription
 
-    def add_report_by_patient(self, *, prescription_id,  report, patient_id):
-        pass
+    def update_prescription(self, *, case_id, prescription_id, prescription):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "UPDATE prescriptions SET prescription=%s, updated_at=now() WHERE prescription_id=%s and case_id=%s"
+        cursor.execute(query, [json.dumps(prescription), prescription_id, case_id])
+        self.connection.commit()
+        cursor.close()

@@ -14,6 +14,7 @@ from app.common.rds import RDS
 from app.common.s3 import S3
 from app.common.config import Config
 
+
 class CreatePrescription(Resource):
     def __init__(self):
         self.rds = RDS()
