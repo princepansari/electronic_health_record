@@ -48,7 +48,7 @@ export default function PrescriptionForm({ cancel, caseId, reFetchCase, ...props
         createPrescription(user.token, caseId, audioBlob, data).then((res) => {
             setIsSuccess(true);
             reFetchCase();
-        }).catch((err) => { console.log(err) })
+        }).catch((err) => { console.log(err.response.data.message) })
     }
 
 

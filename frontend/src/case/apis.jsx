@@ -15,7 +15,7 @@ export const createPrescription = (token, caseId, recordingBlob, prescriptionDat
     };
 
     axios
-        .post(`/api/case/create_prescription/`, prescription)
+        .post(`/api/case/create_prescription`, prescription)
         .then(res => {
             return res.data;
         })
@@ -67,17 +67,14 @@ export const uploadReport = (token, caseId, prescriptionId, reportId, report) =>
         Authorization: `Token ${token}`
     };
 
-    axios
-        .post(`/api/case/add_report/`, reportData)
+    return axios
+        .post(`/api/case/add_report`, reportData)
         .then(res => {
             return res.data.message;
         })
-        .catch(err => {
-            console.log(err);
-        });
+
 
 };
-
 
 
 export const getCase = (token, caseId) => {
@@ -86,15 +83,13 @@ export const getCase = (token, caseId) => {
         "Content-Type": "application/json",
         Authorization: `Token ${token}`
     };
-    axios
+    return axios
         .get(`/api/case/get_case/${caseId}`)
         .then(res => {
             console.log(res.data);
             return res.data;
         })
-        .catch(err => {
-            console.log(err);
-        });
+
 
 };
 
@@ -104,14 +99,12 @@ export const getMyCases = (token) => {
         "Content-Type": "application/json",
         Authorization: `Token ${token}`
     };
-    axios
-        .get(`/api/case/get_all_cases/`)
+    return axios
+        .get(`/api/case/get_all_cases`)
         .then(res => {
             console.log(res.data);
             return res.data;
         })
-        .catch(err => {
-            console.log(err);
-        });
+
 };
 

@@ -35,7 +35,7 @@ const SignIn = (props) => {
                 setPassword('');
                 navigate(props.from || '/');
             })
-            .catch((err) => { console.log(err) }); // TODO: i want to navigate to other page only after i receive response
+            .catch((err) => { console.log(err.response.data.message) }); // TODO: i want to navigate to other page only after i receive response
 
     }
 

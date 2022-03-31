@@ -31,11 +31,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 
-
-
-
-
-
 const briefInfoFields = ['created_at', 'created_by', 'problem']
 
 const displayText = {

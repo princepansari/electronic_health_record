@@ -19,7 +19,9 @@ const MyCasesPage = () => {
     const { user } = useContext(AuthContext);
     const [cases, setCases] = useState([]);
     // useEffect(() => {
-    //     setCases(getMyCases(user.token));
+    //     getMyCases(user.token).then((data) => {
+    //         setCases(data);
+    //     });
     // }, [])
 
 

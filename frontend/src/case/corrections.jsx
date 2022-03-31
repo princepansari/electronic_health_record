@@ -14,12 +14,13 @@ export default function Corrections({ corrections, caseId, prescriptionId, reFet
         console.log(newCorrection);
         //TODO: PUT api call
         const correctionId = corrections.length;
-        addCorrection(user.token, caseId, prescriptionId, correctionId, newCorrection).then((res) => {
-            setSuccess(true);
-            setWantToAddCorrection(false);
-            setNewCorrection("");
-            // reFetchCase();
-        }).catch((err) => { console.log(err) });
+        addCorrection(user.token, caseId, prescriptionId, correctionId, newCorrection)
+            .then((res) => {
+                setSuccess(true);
+                setWantToAddCorrection(false);
+                setNewCorrection("");
+                // reFetchCase();
+            }).catch((err) => { console.log(err.response.data.message) });
     }
 
     return (

@@ -17,7 +17,7 @@ export default function MedicineForm({ control, errors, ...props }) {
                     <Stack key={field.id} direction="row" spacing={2}>
                         <Controller
                             render={({ field }) => <TextField {...field} label="Enter Medicine"
-                                error={errors?.medicines?.[index]?.medicine}
+                                error={errors?.medicines?.[index]?.medicine !== undefined}
                                 helperText={errors?.medicines?.[index]?.medicine?.message} />}
                             name={`medicines.${index}.medicine`}
                             control={control}
@@ -25,7 +25,7 @@ export default function MedicineForm({ control, errors, ...props }) {
                         />
                         <Controller
                             render={({ field }) => <TextField {...field} label="Enter Dosage"
-                                error={errors?.medicines?.[index]?.dosage}
+                                error={errors?.medicines?.[index]?.dosage !== undefined}
                                 helperText={errors?.medicines?.[index]?.dosage?.message}
                             />}
                             name={`medicines.${index}.dosage`}

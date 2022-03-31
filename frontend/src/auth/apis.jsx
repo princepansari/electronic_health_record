@@ -2,22 +2,19 @@ import axios from './../axios'
 
 
 export const authSignup = (user) => {
-    axios
-        .post("api/auth/signup/", user)
+    return axios
+        .post("api/auth/signup", user)
         .then(res => {
             return res.data.message;
         })
-        .catch(err => {
-            console.log(err);
-        });
 };
 
 
 
 export const authLogin = (email, password, setUser, setAuth) => {
 
-    axios
-        .post("/api/auth/login/", {
+    return axios
+        .post("/api/auth/login", {
             email: email,
             password: password
         })
@@ -33,10 +30,8 @@ export const authLogin = (email, password, setUser, setAuth) => {
             localStorage.setItem("user", JSON.stringify(user));
             setUser(user);
             setAuth(true);
-        })
-        .catch(err => {
-            console.log(err);
         });
+
 };
 
 export const authLogout = (setAuth, setUser) => {

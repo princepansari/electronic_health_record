@@ -73,11 +73,15 @@ export default function Case(props) {
 
     const reFetchCase = () => {
         //TODO: api call
-        // setCaseObj(getCase(user.token, caseId));
+        // getCase(user.token, caseId).then((data) => {
+        //     setCaseObj(data);
+        // })
     }
 
     useEffect(() => {
-        // setCaseObj(getCase(user.token, caseId));
+        // getCase(user.token, caseId).then((data) => {
+        //     setCaseObj(data);
+        // })
         setCaseObj(createCase(1, [p1]));
     }, [])
 

@@ -17,7 +17,7 @@ export default function LabTestsForm({ control, errors, ...props }) {
                     <Stack key={field.id} direction="row" spacing={2}>
                         <Controller
                             render={({ field }) => <TextField {...field} label="Enter Test Name"
-                                error={errors?.labtests?.[index]?.testname}
+                                error={errors?.labtests?.[index]?.testname !== undefined}
                                 helperText={errors?.labtests?.[index]?.testname?.message} />}
                             name={`labtests.${index}.testname`}
                             control={control}

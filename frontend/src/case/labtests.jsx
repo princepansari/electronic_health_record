@@ -42,7 +42,7 @@ export default function LabTests({ labTests, caseId, prescriptionId, reFetchCase
             setAddReportSuccessMsg(message);
             // reFetchCase();
             setAddReportSuccessMsg('');
-        }).catch((err) => { console.log(err) });
+        }).catch((err) => { console.log(err.response.data.message) });
 
     };
 
