@@ -11,6 +11,7 @@ import SignIn from "./auth/SignIn";
 import SignUp from "./auth/signUp";
 import Case from "./case/case";
 import RequireAuth from "./auth/requireAuth";
+import OtpVerification from "./auth/otpVerification";
 const theme = createTheme({ palette: { mode: "light" } });
 
 function App() {
@@ -25,7 +26,8 @@ function App() {
                 <BrowserRouter>
                     <Layout>
                         <Routes>
-                            <Route path="/" element={<h1>hello</h1>} />
+                            <Route path="/" element={<h1>Hello</h1>} />
+                            <Route path="/otpVerification" element={<OtpVerification />} />
                             <Route path="/signup" element={<SignUp />} />
                             <Route path="/login" element={<SignIn />} />
                             <Route path="/myCases" element={<RequireAuth children={<MyCases />} />} />

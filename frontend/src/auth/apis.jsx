@@ -34,6 +34,22 @@ export const authLogin = (email, password, setUser, setAuth) => {
 
 };
 
+export const authOTPVerification = (email, emailOTP, guardianEmailOTP) => {
+    const OTPdata = {
+        email,
+        "otp": emailOTP,
+    }
+    if (guardianEmailOTP)
+        OTPdata["guardian_otp"] = guardianEmailOTP;
+    console.log(OTPdata);
+    return axios
+        .post("/api/auth/verify", OTPdata)
+        .then(res => {
+            return res.data.message;
+        })
+};
+
+
 export const authLogout = (setAuth, setUser) => {
     localStorage.removeItem("user");
     setAuth(false);
@@ -53,4 +69,5 @@ export const authCheckState = (auth, setAuth, setUser) => {
         }
     }
     return false;
-};    
+};
+

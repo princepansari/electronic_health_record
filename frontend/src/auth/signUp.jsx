@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+    Alert,
     Checkbox,
     FormControlLabel,
     FormLabel,
@@ -21,6 +22,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { cloneDeep } from 'lodash';
 import { authSignup } from "./apis";
+import { useNavigate } from "react-router-dom";
 
 const iitbhilaiEmailPattern = /@iitbhilai.ac.in$/;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -45,6 +47,7 @@ const schema = yup.object({
             (schedule) => schedule === undefined || Object.values(schedule?.days).filter(Boolean).length > 0
         ),
     dob: yup.string().matches(dobRegex, "Enter the date in the format of DD/MM/YYYY"),
+    slot_duration: yup.number().min(1, "Duration should be atleast 1 minute"),
     password: yup.string().matches(passwordRegex, "Password should contain Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"),
 });
 
@@ -73,18 +76,23 @@ export default function Signup() {
 
     const watchUserType = watch("user_type");
     const watchPersonalEmail = watch("email");
-    const [date, setDate] = useState(null);
+    const [startTime, setStartTime] = useState(null);
+    const [endTime, setEndTime] = useState(null);
 
     useEffect(() => {
-        if (watchUserType === "doctor") {
+        if (watchUserType !== "patient") {
             unregister("allergy");
             register("schedule.start_time");
+            register("schedule.end_time");
         } else {
             console.log("in else unregistering ");
             unregister("schedule.start_time");
+            unregister("schedule.end_time");
             unregister("schedule.days");
             unregister("schedule");
             unregister("slot_duration");
+            setStartTime(null);
+            setEndTime(null);
             if (watchUserType !== "patient") unregister("allergy");
         }
     }, [register, watchUserType]);
@@ -100,6 +108,7 @@ export default function Signup() {
         data = cloneDeep(data)
         if ("schedule" in data) {
             data.schedule.start_time = data.schedule.start_time.format("hh:mm a").toString();
+            data.schedule.end_time = data.schedule.end_time.format("hh:mm a").toString();
         }
         for (let key in data) {
             if (data[key] === null || data[key] === undefined)
@@ -109,13 +118,16 @@ export default function Signup() {
     }
 
     const [signupSuccessMsg, setSignupSuccessMsg] = useState('');
+    const navigate = useNavigate();
     const handleSubmit = (data) => {
         const userObj = preprocessData(data)
         console.log(userObj)
         authSignup(userObj).then((message) => {
             setSignupSuccessMsg(message);
+            navigate("/otpVerification", { state: { email: data.email, guardian_email: data.guardian_email } });
+            return;
         }).catch((err) => {
-            console.log(err.response.data.message);
+            console.log(err?.response?.data?.message || err);
         })
     }
 
@@ -124,9 +136,11 @@ export default function Signup() {
         <>
             <Snackbar
                 open={signupSuccessMsg !== ''}
-                autoHideDuration={6000}
-                message={signupSuccessMsg}
-            />
+                autoHideDuration={6000}>
+                <Alert severity="success" sx={{ width: '100%' }}>
+                    {signupSuccessMsg}
+                </Alert>
+            </Snackbar>
             <form onSubmit={RHFhandleSubmit(handleSubmit)}>
                 <Stack spacing={2}>
                     <Typography variant="h3">Sign Up</Typography>
@@ -175,6 +189,7 @@ export default function Signup() {
                     {watchPersonalEmail.match(iitbhilaiEmailPattern) === null ? (
                         <Controller
                             required
+                            defaultValue=""
                             render={({ field }) => (
                                 <TextField
                                     {...field}
@@ -229,128 +244,143 @@ export default function Signup() {
                             name="allergy"
                             control={control}
                         />
-                        : watchUserType === "nurse" ?
-                            <></>
-                            :
-                            <>
-                                <FormLabel>Schedule</FormLabel>
-                                <Controller
-                                    defaultValue={false}
-                                    name="schedule.days.sunday"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <FormControlLabel
-                                            control={<Checkbox {...field} />}
-                                            label="Sunday"
-                                        />
-                                    )}
-                                />
-                                <Controller
-                                    defaultValue={false}
-                                    name="schedule.days.monday"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <FormControlLabel
-                                            control={<Checkbox {...field} />}
-                                            label="Monday"
-                                        />
-                                    )}
-                                />
-                                <Controller
-                                    defaultValue={false}
-                                    name="schedule.days.tuesday"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <FormControlLabel
-                                            control={<Checkbox {...field} />}
-                                            label="Tuesday"
-                                        />
-                                    )}
-                                />
-                                <Controller
-                                    defaultValue={false}
-                                    name="schedule.days.wednesday"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <FormControlLabel
-                                            control={<Checkbox {...field} />}
-                                            label="Wednesday"
-                                        />
-                                    )}
-                                />
-                                <Controller
-                                    defaultValue={false}
-                                    name="schedule.days.thursday"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <FormControlLabel
-                                            control={<Checkbox {...field} />}
-                                            label="Thursday"
-                                        />
-                                    )}
-                                />
-                                <Controller
-                                    defaultValue={false}
-                                    name="schedule.days.friday"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <FormControlLabel
-                                            control={<Checkbox {...field} />}
-                                            label="Friday"
-                                        />
-                                    )}
-                                />
-                                <Controller
-                                    defaultValue={false}
-                                    name="schedule.days.saturday"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <FormControlLabel
-                                            control={<Checkbox {...field} />}
-                                            label="Saturday"
-                                        />
-                                    )}
-                                />
-                                <Typography variant="body1" component="span" color="error">
-                                    {errors?.schedule?.message}
-                                </Typography>
-                                <LocalizationProvider dateAdapter={DateAdapter}>
-                                    <TimePicker
-                                        label="Start Time"
-                                        value={date | ""}
-                                        onChange={(date) => {
-                                            setValue("schedule.start_time", date | "", {
-                                                shouldValidate: true,
-                                                shouldDirty: true,
-                                            });
-                                            setDate(date);
-                                        }}
-                                        renderInput={(params) => <TextField required {...params}
-                                            error={errors?.schedule?.start_time}
-                                            helperText={errors?.schedule?.start_time?.message} />}
-                                    />
-                                </LocalizationProvider>
 
-                                <Controller
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <TextField
-                                            {...field}
-                                            required
-                                            type='number'
-                                            label="Each Slot Duration(mins)"
-                                        />
-                                    )}
-                                    name="slot_duration"
-                                    control={control}
+                        :
+                        <>
+                            <FormLabel>Schedule</FormLabel>
+                            <Controller
+                                defaultValue={false}
+                                name="schedule.days.sunday"
+                                control={control}
+                                render={({ field }) => (
+                                    <FormControlLabel
+                                        control={<Checkbox {...field} />}
+                                        label="Sunday"
+                                    />
+                                )}
+                            />
+                            <Controller
+                                defaultValue={false}
+                                name="schedule.days.monday"
+                                control={control}
+                                render={({ field }) => (
+                                    <FormControlLabel
+                                        control={<Checkbox {...field} />}
+                                        label="Monday"
+                                    />
+                                )}
+                            />
+                            <Controller
+                                defaultValue={false}
+                                name="schedule.days.tuesday"
+                                control={control}
+                                render={({ field }) => (
+                                    <FormControlLabel
+                                        control={<Checkbox {...field} />}
+                                        label="Tuesday"
+                                    />
+                                )}
+                            />
+                            <Controller
+                                defaultValue={false}
+                                name="schedule.days.wednesday"
+                                control={control}
+                                render={({ field }) => (
+                                    <FormControlLabel
+                                        control={<Checkbox {...field} />}
+                                        label="Wednesday"
+                                    />
+                                )}
+                            />
+                            <Controller
+                                defaultValue={false}
+                                name="schedule.days.thursday"
+                                control={control} StartTime
+                                render={({ field }) => (
+                                    <FormControlLabel
+                                        control={<Checkbox {...field} />}
+                                        label="Thursday"
+                                    />
+                                )}
+                            />
+                            <Controller
+                                defaultValue={false}
+                                name="schedule.days.friday"
+                                control={control}
+                                render={({ field }) => (
+                                    <FormControlLabel
+                                        control={<Checkbox {...field} />}
+                                        label="Friday"
+                                    />
+                                )}
+                            />
+                            <Controller
+                                defaultValue={false}
+                                name="schedule.days.saturday"
+                                control={control}
+                                render={({ field }) => (
+                                    <FormControlLabel
+                                        control={<Checkbox {...field} />}
+                                        label="Saturday"
+                                    />
+                                )}
+                            />
+                            <Typography variant="body1" component="span" color="error">
+                                {errors?.schedule?.message}
+                            </Typography>
+                            <LocalizationProvider dateAdapter={DateAdapter}>
+                                <TimePicker
+                                    label="Start Time"
+                                    value={startTime || ""}
+                                    onChange={(startTime) => {
+                                        setValue("schedule.start_time", startTime || "", {
+                                            shouldValidate: true,
+                                            shouldDirty: true,
+                                        });
+                                        setStartTime(startTime);
+                                    }}
+                                    renderInput={(params) => <TextField required {...params}
+                                        error={errors?.schedule?.start_time}
+                                        helperText={errors?.schedule?.start_time?.message} />}
                                 />
-                            </>
+                                <TimePicker
+                                    label="End Time"
+                                    value={endTime || ""}
+                                    onChange={(endTime) => {
+                                        setValue("schedule.end_time", endTime || "", {
+                                            shouldValidate: true,
+                                            shouldDirty: true,
+                                        });
+                                        setEndTime(endTime);
+                                    }}
+                                    renderInput={(params) => <TextField required {...params}
+                                        error={errors?.schedule?.end_time}
+                                        helperText={errors?.schedule?.end_time?.message} />}
+                                />
+                            </LocalizationProvider>
+
+                            <Controller
+                                defaultValue={10}
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        required
+                                        type='number'
+                                        label="Each Slot Duration(mins)"
+                                        error={errors?.slot_duration !== undefined}
+                                        helperText={errors?.slot_duration?.message}
+                                    />
+                                )}
+                                name="slot_duration"
+                                control={control}
+                            />
+                        </>
                     }
 
                     <Button type="submit" variant="contained" color="primary">
                         Submit
                     </Button>
-                    {console.log(errors)}
+                    {/* {console.log(errors)} */}
                 </Stack>
             </form>
         </>
