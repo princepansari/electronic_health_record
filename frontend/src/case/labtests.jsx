@@ -8,6 +8,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button'
+import { uploadReport } from './apis';
+import { Snackbar } from '@mui/material';
+import AuthContext from '../auth/AuthContext';
 
 const columns = [
     { id: 'testname', label: 'Test Name' },
@@ -27,84 +30,87 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 
 
-export default function LabTests({ labTests, ...rest }) {
-    const [selectedFile, setSelectedFile] = React.useState();
+export default function LabTests({ labTests, caseId, prescriptionId, reFetchCase, ...props }) {
 
-    const fileChangeHandler = (event) => {
-        setSelectedFile(event.target.files[0]);
-    };
+    const { user } = React.useContext(AuthContext);
 
-    const onReportUpload = () => {
-        const formData = new FormData();
+    const [addReportSuccessMsg, setAddReportSuccessMsg] = React.useState('');
+    const handleFileUpload = (e, reportId) => {
+        e.preventDefault();
+        const report = e.target.files[0];
+        uploadReport(user.token, caseId, PrescriptionId, reportId, report).then((message) => {
+            setAddReportSuccessMsg(message);
+            // reFetchCase();
+            setAddReportSuccessMsg('');
+        }).catch((err) => { console.log(err.response.data.message) });
 
-        formData.append('File', selectedFile);
-        //TODO: api call
-        // uploadFile(formData)
-        console.log(formData);
-        for (var p of formData) {
-            console.log(p);
-        }
     };
 
     return (
-        <Paper sx={{ width: '100%' }}>
-            <TableContainer sx={{ maxHeight: 440 }}>
-                <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                        <TableRow>
-                            {columns.map((column) => (
-                                <StyledTableCell key={column.id}>
-                                    {column.label}
-                                </StyledTableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {labTests.map((labTest) => {
-                            return (
-                                <TableRow hover role="checkbox" tabIndex={-1} key={labTest.id}>
-
-                                    <StyledTableCell>
-                                        {labTest.testname}
+        <>
+            <Snackbar
+                open={addReportSuccessMsg !== ''}
+                autoHideDuration={6000}
+                message={addReportSuccessMsg}
+            />
+            <Paper sx={{ width: '100%' }}>
+                <TableContainer sx={{ maxHeight: 440 }}>
+                    <Table stickyHeader aria-label="sticky table">
+                        <TableHead>
+                            <TableRow>
+                                {columns.map((column) => (
+                                    <StyledTableCell key={column.id}>
+                                        {column.label}
                                     </StyledTableCell>
+                                ))}
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {labTests.map((labTest) => {
+                                return (
+                                    <TableRow hover role="checkbox" tabIndex={-1} key={labTest.id}>
 
-                                    <StyledTableCell>
-                                        {labTest.reportLink !== ''
-                                            ?
-                                            <Button variant="contained"
-                                                color="primary"
-                                                href={labTest.reportLink}
-                                                target="_blank"
-                                                size='small'
-                                                rel="noreferrer noopener" >
-                                                View
-                                                {/* TODO: use link component to open a link of our website in new tab */}
-                                            </Button>
-                                            :
-                                            <>
-                                                <input type="file"
-                                                    name={"report" + labTest.id}
-                                                    accept="image/*"
-                                                    id={"report" + labTest.id}
-                                                    onChange={fileChangeHandler} />
-                                                <Button type={'submit'}
-                                                    variant='contained'
+                                        <StyledTableCell>
+                                            {labTest.testname}
+                                        </StyledTableCell>
+
+                                        <StyledTableCell>
+                                            {labTest.reportLink
+                                                ?
+                                                <Button variant="contained"
+                                                    color="primary"
+                                                    href={labTest.reportLink}
+                                                    target="_blank"
                                                     size='small'
-                                                    onClick={onReportUpload}>
-                                                    Upload
+                                                    rel="noreferrer noopener" >
+                                                    View
+                                                    {/* TODO: use link component to open a link of our website in new tab */}
                                                 </Button>
-                                            </>
+                                                :
+                                                <form onSubmit={(e) => { handleFileUpload(e, labTest.id) }}>
+                                                    <input type="file"
+                                                        name={"report" + labTest.id}
+                                                        accept="image/*"
+                                                        id={"report" + labTest.id} />
+                                                    <Button
+                                                        type="submit"
+                                                        variant='contained'
+                                                        size='small'>
+                                                        Upload
+                                                    </Button>
+                                                </form>
 
 
-                                        }
-                                    </StyledTableCell>
+                                            }
+                                        </StyledTableCell>
 
-                                </TableRow>
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Paper>
+                                    </TableRow>
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Paper >
+        </>
     );
 }

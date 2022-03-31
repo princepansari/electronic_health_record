@@ -17,9 +17,21 @@ export default function LabTestsForm({ control, errors, ...props }) {
                     <Stack key={field.id} direction="row" spacing={2}>
                         <Controller
                             render={({ field }) => <TextField {...field} label="Enter Test Name"
-                                error={errors?.labtests?.[index]?.testname}
+                                error={errors?.labtests?.[index]?.testname !== undefined}
                                 helperText={errors?.labtests?.[index]?.testname?.message} />}
                             name={`labtests.${index}.testname`}
+                            control={control}
+                        />
+                        <Controller
+                            defaultValue={index}
+                            render={({ field }) => <TextField type='number' sx={{ display: 'none' }} {...field} />}
+                            name={`labtests.${index}.id`}
+                            control={control}
+                        />
+                        <Controller
+                            defaultValue={''}
+                            render={({ field }) => <TextField sx={{ display: 'none' }} {...field} />}
+                            name={`labtests.${index}.reportLink`}
                             control={control}
                         />
                         <IconButton onClick={() => { remove(index) }} ><RemoveCircleIcon /></IconButton>

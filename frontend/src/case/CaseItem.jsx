@@ -20,30 +20,34 @@ const CaseItem = ({ caseObj }) => {
                         fontWeight: 'bold'
                     }}
                 >
-                    Case : {caseObj.caseId}
-                </Typography>
-
-                <Typography variant='p' component='div'
-                    sx={{
-                        mr: 4,
-                        color: '#757a79'
-                    }}
-                >
-                    {new Date(caseObj.date).toLocaleDateString()}
+                    Case : {caseObj.case_id}
                 </Typography>
             </Box>
 
-            <Box sx={{mt: 1,...boxStyle, justifyContent: 'start'}} >
+            <Box sx={{ mt: 1, ...boxStyle, justifyContent: 'start' }} >
                 <Typography variant='p' component='div' sx={{ ml: 5, fontSize: '1.1em' }} >
                     <strong> Created by : </strong>
-                    {caseObj.doctorName}
+                    {caseObj.created_by}
                 </Typography>
 
                 <Typography variant='p' component='div' sx={{ ml: 5, fontSize: '1.1em' }} >
                     <strong> Patient Name : </strong>
-                    {caseObj.patientName}
+                    {caseObj.patient_name}
                 </Typography>
             </Box>
+
+            <Box sx={{ mt: 1, ...boxStyle, justifyContent: 'start' }} >
+                <Typography variant='p' component='div' sx={{ ml: 5, fontSize: '1.1em' }} >
+                    <strong> Created at : </strong>
+                    {new Date(caseObj.created_at).toLocaleDateString()}
+                </Typography>
+
+                <Typography variant='p' component='div' sx={{ ml: 5, fontSize: '1.1em' }} >
+                    <strong> updated_at : </strong>
+                    {new Date(caseObj.updated_at).toLocaleDateString()}
+                </Typography>
+            </Box>
+
 
             <Box sx={boxStyle} >
                 <Typography variant='p' component='p'
@@ -59,15 +63,15 @@ const CaseItem = ({ caseObj }) => {
                 <Button
                     variant='contained'
                     color='success'
-                    sx={{ mr: 4, fontSize: {xs: '0.6em', md: '1em' }, textTransform: 'none' }}
+                    sx={{ mr: 4, fontSize: { xs: '0.6em', md: '1em' }, textTransform: 'none' }}
                     component={Link}
-                    to={`/case/${caseObj.caseId}`}
+                    to={`/case/${caseObj.case_id}`}
                 >
                     See Details
                 </Button>
             </Box>
 
-            
+
         </div>
     )
 }

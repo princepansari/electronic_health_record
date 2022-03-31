@@ -31,20 +31,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 
-
-
-
-
-
-const briefInfoFields = ['created_at', 'doctor', 'issue']
+const briefInfoFields = ['created_at', 'created_by', 'problem']
 
 const displayText = {
-    "doctor": "Doctor",
-    "issue": "Issue",
+    "created_by": "Created By",
+    "problem": "Problem Description",
     "created_at": "Date and Time"
 }
 
-export default function Prescription({ prescription, ...rest }) {
+export default function Prescription({ prescription, caseId, ...rest }) {
 
 
     const [expanded, setExpanded] = React.useState(false);
@@ -95,11 +90,11 @@ export default function Prescription({ prescription, ...rest }) {
             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <CardContent>
                     <Typography variant='h6'>Medicines:</Typography>
-                    <Medicines medicines={prescription.medicines} {...rest} />
+                    <Medicines medicines={prescription.medicines || []} {...rest} />
                     <Typography variant='h6'>Lab Tests:</Typography>
-                    <LabTests labTests={prescription.labtests} {...rest} />
+                    <LabTests labTests={prescription.labtests || []} caseId={caseId} prescriptionId={prescription.id} {...rest} />
                     <Typography variant='h6'>Corrections:</Typography>
-                    <Corrections corrections={prescription.corrections} {...rest} />
+                    <Corrections caseId={caseId} prescriptionId={prescription.id} corrections={prescription.corrections || []} {...rest} />
                 </CardContent>
             </Collapse>
         </Card>
