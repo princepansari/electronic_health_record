@@ -27,6 +27,7 @@ export const authLogin = (email, password, setUser, setAuth) => {
                 user_type: res.data.user_type,
                 expirationDate: new Date(new Date().getTime() + 24 * 60 * 60 * 60 * 1000)
             };
+            console.log(user)
             localStorage.setItem("user", JSON.stringify(user));
             setUser(user);
             setAuth(true);
@@ -57,6 +58,7 @@ export const authLogout = (setAuth, setUser) => {
 };
 
 export const authCheckState = (auth, setAuth, setUser) => {
+    console.log("in auth check");
     const user = JSON.parse(localStorage.getItem("user"));
     if (auth) {
         const expirationDate = new Date(user.expirationDate);

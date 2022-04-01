@@ -12,8 +12,10 @@ const SignIn = (props) => {
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [error, setError] = useState({});
 
-    const { auth, setAuth, setUser } = useContext(AuthContext);
+    const { auth, setAuth, setUser, user } = useContext(AuthContext);
+
     let navigate = useNavigate();
 
     useEffect(() => {
@@ -34,14 +36,17 @@ const SignIn = (props) => {
         console.log(signinData);
         authLogin(email, password, setUser, setAuth)
             .then(() => {
-                setIsSuccess(true);
-                setEmail('');
-                setPassword('');
+                // setIsSuccess(true);
+                console.log(user);
                 navigate(props.from || '/');
                 console.log("SUCCESS");
                 return;
             })
-            .catch((err) => { console.log(err.response.data.message) }); // TODO: i want to navigate to other page only after i receive response
+            .catch((err) => {
+                setIsLoading(false);
+                setError(err);
+                console.log(err?.response?.data?.message || err)
+            });
         setIsLoading(true);
     }
 
@@ -56,10 +61,10 @@ const SignIn = (props) => {
             }}
         >
             <Snackbar
-                open={isSuccess !== ''}
+                open={isSuccess}
                 autoHideDuration={6000}>
                 <Alert severity="success" sx={{ width: '100%' }}>
-                    {isSuccess}
+                    You have successfully logged in!
                 </Alert>
             </Snackbar>
             {isLoading ?
@@ -121,6 +126,7 @@ const SignIn = (props) => {
                             Submit
                         </Button>
                     </form>
+                    <Typography variant="body1" color="error"> {error?.response?.data?.message}</Typography>
                 </Paper>
             }
 

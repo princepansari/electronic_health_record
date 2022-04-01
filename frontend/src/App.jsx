@@ -12,12 +12,16 @@ import SignUp from "./auth/signUp";
 import Case from "./case/case";
 import RequireAuth from "./auth/requireAuth";
 import OtpVerification from "./auth/otpVerification";
+import { authCheckState } from "./auth/apis";
 const theme = createTheme({ palette: { mode: "light" } });
 
 function App() {
     const [auth, setAuth] = useState(false);
     const [user, setUser] = useState({ user_type: 'doctor' }); //TODO: should be replaced with {}
 
+    useEffect(() => {
+        authCheckState(auth, setAuth, setUser);
+    }, []);
 
     return (
         <ThemeProvider theme={theme}>

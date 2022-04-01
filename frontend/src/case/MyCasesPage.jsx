@@ -24,7 +24,7 @@ const MyCasesPage = () => {
     const [openModal, setOpenModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-
+    console.log("in my cases page");
     // useEffect(() => {
     //     getMyCases(user.token).then((data) => {
     //         setCases(data);

@@ -9,9 +9,9 @@ export const createCase = (token, patientEmail, problem) => {
 
     axios.defaults.headers = {
         'Content-Type': `application/json`,
-        Authorization: `Token ${token}`
+        Authorization: `Bearer ${token}`
     };
-
+    console.log("in create case api= ", token);
     return axios
         .post(`/api/case/create_case`, caseData)
         .then(res => {
