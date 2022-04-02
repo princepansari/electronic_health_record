@@ -92,7 +92,7 @@ export default function Case(props) {
                 setIsLoading(false);
             })
             .catch((err) => {
-                setErrorMsg(err?.response?.data?.message || err);
+                setErrorMsg(err?.response?.data?.message);
                 setIsLoading(false);
             })
         setIsLoading(true);

@@ -50,8 +50,8 @@ export default function LabTests({ labTests, caseId, prescriptionId, reFetchCase
             setReport(null);
         })
             .catch((err) => {
-                console.log(err?.response?.data?.message || err)
-                setErrorMsg(err?.response?.data?.message || err);
+                console.log(err?.response?.data?.message)
+                setErrorMsg(err?.response?.data?.message);
                 setIsLoading(false);
             });
         setIsLoading(true);

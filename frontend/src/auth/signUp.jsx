@@ -131,7 +131,7 @@ export default function Signup() {
             navigate("/otpVerification", { state: { email: data.email, guardian_email: data.guardian_email } });
             return;
         }).catch((err) => {
-            console.log(err?.response?.data?.message || err);
+            console.log(err?.response?.data?.message);
         })
         setIsLoading(true);
     }

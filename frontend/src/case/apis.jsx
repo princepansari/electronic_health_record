@@ -22,7 +22,6 @@ export const createCase = (token, patientEmail, problem) => {
 };
 
 
-
 export const createPrescription = (token, caseId, recordingBlob, prescriptionData) => {
 
     console.log(recordingBlob)
@@ -113,6 +112,7 @@ export const getCase = (token, caseId) => {
 
 
 export const getMyCases = (token) => {
+    console.log(token);
     axios.defaults.headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`

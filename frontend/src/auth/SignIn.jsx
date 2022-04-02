@@ -16,13 +16,13 @@ const SignIn = (props) => {
     const { setUser, user } = useContext(AuthContext);
 
     let navigate = useNavigate();
-    const { state: { from } } = useLocation();
+    const { state } = useLocation();
 
-    console.log("from= ", from);
+    console.log("from= ", state?.from);
 
     useEffect(() => {
         if (user) {
-            navigate(from || '/');
+            navigate(state?.from || '/');
             return;
         }
     }, [user])
@@ -39,14 +39,14 @@ const SignIn = (props) => {
         authLogin(email, password, setUser)
             .then(() => {
                 console.log(user);
-                navigate(from || '/');
+                navigate(state?.from || '/');
                 console.log("SUCCESS");
                 return;
             })
             .catch((err) => {
                 setIsLoading(false);
                 setError(err);
-                console.log(err?.response?.data?.message || err)
+                console.log(err?.response?.data?.message)
             });
         setIsLoading(true);
     }
