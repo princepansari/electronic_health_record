@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DownloadIcon from '@mui/icons-material/Download';
 import TableCell from '@mui/material/TableCell';
-import { Paper, Table, TableBody, TableContainer, TableRow } from '@mui/material';
+import { Button, Paper, Table, TableBody, TableContainer, TableRow } from '@mui/material';
 import LabTests from "./labtests"
 import Medicines from "./medicines"
 import Corrections from "./corrections"
@@ -89,11 +89,24 @@ export default function Prescription({ prescription, caseId, ...rest }) {
             </CardActions>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <CardContent>
-                    <Typography variant='h6'>Medicines:</Typography>
+                    {prescription.recording ?
+                        <>
+                            <Typography variant='h6' sx={{ marginBottom: 2 }}>Voice Recording:</Typography>
+                            <Button variant='contained'
+                                sx={{ marginBottom: 2 }}
+                                href={prescription.recording}
+                                target="_blank"
+                                rel="noreferrer noopener">
+                                Download recording
+                            </Button>
+                        </>
+                        :
+                        null}
+                    <Typography variant='h6' sx={{ marginBottom: 2, marginTop: 2 }}>Medicines:</Typography>
                     <Medicines medicines={prescription.medicines || []} {...rest} />
-                    <Typography variant='h6'>Lab Tests:</Typography>
+                    <Typography variant='h6' sx={{ marginBottom: 2, marginTop: 2 }}>Lab Tests:</Typography>
                     <LabTests labTests={prescription.labtests || []} caseId={caseId} prescriptionId={prescription.id} {...rest} />
-                    <Typography variant='h6'>Corrections:</Typography>
+                    <Typography variant='h6' sx={{ marginBottom: 2, marginTop: 2 }}>Corrections:</Typography>
                     <Corrections caseId={caseId} prescriptionId={prescription.id} corrections={prescription.corrections || []} {...rest} />
                 </CardContent>
             </Collapse>

@@ -2,7 +2,7 @@ import { Alert, Avatar, Button, CircularProgress, Paper, Skeleton, Snackbar, Tex
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useContext, useEffect, useState } from 'react';
 import { authLogin } from './apis';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import AuthContext from './AuthContext';
 
 
@@ -11,19 +11,21 @@ const SignIn = (props) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
     const [error, setError] = useState({});
 
-    const { auth, setAuth, setUser, user } = useContext(AuthContext);
+    const { setUser, user } = useContext(AuthContext);
 
     let navigate = useNavigate();
+    const { state: { from } } = useLocation();
+
+    console.log("from= ", from);
 
     useEffect(() => {
-        if (auth) {
-            navigate(props.from || '/');
+        if (user) {
+            navigate(from || '/');
             return;
         }
-    }, [auth])
+    }, [user])
 
 
     function handleSubmit(event) {
@@ -34,11 +36,10 @@ const SignIn = (props) => {
             password,
         };
         console.log(signinData);
-        authLogin(email, password, setUser, setAuth)
+        authLogin(email, password, setUser)
             .then(() => {
-                // setIsSuccess(true);
                 console.log(user);
-                navigate(props.from || '/');
+                navigate(from || '/');
                 console.log("SUCCESS");
                 return;
             })
@@ -60,13 +61,7 @@ const SignIn = (props) => {
                 alignItems: 'center'
             }}
         >
-            <Snackbar
-                open={isSuccess}
-                autoHideDuration={6000}>
-                <Alert severity="success" sx={{ width: '100%' }}>
-                    You have successfully logged in!
-                </Alert>
-            </Snackbar>
+
             {isLoading ?
                 <CircularProgress />
                 :

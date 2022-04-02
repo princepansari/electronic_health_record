@@ -4,20 +4,17 @@ import {
     Navigate
 } from "react-router-dom";
 import AuthContext from "../auth/AuthContext";
-import { authCheckState } from './apis';
 
 
 export default function RequireAuth(props) {
     let location = useLocation();
-    const { auth } = React.useContext(AuthContext);
-
-    console.log("in require auth");
-
-    if (!auth) {
-        console.log("in require auth ifffff");
-        return <Navigate to="/login" from={location} />;
+    const { user } = React.useContext(AuthContext);
+    console.log("userin require auth= ", user);
+    if (!user) {
+        console.log("in navigate")
+        console.log(location);
+        return <Navigate to="/login" state={{ from: location.pathname }} />;
     }
 
-    console.log("after if in require auth")
     return props.children;
 }

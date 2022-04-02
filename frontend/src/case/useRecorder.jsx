@@ -20,7 +20,8 @@ export default function useRecorder() {
         if (isRecording) {
             recorder.start();
         } else {
-            recorder.stop();
+            if (recorder.state !== "inactive")
+                recorder.stop();
         }
 
         // Obtain the audio when ready.

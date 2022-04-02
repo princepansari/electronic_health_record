@@ -16,17 +16,17 @@ import { authCheckState } from "./auth/apis";
 const theme = createTheme({ palette: { mode: "light" } });
 
 function App() {
-    const [auth, setAuth] = useState(false);
-    const [user, setUser] = useState({ user_type: 'doctor' }); //TODO: should be replaced with {}
+    const [user, setUser] = useState(null); //TODO: should be replaced with {}
 
     useEffect(() => {
-        authCheckState(auth, setAuth, setUser);
+        console.log("in app.jsx auth check")
+        authCheckState(setUser);
     }, []);
 
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <AuthContext.Provider value={{ "auth": auth, "setAuth": setAuth, "user": user, "setUser": setUser }}>
+            <AuthContext.Provider value={{ "user": user, "setUser": setUser }}>
                 <BrowserRouter>
                     <Layout>
                         <Routes>
@@ -41,9 +41,7 @@ function App() {
                         </Routes>
                     </Layout>
                 </BrowserRouter>
-
             </AuthContext.Provider>
-
         </ThemeProvider>
     );
 }

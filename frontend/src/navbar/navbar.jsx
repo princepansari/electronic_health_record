@@ -21,7 +21,7 @@ const links = [
 const navLinkStyle = { m: 2, color: 'white', display: 'block', textTransform: 'none', fontSize: '1.01em', '&.active': { color: 'red' } }
 
 export default function NavBar() {
-  const { auth, setAuth, setUser } = React.useContext(AuthContext);
+  const { setUser, user } = React.useContext(AuthContext);
   let navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
@@ -99,6 +99,14 @@ export default function NavBar() {
         </Typography>
 
         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          {user ?
+            <Button
+              sx={navLinkStyle}>
+              Hi, {user.name}
+            </Button>
+            :
+            null
+          }
           {links.map((link) => (
             <Button
               key={link.to}
@@ -108,10 +116,10 @@ export default function NavBar() {
             />
           ))}
           {
-            auth ?
+            user ?
               <Button
                 onClick={() => {
-                  authLogout(setAuth, setUser);
+                  authLogout(setUser);
                   console.log("in logout")
                   navigate('/login');
                   return;

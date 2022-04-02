@@ -22,14 +22,23 @@ const MyCasesPage = () => {
     const { user } = useContext(AuthContext);
     const [cases, setCases] = useState([]);
     const [openModal, setOpenModal] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [errorMsg, setErrorMsg] = useState(null);
 
     console.log("in my cases page");
-    // useEffect(() => {
-    //     getMyCases(user.token).then((data) => {
-    //         setCases(data);
-    //     });
-    // }, [])
+    useEffect(() => {
+        getMyCases(user.token)
+            .then((data) => {
+                setCases(data);
+                setIsLoading(false);
+            })
+            .catch((err) => {
+                console.log(err?.response?.data?.message || err);
+                setErrorMsg(err?.response?.data?.message || err);
+                setIsLoading(false);
+            });
+        setIsLoading(true);
+    }, [])
 
 
     return (
@@ -42,7 +51,7 @@ const MyCasesPage = () => {
                         open={openModal}
                         onClose={() => setOpenModal(false)}
                     >
-                        <CreateCaseForm setIsLoading={setIsLoading} setopen={setOpenModal} />
+                        <CreateCaseForm setopen={setOpenModal} />
                     </Modal>
                     {
                         user.user_type !== 'patient' ?
@@ -54,6 +63,11 @@ const MyCasesPage = () => {
                             :
                             null
                     }
+                    <Typography variant="h4"
+                        color="error"
+                        component='div'>
+                        {errorMsg}
+                    </Typography>
                     <Grid
                         container
                         spacing={2}
@@ -66,8 +80,8 @@ const MyCasesPage = () => {
                         }}
                     >
                         {
-                            // cases.map(caseObj => (
-                            fakeCases.map(caseObj => (
+                            cases.map(caseObj => (
+                                // fakeCases.map(caseObj => (
                                 <Grid item
                                     key={caseObj.case_id}
                                     sx={{

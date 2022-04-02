@@ -25,15 +25,16 @@ export const createCase = (token, patientEmail, problem) => {
 
 export const createPrescription = (token, caseId, recordingBlob, prescriptionData) => {
 
-    console.log(prescriptionData)
+    console.log(recordingBlob)
     const prescription = new FormData();
-    prescription.append('recording', recordingBlob, 'recording.mp3');
+    if (recordingBlob) //TODO: solve the error(no recording case)
+        prescription.append('recording', recordingBlob, 'recording.mp3');
     prescription.append('case_id', caseId);
     prescription.append('prescription', JSON.stringify(prescriptionData));
 
     axios.defaults.headers = {
         'Content-Type': `multipart/form-data; boundary=${prescription._boundary}`,
-        Authorization: `Token ${token}`
+        Authorization: `Bearer ${token}`
     };
 
     return axios
@@ -47,7 +48,7 @@ export const createPrescription = (token, caseId, recordingBlob, prescriptionDat
 
 export const addCorrection = (token, caseId, prescriptionId, correctionId, correctionDesc) => {
 
-    correctionData = {
+    const correctionData = {
         'case_id': caseId,
         'prescription_id': prescriptionId,
         'correction': {
@@ -57,7 +58,7 @@ export const addCorrection = (token, caseId, prescriptionId, correctionId, corre
     }
     axios.defaults.headers = {
         'Content-Type': `application/json`,
-        Authorization: `Token ${token}`
+        Authorization: `Bearer ${token}`
     };
 
     return axios
@@ -81,7 +82,7 @@ export const uploadReport = (token, caseId, prescriptionId, reportId, report) =>
 
     axios.defaults.headers = {
         'Content-Type': `multipart/form-data; boundary=${reportData._boundary}`,
-        Authorization: `Token ${token}`
+        Authorization: `Bearer ${token}`
     };
 
     return axios
@@ -98,7 +99,7 @@ export const getCase = (token, caseId) => {
 
     axios.defaults.headers = {
         "Content-Type": "application/json",
-        Authorization: `Token ${token}`
+        Authorization: `Bearer ${token}`
     };
     return axios
         .get(`/api/case/get_case/${caseId}`)
@@ -114,7 +115,7 @@ export const getCase = (token, caseId) => {
 export const getMyCases = (token) => {
     axios.defaults.headers = {
         "Content-Type": "application/json",
-        Authorization: `Token ${token}`
+        Authorization: `Bearer ${token}`
     };
     return axios
         .get(`/api/case/get_all_cases`)

@@ -12,16 +12,16 @@ export default function OtpVerification(props) {
     const [guardianEmailOTP, setGuardianEmailOTP] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
 
-    const { auth } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     const { state: { email, guardian_email } } = useLocation();
     let navigate = useNavigate();
 
     useEffect(() => {
-        if (auth) {
-            navigate(props.from || '/');
+        if (user) {
+            navigate('/');
             return;
         }
-    }, [auth])
+    }, [user])
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -30,7 +30,7 @@ export default function OtpVerification(props) {
         authOTPVerification(email, emailOTP, guardianEmailOTP)
             .then((message) => {
                 setSuccessMessage(message);
-                navigate(props.from || '/');
+                navigate('/');
             })
             .catch((err) => { console.log("ERROR:", err?.response?.data?.message) }); // TODO: i want to navigate to other page only after i receive response
         setIsLoading(true);

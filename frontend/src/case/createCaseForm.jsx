@@ -25,6 +25,9 @@ export const CreateCaseForm = React.forwardRef((props, ref) => {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
 
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState(null);
+
     const handleSubmit = (event) => {
         event.preventDefault();
 
@@ -34,17 +37,21 @@ export const CreateCaseForm = React.forwardRef((props, ref) => {
         };
         console.log('caseData :', caseData);
 
-        createCase(user.token, email, problem).then((caseId) => {
-            navigate(`/case/${caseId}`);
-        }).catch((err) => {
-            console.log(err?.response?.data?.message || err);
-        });
+        createCase(user.token, email, problem)
+            .then((caseId) => {
+                navigate(`/case/${caseId}`);
+            })
+            .catch((err) => {
+                console.log(err?.response?.data?.message || err);
+                setErrorMsg(err?.response?.data?.message || err);
+                setIsLoading(false);
+            });
 
         setProblem('');
         setEmail('');
 
         props.setopen(false);
-        props.setIsLoading(true);
+        setIsLoading(true);
     };
 
 
@@ -90,8 +97,17 @@ export const CreateCaseForm = React.forwardRef((props, ref) => {
                         color="primary"
                         sx={{ my: 2 }}
                     >
-                        Submit
+                        {isLoading ?
+                            <CenterCircularProgress />
+                            :
+                            "Submit"
+                        }
                     </Button>
+                    <Typography variant="body1"
+                        color="error"
+                        component='div'>
+                        {errorMsg}
+                    </Typography>
                 </form>
             </Box>
         </div>
