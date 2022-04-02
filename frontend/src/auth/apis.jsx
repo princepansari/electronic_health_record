@@ -11,7 +11,7 @@ export const authSignup = (user) => {
 
 
 
-export const authLogin = (email, password, setUser, setAuth) => {
+export const authLogin = (email, password, setUser) => {
 
     return axios
         .post("/api/auth/login", {
@@ -27,9 +27,9 @@ export const authLogin = (email, password, setUser, setAuth) => {
                 user_type: res.data.user_type,
                 expirationDate: new Date(new Date().getTime() + 24 * 60 * 60 * 60 * 1000)
             };
+            console.log(user)
             localStorage.setItem("user", JSON.stringify(user));
             setUser(user);
-            setAuth(true);
         });
 
 };
@@ -50,21 +50,23 @@ export const authOTPVerification = (email, emailOTP, guardianEmailOTP) => {
 };
 
 
-export const authLogout = (setAuth, setUser) => {
+export const authLogout = (setUser) => {
     localStorage.removeItem("user");
-    setAuth(false);
-    setUser({});
+    setUser(null);
 };
 
-export const authCheckState = (auth, setAuth, setUser) => {
+export const authCheckState = (setUser) => {
+    console.log("in auth check");
     const user = JSON.parse(localStorage.getItem("user"));
-    if (auth) {
+    console.log("user= ", user);
+    if (user) {
         const expirationDate = new Date(user.expirationDate);
         if (expirationDate <= new Date()) {
-            authLogout(setAuth, setUser);
+            console.log("expired");
+            authLogout(setUser);
         } else {
+            console.log("in else")
             setUser(user);
-            setAuth(true);
             return true;
         }
     }

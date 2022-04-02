@@ -10,6 +10,7 @@ import { createPrescription } from './apis'
 
 import * as yup from "yup";
 import AuthContext from '../auth/AuthContext';
+import CenterCircularProgress from '../common/centerLoader';
 
 const schema = yup.object({
     problem: yup.string().required("Problem description should not be empty"),
@@ -42,15 +43,24 @@ export default function PrescriptionForm({ cancel, caseId, reFetchCase, ...props
 
     const { user } = useContext(AuthContext);
     const [audioURL, audioBlob, isRecording, startRecording, stopRecording, resetRecording] = useRecorder();
-
+    const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
-    const handleSubmit = (data) => {
-        createPrescription(user.token, caseId, audioBlob, data).then((res) => {
-            setIsSuccess(true);
-            reFetchCase();
-        }).catch((err) => { console.log(err.response.data.message) })
-    }
+    const [errorMsg, setErrorMsg] = useState(null);
 
+    const handleSubmit = (data) => {
+        createPrescription(user.token, caseId, audioURL ? audioBlob : null, data)
+            .then((res) => {
+                setIsSuccess(true);
+                setIsLoading(false);
+                reFetchCase();
+            })
+            .catch((err) => {
+                console.log(err?.response?.data?.message || err);
+                setErrorMsg(err?.response?.data?.message || err);
+                setIsLoading(false);
+            })
+        setIsLoading(true);
+    }
 
     return (
         <>
@@ -93,7 +103,11 @@ export default function PrescriptionForm({ cancel, caseId, reFetchCase, ...props
                                 type='submit'
                                 variant="contained"
                                 color="primary">
-                                Submit
+                                {isLoading ?
+                                    <CenterCircularProgress />
+                                    :
+                                    "Submit"
+                                }
                             </Button>
                             <Button
                                 onClick={cancel}
@@ -101,6 +115,11 @@ export default function PrescriptionForm({ cancel, caseId, reFetchCase, ...props
                                 color="error">
                                 Cancel
                             </Button>
+                            <Typography variant="body1"
+                                color="error"
+                                component='div'>
+                                {errorMsg}
+                            </Typography>
                         </Stack>
                         {console.log("errors=", errors)}
                     </form >

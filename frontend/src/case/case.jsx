@@ -1,11 +1,12 @@
 import { useEffect, useState, useContext } from "react"
 import Prescription from "./prescription";
 import Typography from '@mui/material/Typography'
-import { Grid, Skeleton, Button } from "@mui/material";
+import { Grid, Skeleton, Button, CircularProgress } from "@mui/material";
 import PrescriptionForm from "./prescriptionForm";
 import AuthContext from "../auth/AuthContext";
 import { useParams } from "react-router-dom";
 import { getCase } from "./apis";
+import CenterCircularProgress from "../common/centerLoader";
 
 function createMedicine(medicine, dosage) {
     return { medicine, dosage };
@@ -67,22 +68,35 @@ const p1 = createPrescription(
 export default function Case(props) {
     const [caseObj, setCaseObj] = useState(null);
     const [isDisplayForm, setIsDisplayForm] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const { user } = useContext(AuthContext);
     let params = useParams();
     const caseId = params.caseId;
 
     const reFetchCase = () => {
-        //TODO: api call
-        // getCase(user.token, caseId).then((data) => {
-        //     setCaseObj(data);
-        // })
+        // TODO: api call
+        setIsDisplayForm(false);
+        getCase(user.token, caseId).then((data) => {
+            setCaseObj(data);
+            setIsLoading(false);
+        })
+        setIsLoading(true);
     }
 
+    const [errorMsg, setErrorMsg] = useState(null);
+
     useEffect(() => {
-        // getCase(user.token, caseId).then((data) => {
-        //     setCaseObj(data);
-        // })
-        setCaseObj(createCase(1, [p1]));
+        getCase(user.token, caseId)
+            .then((data) => {
+                setCaseObj(data);
+                setIsLoading(false);
+            })
+            .catch((err) => {
+                setErrorMsg(err?.response?.data?.message || err);
+                setIsLoading(false);
+            })
+        setIsLoading(true);
+        // setCaseObj(createCase(1, [p1]));
     }, [])
 
     const briefInfoFields = [
@@ -110,34 +124,49 @@ export default function Case(props) {
     return (
         <>
             {
-                caseObj === null ?
-                    <Skeleton variant="rectangular" height={500} />
+                isLoading ?
+                    <CenterCircularProgress />
                     :
-                    <>
-                        <Grid container sx={{ marginBottom: 10 }}>
-                            {console.log(caseObj)}
-                            {briefInfoFields.map((field) => (
-                                <Grid item key={field} sm={6} md={4} >
-                                    <Typography variant="h6" component='span'>
-                                        {displayName[field] + caseObj[field]}
-                                    </Typography>
-                                </Grid>
-                            ))}
-                        </Grid>
-                        {console.log(user.user_type)}
-                        {!isDisplayForm
-                            ?
-                            (['doctor', 'nurse'].includes(user.user_type) &&
-                                <Button variant="contained" sx={{ marginBottom: 2 }} onClick={() => { setIsDisplayForm(true); }}>
-                                    Add a prescription
-                                </Button>)
-                            : <PrescriptionForm caseId={caseObj.id} reFetchCase={reFetchCase} cancel={() => { setIsDisplayForm(false); }} />}
-                        <div style={{ marginBottom: 10 }}></div>
-                        <Typography variant="h5" sx={{ marginTop: 5, marginBottom: 2 }}>Old Prescriptions</Typography>
-                        {caseObj.prescriptions !== undefined && caseObj.prescriptions.map((prescription) => (
-                            <Prescription key={prescription.id} caseId={caseObj.id} reFetchCase={reFetchCase} prescription={prescription} />
-                        ))}
-                    </>
+                    caseObj ?
+                        <>
+                            <Grid container sx={{ marginBottom: 10 }}>
+                                {console.log(caseObj)}
+                                {briefInfoFields.map((field) => (
+                                    <Grid item key={field} sm={6} md={4} >
+                                        <Typography variant="h6" component='span'>
+                                            {displayName[field] + caseObj[field]}
+                                        </Typography>
+                                    </Grid>
+                                ))}
+                            </Grid>
+                            {console.log(user.user_type)}
+                            {
+                                !isDisplayForm
+                                    ?
+                                    (['doctor', 'nurse'].includes(user.user_type) &&
+                                        <Button variant="contained" sx={{ marginBottom: 2 }} onClick={() => { setIsDisplayForm(true); }}>
+                                            Add a prescription
+                                        </Button>)
+                                    : <PrescriptionForm caseId={caseObj.id} reFetchCase={reFetchCase} cancel={() => { setIsDisplayForm(false); }} />
+                            }
+                            <div style={{ marginBottom: 10 }}></div>
+                            <Typography variant="h5" sx={{ marginTop: 5, marginBottom: 2 }}>Old Prescriptions</Typography>
+                            {
+                                caseObj.prescriptions !== undefined && caseObj.prescriptions.map((prescription) => (
+                                    <Prescription key={prescription.id} caseId={caseObj.id} reFetchCase={reFetchCase} prescription={prescription} />
+                                ))
+                            }
+                        </>
+                        :
+                        <Typography variant="h4"
+                            color="error"
+                            component='div'
+                            sx={{
+                                marginTop: '50%',
+                                marginLeft: '50%'
+                            }}>
+                            {errorMsg}
+                        </Typography>
             }
 
         </>

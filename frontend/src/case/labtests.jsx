@@ -9,8 +9,9 @@ import TableRow from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button'
 import { uploadReport } from './apis';
-import { Snackbar } from '@mui/material';
+import { Snackbar, Typography } from '@mui/material';
 import AuthContext from '../auth/AuthContext';
+import CenterCircularProgress from '../common/centerLoader';
 
 const columns = [
     { id: 'testname', label: 'Test Name' },
@@ -35,15 +36,25 @@ export default function LabTests({ labTests, caseId, prescriptionId, reFetchCase
     const { user } = React.useContext(AuthContext);
 
     const [addReportSuccessMsg, setAddReportSuccessMsg] = React.useState('');
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [errorMsg, setErrorMsg] = React.useState(null);
+    const [report, setReport] = React.useState(null);
+
     const handleFileUpload = (e, reportId) => {
         e.preventDefault();
-        const report = e.target.files[0];
-        uploadReport(user.token, caseId, PrescriptionId, reportId, report).then((message) => {
+        uploadReport(user.token, caseId, prescriptionId, reportId, report).then((message) => {
             setAddReportSuccessMsg(message);
-            // reFetchCase();
+            reFetchCase();
             setAddReportSuccessMsg('');
-        }).catch((err) => { console.log(err.response.data.message) });
-
+            setIsLoading(false);
+            setReport(null);
+        })
+            .catch((err) => {
+                console.log(err?.response?.data?.message || err)
+                setErrorMsg(err?.response?.data?.message || err);
+                setIsLoading(false);
+            });
+        setIsLoading(true);
     };
 
     return (
@@ -87,17 +98,28 @@ export default function LabTests({ labTests, caseId, prescriptionId, reFetchCase
                                                     {/* TODO: use link component to open a link of our website in new tab */}
                                                 </Button>
                                                 :
-                                                <form onSubmit={(e) => { handleFileUpload(e, labTest.id) }}>
+                                                <form>
                                                     <input type="file"
+                                                        required
                                                         name={"report" + labTest.id}
                                                         accept="image/*"
-                                                        id={"report" + labTest.id} />
+                                                        id={"report" + labTest.id}
+                                                        onChange={(e) => { setReport(e.target.files[0]) }} />
                                                     <Button
-                                                        type="submit"
+                                                        onClick={(e) => { report ? handleFileUpload(e, labTest.id) : null }}
                                                         variant='contained'
                                                         size='small'>
-                                                        Upload
+                                                        {isLoading ?
+                                                            <CenterCircularProgress />
+                                                            :
+                                                            "Upload"
+                                                        }
                                                     </Button>
+                                                    <Typography variant="body1"
+                                                        color="error"
+                                                        component='div'>
+                                                        {errorMsg}
+                                                    </Typography>
                                                 </form>
 
 
