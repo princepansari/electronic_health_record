@@ -33,8 +33,8 @@ const MyCasesPage = () => {
                 setIsLoading(false);
             })
             .catch((err) => {
-                console.log(err?.response?.data?.message || err);
-                setErrorMsg(err?.response?.data?.message || err);
+                console.log(err?.response?.data?.message);
+                setErrorMsg(err?.response?.data?.message);
                 setIsLoading(false);
             });
         setIsLoading(true);
@@ -65,7 +65,7 @@ const MyCasesPage = () => {
                     }
                     <Typography variant="h4"
                         color="error"
-                        component='div'>
+                    >
                         {errorMsg}
                     </Typography>
                     <Grid

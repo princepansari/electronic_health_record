@@ -55,8 +55,8 @@ export default function PrescriptionForm({ cancel, caseId, reFetchCase, ...props
                 reFetchCase();
             })
             .catch((err) => {
-                console.log(err?.response?.data?.message || err);
-                setErrorMsg(err?.response?.data?.message || err);
+                console.log(err?.response?.data?.message);
+                setErrorMsg(err?.response?.data?.message);
                 setIsLoading(false);
             })
         setIsLoading(true);

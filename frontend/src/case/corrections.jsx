@@ -27,8 +27,8 @@ export default function Corrections({ corrections, caseId, prescriptionId, reFet
                 setIsLoading(false);
             })
             .catch((err) => {
-                console.log(err?.response?.data?.message || err)
-                setErrorMsg(err?.response?.data?.message || err);
+                console.log(err?.response?.data?.message)
+                setErrorMsg(err?.response?.data?.message);
                 setIsLoading(false);
             });
         setIsLoading(true);

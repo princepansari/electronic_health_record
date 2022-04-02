@@ -42,8 +42,8 @@ export const CreateCaseForm = React.forwardRef((props, ref) => {
                 navigate(`/case/${caseId}`);
             })
             .catch((err) => {
-                console.log(err?.response?.data?.message || err);
-                setErrorMsg(err?.response?.data?.message || err);
+                console.log(err?.response?.data?.message);
+                setErrorMsg(err?.response?.data?.message);
                 setIsLoading(false);
             });
 
