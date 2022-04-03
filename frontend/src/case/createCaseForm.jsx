@@ -1,8 +1,9 @@
-import { Button, CircularProgress, TextField, Typography } from '@mui/material';
+import { Button, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../auth/AuthContext';
+import CenterCircularProgress from '../common/centerLoader';
 import { createCase } from './apis';
 
 const style = {
@@ -17,7 +18,7 @@ const style = {
     p: 4,
 };
 
-export const CreateCaseForm = React.forwardRef((props, ref) => {
+export const CreateCaseForm = React.forwardRef(function CreateCaseForm(props, ref) {
 
     const [problem, setProblem] = useState('');
     const [email, setEmail] = useState('');
@@ -50,7 +51,6 @@ export const CreateCaseForm = React.forwardRef((props, ref) => {
         setProblem('');
         setEmail('');
 
-        props.setopen(false);
         setIsLoading(true);
     };
 

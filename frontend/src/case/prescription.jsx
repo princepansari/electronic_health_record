@@ -92,13 +92,12 @@ export default function Prescription({ prescription, caseId, ...rest }) {
                     {prescription.recording ?
                         <>
                             <Typography variant='h6' sx={{ marginBottom: 2 }}>Voice Recording:</Typography>
-                            <Button variant='contained'
-                                sx={{ marginBottom: 2 }}
-                                href={prescription.recording}
-                                target="_blank"
-                                rel="noreferrer noopener">
-                                Download recording
-                            </Button>
+                            <audio
+                                controls
+                                src={prescription.recording}>
+                                Your browser does not support the
+                                <code>audio</code> element.
+                            </audio>
                         </>
                         :
                         null}

@@ -13,9 +13,6 @@ import { authLogout } from "../auth/apis";
 const links = [
   { children: 'My Cases', to: '/myCases' },
   { children: 'Upcoming Appointments', to: '/appointments' },
-  { children: 'Sign Up', to: '/signup' },
-  { children: 'Home', to: '/' },
-  { children: 'Case', to: '/case' },
 ]
 
 const navLinkStyle = { m: 2, color: 'white', display: 'block', textTransform: 'none', fontSize: '1.01em', '&.active': { color: 'red' } }
@@ -107,33 +104,50 @@ export default function NavBar() {
             :
             null
           }
-          {links.map((link) => (
-            <Button
-              key={link.to}
-              component={Link}
-              sx={navLinkStyle}
-              {...link}
-            />
-          ))}
+          <Button
+            component={Link}
+            to='/'
+            sx={navLinkStyle}>
+            Home
+          </Button>
+
           {
             user ?
-              <Button
-                onClick={() => {
-                  authLogout(setUser);
-                  console.log("in logout")
-                  navigate('/login');
-                  return;
-                }}
-                sx={navLinkStyle}>
-                Logout
-              </Button>
+              <>
+                {links.map((link) => (
+                  <Button
+                    key={link.to}
+                    component={Link}
+                    sx={navLinkStyle}
+                    {...link}
+                  />
+                ))}
+                <Button
+                  onClick={() => {
+                    authLogout(setUser);
+                    console.log("in logout")
+                    navigate('/login');
+                    return;
+                  }}
+                  sx={navLinkStyle}>
+                  Logout
+                </Button>
+              </>
               :
-              <Button
-                component={Link}
-                to='/login'
-                sx={navLinkStyle}>
-                Login
-              </Button>
+              <>
+                <Button
+                  component={Link}
+                  to='/signup'
+                  sx={navLinkStyle}>
+                  Sign Up
+                </Button>
+                <Button
+                  component={Link}
+                  to='/login'
+                  sx={navLinkStyle}>
+                  Login
+                </Button>
+              </>
           }
         </Box>
       </Toolbar>
