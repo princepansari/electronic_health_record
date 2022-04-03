@@ -31,7 +31,10 @@ class CreateCase(Resource):
         user_id = get_jwt_identity()
         user_type = get_jwt()['user_type']
         if user_type == 'doctor' or user_type == 'nurse':
-            patient_id = self.rds.get_user_by_email(email=data['patient_email'])['user_id']
+            patient = self.rds.get_user_by_email(email=data['patient_email'])
+            if patient is None:
+                return {'message': 'Patient not found'}, HTTPStatus.NOT_FOUND
+            patient_id = patient['user_id']
             case_id = self.rds.create_case(patient_id=patient_id,
                                            created_by_id=user_id,
                                            problem=data['problem'])

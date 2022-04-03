@@ -77,12 +77,13 @@ CREATE TABLE cases(
 );
 
 CREATE TABLE prescriptions(
-    prescription_id int PRIMARY KEY,
+    prescription_id int,
     case_id int NOT NULL,
     created_by_id uuid NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     prescription json NOT NULL,
+    PRIMARY KEY (prescription_id, case_id),
     FOREIGN KEY (created_by_id) REFERENCES users (user_id),
     FOREIGN KEY (case_id) REFERENCES cases (case_id)
 );
