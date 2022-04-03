@@ -30,13 +30,12 @@ function App() {
                 <BrowserRouter>
                     <Layout>
                         <Routes>
-                            <Route path="/" element={<h1>Hello</h1>} />
+                            <Route path="/" element={<h1>Home Page</h1>} />
                             <Route path="/otpVerification" element={<OtpVerification />} />
                             <Route path="/signup" element={<SignUp />} />
                             <Route path="/login" element={<SignIn />} />
                             <Route path="/myCases" element={<RequireAuth children={<MyCases />} />} />
                             <Route path="/appointments" element={<RequireAuth children={<UpcomingAppointments />} />} />
-                            <Route path="/case" element={<RequireAuth children={<Case />} />} />
                             <Route path="/case/:caseId" element={<RequireAuth children={<Case />} />} />
                         </Routes>
                     </Layout>
