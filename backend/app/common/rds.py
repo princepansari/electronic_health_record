@@ -149,6 +149,7 @@ class RDS:
         patient = self.get_user_by_user_id(user_id=case['patient_id'])
         case['patient_name'] = patient['name']
         case['patient_allergy'] = patient['allergy']
+        case['patient_age'] = Utils.calculate_age(patient['dob'])
         case['created_by'] = self.get_user_by_user_id(user_id=case['created_by_id'])['name']
         return case
 
