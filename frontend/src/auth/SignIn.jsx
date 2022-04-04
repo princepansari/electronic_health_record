@@ -75,7 +75,7 @@ const SignIn = (props) => {
                     }}
                     elevation={2}
                 >
-                    <Avatar sx={{ backgroundColor: 'secondary.main' }}>
+                    <Avatar sx={{ backgroundColor: 'primary.main' }}>
                         <LockOutlinedIcon />
                     </Avatar>
 

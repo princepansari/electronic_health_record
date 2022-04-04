@@ -13,7 +13,20 @@ import Case from "./case/case";
 import RequireAuth from "./auth/requireAuth";
 import OtpVerification from "./auth/otpVerification";
 import { authCheckState } from "./auth/apis";
-const theme = createTheme({ palette: { mode: "light" } });
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: "#14bdad"
+        }
+    },
+    typography: {
+        "fontFamily": `"Hind Siliguri", "Helvetica", "Arial", sans-serif`,
+        "fontSize": 15,
+        "fontWeightLight": 300,
+        "fontWeightRegular": 400,
+        "fontWeightMedium": 500
+    }
+});
 
 function App() {
     const [user, setUser] = useState(null); //TODO: should be replaced with {}
