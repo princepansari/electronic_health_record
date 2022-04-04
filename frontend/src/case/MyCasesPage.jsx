@@ -87,7 +87,7 @@ const MyCasesPage = () => {
                                     sx={{
                                         width: { xs: '90%', md: '75%' },
                                         borderRadius: '10px',
-                                        backgroundColor: '#d9dad7',
+                                        backgroundColor: "#fafafa",
                                         my: 1,
                                         padding: 2,
                                     }}>

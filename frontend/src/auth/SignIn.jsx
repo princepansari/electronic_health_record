@@ -71,21 +71,22 @@ const SignIn = (props) => {
                         padding: 3,
                         display: 'flex',
                         flexDirection: 'column',
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        backgroundColor: "#fafafa"
                     }}
-                    elevation={2}
+                    elevation={5}
                 >
                     <Avatar sx={{ backgroundColor: 'primary.main' }}>
                         <LockOutlinedIcon />
                     </Avatar>
 
-                    <Typography variant='h5' component='h1' sx={{ mt: 3 }}>
-                        Sign In
+                    <Typography variant='h5' component='h1' sx={{ mt: 3, letterSpacing: '1px' }}>
+                        SIGN IN
                     </Typography>
 
                     <form noValidate style={{ width: '95%' }} onSubmit={(e) => handleSubmit(e)}>
                         <TextField
-                            variant='outlined'
+                            variant='filled'
                             margin='normal'
                             required
                             fullWidth
@@ -95,10 +96,13 @@ const SignIn = (props) => {
                             onChange={(e) => setEmail(e.currentTarget.value)}
                             autoComplete="email"
                             autoFocus
+                            InputProps={{
+                                disableUnderline: true,
+                            }}
                         />
 
                         <TextField
-                            variant='outlined'
+                            variant='filled'
                             margin='normal'
                             required
                             fullWidth
@@ -109,6 +113,9 @@ const SignIn = (props) => {
                             onChange={(e) => setPassword(e.currentTarget.value)}
                             autoComplete="current-password"
                             autoFocus
+                            InputProps={{
+                                disableUnderline: true,
+                            }}
                         />
 
                         <Button

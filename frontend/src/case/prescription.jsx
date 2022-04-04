@@ -49,7 +49,10 @@ export default function Prescription({ prescription, caseId, ...rest }) {
     };
 
     return (
-        <Card sx={{ flexGrow: 1 }}>
+        <Card sx={{
+            flexGrow: 1,
+            backgroundColor: "#fafafa"
+        }}>
             <CardHeader
                 action={
                     <IconButton aria-label="download">

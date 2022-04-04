@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const boxStyle = {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
 };
 
 const CaseItem = ({ caseObj }) => {
@@ -61,13 +61,13 @@ const CaseItem = ({ caseObj }) => {
                 </Typography>
 
                 <Button
-                    variant='contained'
-                    color='success'
+                    variant='text'
+
                     sx={{ mr: 4, fontSize: { xs: '0.6em', md: '1em' }, textTransform: 'none' }}
                     component={Link}
                     to={`/case/${caseObj.case_id}`}
                 >
-                    See Details
+                    SEE MORE
                 </Button>
             </Box>
 
