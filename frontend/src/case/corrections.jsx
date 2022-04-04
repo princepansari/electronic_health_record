@@ -57,12 +57,17 @@ export default function Corrections({ corrections, caseId, prescriptionId, reFet
                     :
                     <Stack direction='row' spacing={2}>
                         <TextField
+                            variant='filled'
                             id="add_correction"
                             label="Description"
                             value={newCorrection}
                             size='small'
-                            onChange={(e) => { setNewCorrection(e.target.value); }}
-                        />
+                            onChange={(e) => {
+                                setNewCorrection(e.target.value);
+                            }}
+                            InputProps={{
+                                disableUnderline: true,
+                            }} />
                         <Button variant="contained" color="primary" size='small' onClick={handleSubmit}>
                             {isLoading ?
                                 <CenterCircularProgress />

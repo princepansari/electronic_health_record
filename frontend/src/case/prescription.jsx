@@ -31,12 +31,22 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 
-const briefInfoFields = ['created_at', 'created_by', 'problem']
+const dateTimeOptions = {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour12: false,
+    hour: 'numeric',
+    minute: 'numeric'
+}
+
+const briefInfoFields = ['updated_at', 'created_by', 'problem']
 
 const displayText = {
     "created_by": "Created By",
     "problem": "Problem Description",
-    "created_at": "Date and Time"
+    "updated_at": "Last Modified On",
 }
 
 export default function Prescription({ prescription, caseId, ...rest }) {
@@ -60,6 +70,7 @@ export default function Prescription({ prescription, caseId, ...rest }) {
                     </IconButton>
                 }
                 title={"Prescription " + prescription.id}
+                subheader={new Date(prescription.created_at).toLocaleString('en-US', dateTimeOptions)}
             />
             <CardContent>
                 <TableContainer component={Paper} elevation={0}>
@@ -71,7 +82,11 @@ export default function Prescription({ prescription, caseId, ...rest }) {
                                         <TableCell component="th" scope="row">
                                             {displayText[field]}
                                         </TableCell>
-                                        <TableCell >{prescription[field]}</TableCell>
+                                        <TableCell >{field === "updated_at"
+                                            ?
+                                            new Date(prescription[field]).toLocaleDateString('en-US', dateTimeOptions)
+                                            :
+                                            prescription[field]}</TableCell>
                                     </StyledTableRow>
                                 ))
                             }

@@ -82,15 +82,19 @@ export default function PrescriptionForm({ cancel, caseId, reFetchCase, ...props
                         <Typography variant="h6" sx={{ marginBottom: 2 }} > Problem Description</Typography>
                         <Controller
                             render={({ field }) => <TextField
+                                variant='filled'
                                 sx={{ marginBottom: 2 }}
                                 fullWidth
                                 minRows={3}
                                 multiline
                                 required
                                 {...field}
-                                label="Describe problem in detail"
+                                placeholder="Describe problem in detail"
                                 error={errors?.problem}
-                                helperText={errors?.problem?.message} />}
+                                helperText={errors?.problem?.message}
+                                InputProps={{
+                                    disableUnderline: true,
+                                }} />}
                             name={'problem'}
                             control={control}
 

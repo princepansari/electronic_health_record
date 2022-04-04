@@ -182,14 +182,22 @@ export default function Signup() {
                         />
 
                         <Controller
-                            render={({ field }) => <TextField {...field} required label="Name" />}
+                            render={({ field }) => <TextField {...field} variant='filled' required label="Name"
+                                InputProps={{
+                                    disableUnderline: true,
+                                }}
+                            />}
                             name="name"
                             control={control}
                         />
 
                         <Controller
                             render={({ field }) => (
-                                <TextField {...field} required label="Email Address" />
+                                <TextField {...field} required variant='filled' label="Email Address"
+                                    InputProps={{
+                                        disableUnderline: true,
+                                    }}
+                                />
                             )}
                             name="email"
                             control={control}
@@ -202,10 +210,13 @@ export default function Signup() {
                                     <TextField
                                         {...field}
                                         required
+                                        variant='filled'
                                         label="Guardian Email Address"
                                         error={errors?.guardian_email !== undefined}
                                         helperText={errors?.guardian_email?.message}
-                                    />
+                                        InputProps={{
+                                            disableUnderline: true,
+                                        }} />
                                 )}
                                 name="guardian_email"
                                 control={control}
@@ -214,9 +225,12 @@ export default function Signup() {
 
                         <Controller
                             render={({ field }) => (
-                                <TextField {...field} required label="Password"
+                                <TextField {...field} variant='filled' required label="Password"
                                     error={errors?.password !== undefined}
-                                    helperText={errors?.password?.message} />
+                                    helperText={errors?.password?.message}
+                                    InputProps={{
+                                        disableUnderline: true,
+                                    }} />
                             )}
                             name="password"
                             control={control}
@@ -224,9 +238,12 @@ export default function Signup() {
 
                         <Controller
                             render={({ field }) => (
-                                <TextField {...field} required label="DOB: DD/MM/YYYY"
+                                <TextField {...field} variant='filled' required label="DOB: DD/MM/YYYY"
                                     error={errors?.dob !== undefined}
-                                    helperText={errors?.dob?.message} />
+                                    helperText={errors?.dob?.message}
+                                    InputProps={{
+                                        disableUnderline: true,
+                                    }} />
                             )}
                             name="dob"
                             control={control}
@@ -236,10 +253,14 @@ export default function Signup() {
                             render={({ field }) => (
                                 <TextField
                                     {...field}
+                                    variant='filled'
                                     required
                                     label="Phone Number"
                                     error={errors?.phone !== undefined}
                                     helperText={errors?.phone?.message}
+                                    InputProps={{
+                                        disableUnderline: true,
+                                    }}
                                 />
                             )}
                             name="phone"
@@ -248,7 +269,12 @@ export default function Signup() {
 
                         {watchUserType === "patient" ?
                             <Controller
-                                render={({ field }) => <TextField {...field} label="Allergies" />}
+                                render={({ field }) => <TextField {...field}
+                                    variant='filled'
+                                    label="Allergies"
+                                    InputProps={{
+                                        disableUnderline: true,
+                                    }} />}
                                 name="allergy"
                                 control={control}
                             />
@@ -347,9 +373,12 @@ export default function Signup() {
                                             });
                                             setStartTime(startTime);
                                         }}
-                                        renderInput={(params) => <TextField required {...params}
+                                        renderInput={(params) => <TextField variant='filled' required {...params}
                                             error={errors?.schedule?.start_time}
-                                            helperText={errors?.schedule?.start_time?.message} />}
+                                            helperText={errors?.schedule?.start_time?.message}
+                                            InputProps={{
+                                                disableUnderline: true,
+                                            }} />}
                                     />
                                     <TimePicker
                                         label="End Time"
@@ -361,9 +390,12 @@ export default function Signup() {
                                             });
                                             setEndTime(endTime);
                                         }}
-                                        renderInput={(params) => <TextField required {...params}
+                                        renderInput={(params) => <TextField variant='filled' required {...params}
                                             error={errors?.schedule?.end_time}
-                                            helperText={errors?.schedule?.end_time?.message} />}
+                                            helperText={errors?.schedule?.end_time?.message}
+                                            InputProps={{
+                                                disableUnderline: true,
+                                            }} />}
                                     />
                                 </LocalizationProvider>
 
@@ -373,11 +405,14 @@ export default function Signup() {
                                         <TextField
                                             {...field}
                                             required
+                                            variant='filled'
                                             type='number'
                                             label="Each Slot Duration(mins)"
                                             error={errors?.slot_duration !== undefined}
                                             helperText={errors?.slot_duration?.message}
-                                        />
+                                            InputProps={{
+                                                disableUnderline: true,
+                                            }} />
                                     )}
                                     name="slot_duration"
                                     control={control}

@@ -67,7 +67,7 @@ export const CreateCaseForm = React.forwardRef(function CreateCaseForm(props, re
 
 
                     <TextField
-                        variant='outlined'
+                        variant='filled'
                         margin='normal'
                         required
                         fullWidth
@@ -75,11 +75,13 @@ export const CreateCaseForm = React.forwardRef(function CreateCaseForm(props, re
                         label="Problem"
                         value={problem}
                         onChange={(e) => setProblem(e.currentTarget.value)}
-                    />
+                        InputProps={{
+                            disableUnderline: true,
+                        }} />
 
 
                     <TextField
-                        variant='outlined'
+                        variant='filled'
                         required
                         fullWidth
                         id="patientEmail"
@@ -88,7 +90,9 @@ export const CreateCaseForm = React.forwardRef(function CreateCaseForm(props, re
                         value={email}
                         onChange={(e) => setEmail(e.currentTarget.value)}
                         autoComplete="off"
-                    />
+                        InputProps={{
+                            disableUnderline: true,
+                        }} />
 
                     <Button
                         type="submit"
