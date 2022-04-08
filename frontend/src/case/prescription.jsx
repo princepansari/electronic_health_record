@@ -80,7 +80,7 @@ export default function Prescription({ prescription, caseId, ...rest }) {
                                 briefInfoFields.map((field) => (
                                     <StyledTableRow key={field}>
                                         <TableCell component="th" scope="row">
-                                            {displayText[field]}
+                                            <b>{displayText[field]}</b>
                                         </TableCell>
                                         <TableCell >{field === "updated_at"
                                             ?

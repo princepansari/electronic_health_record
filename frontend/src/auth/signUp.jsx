@@ -376,9 +376,7 @@ export default function Signup() {
                                         renderInput={(params) => <TextField variant='filled' required {...params}
                                             error={errors?.schedule?.start_time}
                                             helperText={errors?.schedule?.start_time?.message}
-                                            InputProps={{
-                                                disableUnderline: true,
-                                            }} />}
+                                        />}
                                     />
                                     <TimePicker
                                         label="End Time"
@@ -393,9 +391,7 @@ export default function Signup() {
                                         renderInput={(params) => <TextField variant='filled' required {...params}
                                             error={errors?.schedule?.end_time}
                                             helperText={errors?.schedule?.end_time?.message}
-                                            InputProps={{
-                                                disableUnderline: true,
-                                            }} />}
+                                        />}
                                     />
                                 </LocalizationProvider>
 

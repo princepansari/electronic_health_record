@@ -1,26 +1,21 @@
-import { CircularProgress, Grid } from '@mui/material';
+import { CircularProgress, Grid, Stack } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
-import { Box, Button, Modal, Typography } from '@mui/material';
+import { Box, Button, Modal, Typography, IconButton } from '@mui/material';
 import { CreateCaseForm } from './createCaseForm';
 import CaseItem from './CaseItem';
 import { getMyCases } from './apis'
 import AuthContext from '../auth/AuthContext';
 import CenterCircularProgress from '../common/centerLoader';
-
-const fakeCases = [
-    { case_id: 1, created_at: Date.now(), updated_at: Date.now(), problem: 'Very Dangerous Problem', created_by: 'Dr. Zeus', patient_name: 'Parth Joshi' },
-    { case_id: 2, created_at: Date.now(), updated_at: Date.now(), problem: 'Very Dangerous Problem', created_by: 'Dr. Zeus', patient_name: 'Parth Joshi' },
-    { case_id: 3, created_at: Date.now(), updated_at: Date.now(), problem: 'Very Dangerous Problem', created_by: 'Dr. Zeus', patient_name: 'Parth Joshi' },
-    { case_id: 4, created_at: Date.now(), updated_at: Date.now(), problem: 'Very Dangerous Problem', created_by: 'Dr. Zeus', patient_name: 'Parth Joshi' },
-    { case_id: 5, created_at: Date.now(), updated_at: Date.now(), problem: 'Very Dangerous Problem', created_by: 'Dr. Zeus', patient_name: 'Parth Joshi' },
-    { case_id: 6, created_at: Date.now(), updated_at: Date.now(), problem: 'Very Dangerous Problem', created_by: 'Dr. Zeus', patient_name: 'Parth Joshi' },
-];
+import Filters from './myCasesPageFilters';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 
 const MyCasesPage = () => {
 
     const { user } = useContext(AuthContext);
     const [cases, setCases] = useState([]);
+    const [filteredCases, setFilteredCases] = useState([]);
+    const [openFilters, setOpenFilters] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState(null);
@@ -30,6 +25,7 @@ const MyCasesPage = () => {
         getMyCases(user.token)
             .then((data) => {
                 setCases(data);
+                setFilteredCases(data);
                 setIsLoading(false);
             })
             .catch((err) => {
@@ -53,11 +49,24 @@ const MyCasesPage = () => {
                     >
                         <CreateCaseForm setopen={setOpenModal} />
                     </Modal>
+                    <Stack direction='row' spacing={1} sx={{ marginBottom: 5 }}>
+                        <Typography variant="h4" color="initial">My Cases</Typography>
+                        <IconButton onClick={() => { setOpenFilters((prevValue) => { return prevValue ? false : true; }) }}>
+                            <FilterAltIcon />
+                        </IconButton>
+                    </Stack>
+                    {
+                        openFilters ?
+
+                            <Filters setOpenFilters={setOpenFilters} cases={cases} setFilteredCases={setFilteredCases} />
+                            :
+                            null
+                    }
                     {
                         user.user_type !== 'patient' ?
                             <Button variant="contained"
                                 onClick={() => setOpenModal(true)}
-                                sx={{ marginLeft: "11%", marginTop: "4%" }}>
+                                sx={{ marginLeft: "1%", marginTop: "4%" }}>
                                 Create Case
                             </Button>
                             :
@@ -68,37 +77,15 @@ const MyCasesPage = () => {
                     >
                         {errorMsg}
                     </Typography>
-                    <Grid
-                        container
-                        spacing={2}
-                        sx={{
-                            mt: { xs: 8, md: 10 },
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}
-                    >
-                        {
-                            cases.map(caseObj => (
-                                // fakeCases.map(caseObj => (
-                                <Grid item
-                                    key={caseObj.case_id}
-                                    sx={{
-                                        width: { xs: '90%', md: '75%' },
-                                        borderRadius: '10px',
-                                        backgroundColor: "#fafafa",
-                                        my: 1,
-                                        padding: 2,
-                                    }}>
-                                    <CaseItem caseObj={caseObj} />
-                                </Grid>
-                            ))
-                        }
-                    </Grid>
+
+                    {
+                        filteredCases.map(caseObj => (
+                            <CaseItem key={caseObj.case_id} caseObj={caseObj} />
+                        ))
+                    }
                 </>
             }
-        </div>
+        </div >
     )
 }
 

@@ -1,9 +1,10 @@
 import { useEffect, useState, useContext } from "react"
 import Prescription from "./prescription";
 import Typography from '@mui/material/Typography'
-import { Grid, Skeleton, Button, CircularProgress, Paper, Stack, TableContainer, Table, TableBody, TableCell, TableRow } from "@mui/material";
+import { Button, Paper, Stack, TableContainer, Table, TableBody, TableCell, TableRow, IconButton } from "@mui/material";
 import PrescriptionForm from "./prescriptionForm";
 import AuthContext from "../auth/AuthContext";
+import DownloadIcon from '@mui/icons-material/Download';
 import { useParams } from "react-router-dom";
 import { getCase } from "./apis";
 import CenterCircularProgress from "../common/centerLoader";
@@ -17,28 +18,6 @@ const dateTimeOptions = {
     hour12: false,
     hour: 'numeric',
     minute: 'numeric'
-}
-
-const briefInfoFields = [
-    'id',
-    'created_by',
-    'created_at',
-    'updated_at',
-    'patient_name',
-    'patient_age',
-    'patient_allergy',
-    'problem',
-]
-
-const displayName = {
-    id: "Case Id: ",
-    created_by: "Created By: ",
-    created_at: "Created On: ",
-    updated_at: "Last Modified: ",
-    patient_name: "Patient: ",
-    patient_age: "Patient Age: ",
-    patient_allergy: "Allergy: ",
-    problem: "Problem: "
 }
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -87,7 +66,13 @@ export default function Case(props) {
                     :
                     caseObj ?
                         <>
-                            <Paper elevation={2} sx={{ padding: 5, marginBottom: 5, marginTop: 15 }} >
+                            <Stack direction="row" spacing={2} sx={{ marginTop: 12 }}>
+                                <Typography variant="h3" > CASE </Typography>
+                                <IconButton onClick={() => { }}>
+                                    <DownloadIcon />
+                                </IconButton>
+                            </Stack>
+                            <Paper elevation={2} sx={{ padding: 5, marginBottom: 5, marginTop: 5 }} >
                                 <Typography variant="h6">
                                     Case Details
                                 </Typography>
@@ -96,21 +81,21 @@ export default function Case(props) {
                                         <TableBody>
                                             <StyledTableRow >
                                                 <TableCell component="th" scope="row">
-                                                    Case Id: {caseObj.id}
+                                                    <b>Case Id:</b> &nbsp; {caseObj.id}
                                                 </TableCell>
-                                                <TableCell >Case Opened On: {new Date(caseObj.created_at).toLocaleDateString('en-US', dateTimeOptions)}</TableCell>
+                                                <TableCell ><b>Opened On:</b>&nbsp; {new Date(caseObj.created_at).toLocaleDateString('en-US', dateTimeOptions)}</TableCell>
                                             </StyledTableRow>
 
                                             <StyledTableRow >
                                                 <TableCell component="th" scope="row">
-                                                    Last Modified On: {new Date(caseObj.updated_at).toLocaleDateString('en-US', dateTimeOptions)}
+                                                    <b>Last Modified On:</b>&nbsp; {new Date(caseObj.updated_at).toLocaleDateString('en-US', dateTimeOptions)}
                                                 </TableCell>
-                                                <TableCell >Created By: {caseObj.created_by}</TableCell>
+                                                <TableCell ><b>Created By:</b>&nbsp; {caseObj.created_by}</TableCell>
                                             </StyledTableRow>
 
                                             <StyledTableRow >
                                                 <TableCell component="th" scope="row">
-                                                    Problem: {caseObj.problem}
+                                                    <b>Problem:</b>&nbsp; {caseObj.problem}
                                                 </TableCell>
                                                 <TableCell component="th" scope="row">
                                                 </TableCell>
@@ -131,13 +116,13 @@ export default function Case(props) {
                                         <TableBody>
                                             <StyledTableRow >
                                                 <TableCell component="th" scope="row">
-                                                    Name: {caseObj.patient_name}
+                                                    <b>Name:</b>&nbsp; {caseObj.patient_name}
                                                 </TableCell>
-                                                <TableCell >Age: {caseObj.patient_age}</TableCell>
+                                                <TableCell ><b>Age:</b>&nbsp; {caseObj.patient_age}</TableCell>
                                             </StyledTableRow>
                                             <StyledTableRow >
                                                 <TableCell component="th" scope="row">
-                                                    Allergy: {caseObj.patient_allergy}
+                                                    <b>Allergy:</b>&nbsp; {caseObj.patient_allergy}
                                                 </TableCell>
                                                 <TableCell component="th" scope="row">
                                                 </TableCell>
