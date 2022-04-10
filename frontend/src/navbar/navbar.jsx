@@ -6,16 +6,28 @@ import Typography from "@mui/material/Typography";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../auth/AuthContext";
 import { Button, IconButton, Menu, MenuItem } from "@mui/material";
-import MenuIcon from '@mui/icons-material/Menu';
+import MenuIcon from "@mui/icons-material/Menu";
 import { Box } from "@mui/system";
 import { authLogout } from "../auth/apis";
 
 const links = [
-  { children: 'My Cases', to: '/myCases' },
-  { children: 'Upcoming Appointments', to: '/appointments' },
-]
+  { children: "My Cases", to: "/myCases" },
+  { children: "Upcoming Appointments", to: "/appointments" },
+  { children: "Sign Up", to: "/signup" },
+  { children: "Home", to: "/" },
+  { children: "Case", to: "/case" },
+  { children: "Profile", to: "/profile" },
+  { children: "Profile2", to: "/profile2" },
+];
 
-const navLinkStyle = { m: 2, color: 'rgb(6 69 63)', display: 'block', textTransform: 'none', fontSize: '1.01em', '&.active': { color: 'red' } }
+const navLinkStyle = {
+  m: 2,
+  color: "white",
+  display: "block",
+  textTransform: "none",
+  fontSize: "1.01em",
+  "&.active": { color: "red" },
+};
 
 export default function NavBar() {
   const { setUser, user } = React.useContext(AuthContext);
@@ -51,7 +63,7 @@ export default function NavBar() {
           LOGO
         </Typography>
 
-        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+        <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
           <IconButton
             size="large"
             aria-label="account of current user"
@@ -66,18 +78,18 @@ export default function NavBar() {
             id="menu-appbar"
             anchorEl={anchorElNav}
             anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
+              vertical: "bottom",
+              horizontal: "left",
             }}
             keepMounted
             transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
+              vertical: "top",
+              horizontal: "left",
             }}
             open={Boolean(anchorElNav)}
             onClose={handleCloseNavMenu}
             sx={{
-              display: { xs: 'block', md: 'none' },
+              display: { xs: "block", md: "none" },
             }}
           >
             {links.map((link) => (
@@ -153,6 +165,6 @@ export default function NavBar() {
           }
         </Box>
       </Toolbar>
-    </AppBar >
+    </AppBar>
   );
 }
