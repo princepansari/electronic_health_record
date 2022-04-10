@@ -12,25 +12,25 @@ import {
     TextField,
 } from "@mui/material";
 import Button from "@mui/material/Button";
-import {
-    Typography,
-} from "@mui/material";
+import { Typography } from "@mui/material";
 import TimePicker from "@mui/lab/TimePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import DateAdapter from "@mui/lab/AdapterMoment";
 import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from "lodash";
 import { authSignup } from "./apis";
 import { useNavigate } from "react-router-dom";
-import CenterCircularProgress from './../common/centerLoader'
+import CenterCircularProgress from "./../common/centerLoader";
 
 const iitbhilaiEmailPattern = /@iitbhilai.ac.in$/;
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
 const phoneRegExp = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
-const dobRegex = /^(?:0[1-9]|[12]\d|3[01])([\/.-])(?:0[1-9]|1[012])\1(?:19|20)\d\d$/
-const startTimeRegex = /^(1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm])$/
+const dobRegex =
+    /^(?:0[1-9]|[12]\d|3[01])([\/.-])(?:0[1-9]|1[012])\1(?:19|20)\d\d$/;
+const startTimeRegex = /^(1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm])$/;
 
 const schema = yup.object({
     guardian_email: yup
@@ -46,11 +46,20 @@ const schema = yup.object({
         .test(
             "test-atleast-one-selected",
             "Should select atleast one day",
-            (schedule) => schedule === undefined || Object.values(schedule?.days).filter(Boolean).length > 0
+            (schedule) =>
+                schedule === undefined ||
+                Object.values(schedule?.days).filter(Boolean).length > 0
         ),
-    dob: yup.string().matches(dobRegex, "Enter the date in the format of DD/MM/YYYY"),
+    dob: yup
+        .string()
+        .matches(dobRegex, "Enter the date in the format of DD/MM/YYYY"),
     slot_duration: yup.number().min(1, "Duration should be atleast 1 minute"),
-    password: yup.string().matches(passwordRegex, "Password should contain Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"),
+    password: yup
+        .string()
+        .matches(
+            passwordRegex,
+            "Password should contain Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"
+        ),
 });
 
 export default function Signup() {
@@ -106,81 +115,56 @@ export default function Signup() {
     }, [watchPersonalEmail]);
 
     const preprocessData = (data) => {
-        console.log(data)
-        data = cloneDeep(data)
+        console.log(data);
+        data = cloneDeep(data);
         if ("schedule" in data) {
-            data.schedule.start_time = data.schedule.start_time.format("hh:mm a").toString();
-            data.schedule.end_time = data.schedule.end_time.format("hh:mm a").toString();
+            data.schedule.start_time = data.schedule.start_time
+                .format("hh:mm a")
+                .toString();
+            data.schedule.end_time = data.schedule.end_time
+                .format("hh:mm a")
+                .toString();
         }
         for (let key in data) {
-            if (data[key] === null || data[key] === undefined)
-                data.key = ""
+            if (data[key] === null || data[key] === undefined) data.key = "";
         }
-        return data
-    }
+        return data;
+    };
 
-    const [signupSuccessMsg, setSignupSuccessMsg] = useState('');
+    const [signupSuccessMsg, setSignupSuccessMsg] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
     const handleSubmit = (data) => {
-        const userObj = preprocessData(data)
-        console.log(userObj)
-        authSignup(userObj).then((message) => {
-            setSignupSuccessMsg(message);
-            navigate("/otpVerification", { state: { email: data.email, guardian_email: data.guardian_email } });
-            return;
-        }).catch((err) => {
-            console.log(err?.response?.data?.message);
-        })
+        const userObj = preprocessData(data);
+        console.log(userObj);
+        authSignup(userObj)
+            .then((message) => {
+                setSignupSuccessMsg(message);
+                navigate("/otpVerification", {
+                    state: { email: data.email, guardian_email: data.guardian_email },
+                });
+                return;
+            })
+            .catch((err) => {
+                console.log(err?.response?.data?.message);
+            });
         setIsLoading(true);
-    }
-
+    };
 
     return (
         <>
-            <Snackbar
-                open={signupSuccessMsg !== ''}
-                autoHideDuration={6000}>
-                <Alert severity="success" sx={{ width: '100%' }}>
+            <Snackbar open={signupSuccessMsg !== ""} autoHideDuration={6000}>
+                <Alert severity="success" sx={{ width: "100%" }}>
                     {signupSuccessMsg}
                 </Alert>
             </Snackbar>
-            {isLoading ?
+            {isLoading ? (
                 <CenterCircularProgress />
-                :
+            ) : (
                 <form onSubmit={RHFhandleSubmit(handleSubmit)}>
                     <Stack spacing={2}>
                         <Typography variant="h3">Sign Up</Typography>
-                        <Controller
-                            rules={{ required: true }}
-                            control={control}
-                            name="user_type"
-                            render={({ field }) => (
-                                <RadioGroup
-                                    style={{ display: "inline" }}
-                                    label="User Type"
-                                    {...field}
-                                >
-                                    <FormControlLabel
-                                        value="patient"
-                                        control={<Radio />}
-                                        label="Patient"
-                                    />
-                                    <FormControlLabel
-                                        value="doctor"
-                                        control={<Radio />}
-                                        label="Doctor"
-                                    />
-                                    <FormControlLabel
-                                        value="nurse"
-                                        control={<Radio />}
-                                        label="Nurse"
-                                    />
-                                </RadioGroup>
-                            )}
-                        />
-
                         <Controller
                             render={({ field }) => <TextField {...field} variant='filled' required label="Name"
                                 InputProps={{
@@ -422,7 +406,7 @@ export default function Signup() {
                         {/* {console.log(errors)} */}
                     </Stack>
                 </form>
-            }
+            )}
         </>
     );
 }
