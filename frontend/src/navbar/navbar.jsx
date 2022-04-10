@@ -6,19 +6,28 @@ import Typography from "@mui/material/Typography";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../auth/AuthContext";
 import { Button, IconButton, Menu, MenuItem } from "@mui/material";
-import MenuIcon from '@mui/icons-material/Menu';
+import MenuIcon from "@mui/icons-material/Menu";
 import { Box } from "@mui/system";
 import { authLogout } from "../auth/apis";
 
 const links = [
-  { children: 'My Cases', to: '/myCases' },
-  { children: 'Upcoming Appointments', to: '/appointments' },
-  { children: 'Sign Up', to: '/signup' },
-  { children: 'Home', to: '/' },
-  { children: 'Case', to: '/case' },
-]
+  { children: "My Cases", to: "/myCases" },
+  { children: "Upcoming Appointments", to: "/appointments" },
+  { children: "Sign Up", to: "/signup" },
+  { children: "Home", to: "/" },
+  { children: "Case", to: "/case" },
+  { children: "Profile", to: "/profile" },
+  { children: "Profile2", to: "/profile2" },
+];
 
-const navLinkStyle = { m: 2, color: 'white', display: 'block', textTransform: 'none', fontSize: '1.01em', '&.active': { color: 'red' } }
+const navLinkStyle = {
+  m: 2,
+  color: "white",
+  display: "block",
+  textTransform: "none",
+  fontSize: "1.01em",
+  "&.active": { color: "red" },
+};
 
 export default function NavBar() {
   const { setUser, user } = React.useContext(AuthContext);
@@ -39,20 +48,21 @@ export default function NavBar() {
   };
 
   return (
-    <AppBar
-      position="fixed"
-      elevation={0}
-    >
+    <AppBar position="fixed" elevation={0}>
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{
-          marginRight: 15,
-          display: { xs: 'none', md: 'flex' },
-          fontWeight: 'bold'
-        }} >
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{
+            marginRight: 15,
+            display: { xs: "none", md: "flex" },
+            fontWeight: "bold",
+          }}
+        >
           LOGO
         </Typography>
 
-        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+        <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
           <IconButton
             size="large"
             aria-label="account of current user"
@@ -67,18 +77,18 @@ export default function NavBar() {
             id="menu-appbar"
             anchorEl={anchorElNav}
             anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
+              vertical: "bottom",
+              horizontal: "left",
             }}
             keepMounted
             transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
+              vertical: "top",
+              horizontal: "left",
             }}
             open={Boolean(anchorElNav)}
             onClose={handleCloseNavMenu}
             sx={{
-              display: { xs: 'block', md: 'none' },
+              display: { xs: "block", md: "none" },
             }}
           >
             {links.map((link) => (
@@ -93,20 +103,17 @@ export default function NavBar() {
           variant="h6"
           noWrap
           component="div"
-          sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, fontWeight: 'bold' }}
+          sx={{
+            flexGrow: 1,
+            display: { xs: "flex", md: "none" },
+            fontWeight: "bold",
+          }}
         >
           LOGO
         </Typography>
 
-        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-          {user ?
-            <Button
-              sx={navLinkStyle}>
-              Hi, {user.name}
-            </Button>
-            :
-            null
-          }
+        <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          {user ? <Button sx={navLinkStyle}>Hi, {user.name}</Button> : null}
           {links.map((link) => (
             <Button
               key={link.to}
@@ -115,28 +122,25 @@ export default function NavBar() {
               {...link}
             />
           ))}
-          {
-            user ?
-              <Button
-                onClick={() => {
-                  authLogout(setUser);
-                  console.log("in logout")
-                  navigate('/login');
-                  return;
-                }}
-                sx={navLinkStyle}>
-                Logout
-              </Button>
-              :
-              <Button
-                component={Link}
-                to='/login'
-                sx={navLinkStyle}>
-                Login
-              </Button>
-          }
+          {user ? (
+            <Button
+              onClick={() => {
+                authLogout(setUser);
+                console.log("in logout");
+                navigate("/login");
+                return;
+              }}
+              sx={navLinkStyle}
+            >
+              Logout
+            </Button>
+          ) : (
+            <Button component={Link} to="/login" sx={navLinkStyle}>
+              Login
+            </Button>
+          )}
         </Box>
       </Toolbar>
-    </AppBar >
+    </AppBar>
   );
 }

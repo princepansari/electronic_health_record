@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import {
   Alert,
+  Box,
   Checkbox,
-  CircularProgress,
   FormControlLabel,
   FormLabel,
   Radio,
@@ -20,9 +20,9 @@ import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { cloneDeep } from "lodash";
-import { authSignup } from "./apis";
+import { authSignup } from "../auth/apis";
 import { useNavigate } from "react-router-dom";
-import CenterCircularProgress from "./../common/centerLoader";
+import CenterCircularProgress from "../common/centerLoader";
 
 const iitbhilaiEmailPattern = /@iitbhilai.ac.in$/;
 const passwordRegex =
@@ -33,6 +33,7 @@ const dobRegex =
 const startTimeRegex = /^(1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm])$/;
 
 const schema = yup.object({
+  email: yup.string().email(),
   guardian_email: yup
     .string()
     .email()
@@ -54,15 +55,24 @@ const schema = yup.object({
     .string()
     .matches(dobRegex, "Enter the date in the format of DD/MM/YYYY"),
   slot_duration: yup.number().min(1, "Duration should be atleast 1 minute"),
-  password: yup
-    .string()
-    .matches(
-      passwordRegex,
-      "Password should contain Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"
-    ),
+  //   password: yup
+  //     .string()
+  //     .matches(
+  //       passwordRegex,
+  //       "Password should contain Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"
+  //     ),
 });
 
-export default function Signup() {
+const buttonAreaStyle = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  py: 2,
+};
+
+export default function ProfilePage2() {
+  const [isEditing, setIsEditing] = useState(false);
+
   const {
     control,
     handleSubmit: RHFhandleSubmit,
@@ -70,6 +80,7 @@ export default function Signup() {
     register,
     unregister,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -80,18 +91,19 @@ export default function Signup() {
       dob: "",
       phone: "",
       allergy: "",
-      password: "",
     },
     resolver: yupResolver(schema),
   });
 
-  const watchUserType = watch("user_type");
+  const [userType, setUserType] = useState("doctor");
+  //   const userType = watch("user_type");
   const watchPersonalEmail = watch("email");
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
 
   useEffect(() => {
-    if (watchUserType !== "patient") {
+    if (userType !== "patient") {
+      console.log("in if registering");
       unregister("allergy");
       register("schedule.start_time");
       register("schedule.end_time");
@@ -104,9 +116,9 @@ export default function Signup() {
       unregister("slot_duration");
       setStartTime(null);
       setEndTime(null);
-      if (watchUserType !== "patient") unregister("allergy");
+      if (userType !== "patient") unregister("allergy");
     }
-  }, [register, watchUserType]);
+  }, [register, userType]);
 
   useEffect(() => {
     if (watchPersonalEmail.match(iitbhilaiEmailPattern) !== null) {
@@ -135,22 +147,76 @@ export default function Signup() {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const handleSubmit = (data) => {
-    const userObj = preprocessData(data);
-    console.log(userObj);
-    authSignup(userObj)
-      .then((message) => {
-        setSignupSuccessMsg(message);
-        navigate("/otpVerification", {
-          state: { email: data.email, guardian_email: data.guardian_email },
-        });
-        return;
+  //   const handleSubmit = (data) => {
+  //     const userObj = preprocessData(data);
+  //     console.log(userObj);
+  //     authSignup(userObj)
+  //       .then((message) => {
+  //         setSignupSuccessMsg(message);
+  //         navigate("/otpVerification", {
+  //           state: { email: data.email, guardian_email: data.guardian_email },
+  //         });
+  //         return;
+  //       })
+  //       .catch((err) => {
+  //         console.log(err?.response?.data?.message);
+  //       });
+  //     setIsLoading(true);
+  //   };
+
+  const initValues = () => {
+    // TODO : fetch data
+
+    const profileValues = JSON.parse(
+      JSON.stringify({
+        user_type: userType,
+        name: "Lavish",
+        email: "lavishgautam2206@gmail.com",
+        guardian_email: "lavishg@iitbhilai.ac.in",
+        dob: "01/01/2022",
+        phone: "0123456789",
+        allergy: "Nothing",
+        schedule: {
+          days: {
+            sunday: true,
+            monday: false,
+            tuesday: true,
+            wednesday: true,
+            thursday: false,
+            friday: true,
+            saturday: false,
+          },
+          start_time: "9:00 AM",
+          end_time: "11:00 AM",
+          slot_duration: 10,
+        },
       })
-      .catch((err) => {
-        console.log(err?.response?.data?.message);
-      });
-    setIsLoading(true);
+    );
+
+    reset(profileValues);
   };
+
+  const handleSubmit = (data) => {
+    console.log("rnning");
+    if (!isEditing) setIsEditing(true);
+    else {
+      console.log(data);
+      // TODO : update data
+      initValues();
+      setIsEditing(false);
+    }
+  };
+
+  const handleCancel = () => {
+    initValues();
+    setIsEditing(false);
+  };
+
+  useEffect(() => {
+    initValues();
+
+    return () => {};
+  }, []);
 
   return (
     <>
@@ -164,7 +230,9 @@ export default function Signup() {
       ) : (
         <form onSubmit={RHFhandleSubmit(handleSubmit)}>
           <Stack spacing={2}>
-            <Typography variant="h3">Sign Up</Typography>
+            <Typography variant="h3" textAlign="center">
+              Profile
+            </Typography>
             <Controller
               rules={{ required: true }}
               control={control}
@@ -196,7 +264,12 @@ export default function Signup() {
 
             <Controller
               render={({ field }) => (
-                <TextField {...field} required label="Name" />
+                <>
+                  <Typography variant="h6" component="div">
+                    Name
+                  </Typography>
+                  <TextField {...field} required disabled={!isEditing} />
+                </>
               )}
               name="name"
               control={control}
@@ -204,7 +277,18 @@ export default function Signup() {
 
             <Controller
               render={({ field }) => (
-                <TextField {...field} required label="Email Address" />
+                <>
+                  <Typography variant="h6" component="div">
+                    Email Address
+                  </Typography>
+                  <TextField
+                    {...field}
+                    required
+                    disabled={!isEditing}
+                    error={errors?.email !== undefined}
+                    helperText={errors?.email?.message}
+                  />
+                </>
               )}
               name="email"
               control={control}
@@ -214,13 +298,18 @@ export default function Signup() {
                 required
                 defaultValue=""
                 render={({ field }) => (
-                  <TextField
-                    {...field}
-                    required
-                    label="Guardian Email Address"
-                    error={errors?.guardian_email !== undefined}
-                    helperText={errors?.guardian_email?.message}
-                  />
+                  <>
+                    <Typography variant="h6" component="div">
+                      Guardian Email Address
+                    </Typography>
+                    <TextField
+                      {...field}
+                      required
+                      disabled={!isEditing}
+                      error={errors?.guardian_email !== undefined}
+                      helperText={errors?.guardian_email?.message}
+                    />
+                  </>
                 )}
                 name="guardian_email"
                 control={control}
@@ -229,27 +318,18 @@ export default function Signup() {
 
             <Controller
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  required
-                  label="Password"
-                  error={errors?.password !== undefined}
-                  helperText={errors?.password?.message}
-                />
-              )}
-              name="password"
-              control={control}
-            />
-
-            <Controller
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  required
-                  label="DOB: DD/MM/YYYY"
-                  error={errors?.dob !== undefined}
-                  helperText={errors?.dob?.message}
-                />
+                <>
+                  <Typography variant="h6" component="div">
+                    Date of Birth
+                  </Typography>
+                  <TextField
+                    {...field}
+                    required
+                    disabled={!isEditing}
+                    error={errors?.dob !== undefined}
+                    helperText={errors?.dob?.message}
+                  />
+                </>
               )}
               name="dob"
               control={control}
@@ -257,22 +337,32 @@ export default function Signup() {
 
             <Controller
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  required
-                  label="Phone Number"
-                  error={errors?.phone !== undefined}
-                  helperText={errors?.phone?.message}
-                />
+                <>
+                  <Typography variant="h6" component="div">
+                    Contact Number
+                  </Typography>
+                  <TextField
+                    {...field}
+                    required
+                    disabled={!isEditing}
+                    error={errors?.phone !== undefined}
+                    helperText={errors?.phone?.message}
+                  />
+                </>
               )}
               name="phone"
               control={control}
             />
 
-            {watchUserType === "patient" ? (
+            {userType === "patient" ? (
               <Controller
                 render={({ field }) => (
-                  <TextField {...field} label="Allergies" />
+                  <>
+                    <Typography variant="h6" component="div">
+                      Allergies
+                    </Typography>
+                    <TextField {...field} required disabled={!isEditing} />
+                  </>
                 )}
                 name="allergy"
                 control={control}
@@ -281,12 +371,12 @@ export default function Signup() {
               <>
                 <FormLabel>Schedule</FormLabel>
                 <Controller
-                  defaultValue={false}
+                  // defaultValue={false}
                   name="schedule.days.sunday"
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      control={<Checkbox {...field} />}
+                      control={<Checkbox {...field} disabled={!isEditing} />}
                       label="Sunday"
                     />
                   )}
@@ -297,7 +387,7 @@ export default function Signup() {
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      control={<Checkbox {...field} />}
+                      control={<Checkbox {...field} disabled={!isEditing} />}
                       label="Monday"
                     />
                   )}
@@ -308,7 +398,7 @@ export default function Signup() {
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      control={<Checkbox {...field} />}
+                      control={<Checkbox {...field} disabled={!isEditing} />}
                       label="Tuesday"
                     />
                   )}
@@ -319,7 +409,7 @@ export default function Signup() {
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      control={<Checkbox {...field} />}
+                      control={<Checkbox {...field} disabled={!isEditing} />}
                       label="Wednesday"
                     />
                   )}
@@ -331,7 +421,7 @@ export default function Signup() {
                   StartTime
                   render={({ field }) => (
                     <FormControlLabel
-                      control={<Checkbox {...field} />}
+                      control={<Checkbox {...field} disabled={!isEditing} />}
                       label="Thursday"
                     />
                   )}
@@ -342,7 +432,7 @@ export default function Signup() {
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      control={<Checkbox {...field} />}
+                      control={<Checkbox {...field} disabled={!isEditing} />}
                       label="Friday"
                     />
                   )}
@@ -353,7 +443,7 @@ export default function Signup() {
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      control={<Checkbox {...field} />}
+                      control={<Checkbox {...field} disabled={!isEditing} />}
                       label="Saturday"
                     />
                   )}
@@ -363,8 +453,8 @@ export default function Signup() {
                 </Typography>
                 <LocalizationProvider dateAdapter={DateAdapter}>
                   <TimePicker
-                    label="Start Time"
                     value={startTime || ""}
+                    disabled={!isEditing}
                     onChange={(startTime) => {
                       setValue("schedule.start_time", startTime || "", {
                         shouldValidate: true,
@@ -373,17 +463,22 @@ export default function Signup() {
                       setStartTime(startTime);
                     }}
                     renderInput={(params) => (
-                      <TextField
-                        required
-                        {...params}
-                        error={errors?.schedule?.start_time}
-                        helperText={errors?.schedule?.start_time?.message}
-                      />
+                      <>
+                        <Typography variant="h6" component="div">
+                          Slot Starting Time
+                        </Typography>
+                        <TextField
+                          required
+                          {...params}
+                          error={errors?.schedule?.start_time}
+                          helperText={errors?.schedule?.start_time?.message}
+                        />
+                      </>
                     )}
                   />
                   <TimePicker
-                    label="End Time"
                     value={endTime || ""}
+                    disabled={!isEditing}
                     onChange={(endTime) => {
                       setValue("schedule.end_time", endTime || "", {
                         shouldValidate: true,
@@ -392,12 +487,17 @@ export default function Signup() {
                       setEndTime(endTime);
                     }}
                     renderInput={(params) => (
-                      <TextField
-                        required
-                        {...params}
-                        error={errors?.schedule?.end_time}
-                        helperText={errors?.schedule?.end_time?.message}
-                      />
+                      <>
+                        <Typography variant="h6" component="div">
+                          Slot Ending Time
+                        </Typography>
+                        <TextField
+                          required
+                          {...params}
+                          error={errors?.schedule?.end_time}
+                          helperText={errors?.schedule?.end_time?.message}
+                        />
+                      </>
                     )}
                   />
                 </LocalizationProvider>
@@ -405,14 +505,19 @@ export default function Signup() {
                 <Controller
                   defaultValue={10}
                   render={({ field }) => (
-                    <TextField
-                      {...field}
-                      required
-                      type="number"
-                      label="Each Slot Duration(mins)"
-                      error={errors?.slot_duration !== undefined}
-                      helperText={errors?.slot_duration?.message}
-                    />
+                    <>
+                      <Typography variant="h6" component="div">
+                        Each Slot Duration(in minutes)
+                      </Typography>
+                      <TextField
+                        {...field}
+                        required
+                        disabled={!isEditing}
+                        type="number"
+                        error={errors?.slot_duration !== undefined}
+                        helperText={errors?.slot_duration?.message}
+                      />
+                    </>
                   )}
                   name="slot_duration"
                   control={control}
@@ -420,10 +525,28 @@ export default function Signup() {
               </>
             )}
 
-            <Button type="submit" variant="contained" color="primary">
-              Submit
-            </Button>
-            {/* {console.log(errors)} */}
+            <Box sx={buttonAreaStyle}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+              >
+                {isEditing ? "Save" : "Edit"}
+              </Button>
+              {isEditing && (
+                <Button
+                  variant="outlined"
+                  color="error"
+                  size="large"
+                  onClick={handleCancel}
+                  sx={{ ml: 5 }}
+                >
+                  Cancel
+                </Button>
+              )}
+            </Box>
+            {console.log(errors)}
           </Stack>
         </form>
       )}

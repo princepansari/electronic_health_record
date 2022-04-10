@@ -94,7 +94,6 @@ const SignIn = (props) => {
                             value={email}
                             onChange={(e) => setEmail(e.currentTarget.value)}
                             autoComplete="email"
-                            autoFocus
                         />
 
                         <TextField
@@ -108,7 +107,6 @@ const SignIn = (props) => {
                             value={password}
                             onChange={(e) => setPassword(e.currentTarget.value)}
                             autoComplete="current-password"
-                            autoFocus
                         />
 
                         <Button
