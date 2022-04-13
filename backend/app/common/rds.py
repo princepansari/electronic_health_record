@@ -8,6 +8,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app.common.config import Config
+from app.common.utilities import Utils
 
 
 class RDS:
@@ -148,6 +149,7 @@ class RDS:
         patient = self.get_user_by_user_id(user_id=case['patient_id'])
         case['patient_name'] = patient['name']
         case['patient_allergy'] = patient['allergy']
+        case['patient_age'] = Utils.calculate_age(patient['dob'])
         case['created_by'] = self.get_user_by_user_id(user_id=case['created_by_id'])['name']
         return case
 
@@ -164,6 +166,7 @@ class RDS:
         patient = self.get_user_by_user_id(user_id=case['patient_id'])
         case['patient_name'] = patient['name']
         case['patient_allergy'] = patient['allergy']
+        case['patient_age'] = Utils.calculate_age(patient['dob'])
         case['created_by'] = self.get_user_by_user_id(user_id=case['created_by_id'])['name']
         return True, case
 

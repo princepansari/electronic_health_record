@@ -152,273 +152,240 @@ export default function Signup() {
     setIsLoading(true);
   };
 
-  return (
-    <>
-      <Snackbar open={signupSuccessMsg !== ""} autoHideDuration={6000}>
-        <Alert severity="success" sx={{ width: "100%" }}>
-          {signupSuccessMsg}
-        </Alert>
-      </Snackbar>
-      {isLoading ? (
-        <CenterCircularProgress />
-      ) : (
-        <form onSubmit={RHFhandleSubmit(handleSubmit)}>
-          <Stack spacing={2}>
-            <Typography variant="h3">Sign Up</Typography>
-            <Controller
-              rules={{ required: true }}
-              control={control}
-              name="user_type"
-              render={({ field }) => (
-                <RadioGroup
-                  style={{ display: "inline" }}
-                  label="User Type"
-                  {...field}
-                >
-                  <FormControlLabel
-                    value="patient"
-                    control={<Radio />}
-                    label="Patient"
-                  />
-                  <FormControlLabel
-                    value="doctor"
-                    control={<Radio />}
-                    label="Doctor"
-                  />
-                  <FormControlLabel
-                    value="nurse"
-                    control={<Radio />}
-                    label="Nurse"
-                  />
-                </RadioGroup>
-              )}
-            />
+                        <Controller
+                            render={({ field }) => <TextField {...field} variant='filled' required label="Name"
+                                InputProps={{
+                                    disableUnderline: true,
+                                }}
+                            />}
+                            name="name"
+                            control={control}
+                        />
 
-            <Controller
-              render={({ field }) => (
-                <TextField {...field} required label="Name" />
-              )}
-              name="name"
-              control={control}
-            />
+                        <Controller
+                            render={({ field }) => (
+                                <TextField {...field} required variant='filled' label="Email Address"
+                                    InputProps={{
+                                        disableUnderline: true,
+                                    }}
+                                />
+                            )}
+                            name="email"
+                            control={control}
+                        />
+                        {watchPersonalEmail.match(iitbhilaiEmailPattern) === null ? (
+                            <Controller
+                                required
+                                defaultValue=""
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        required
+                                        variant='filled'
+                                        label="Guardian Email Address"
+                                        error={errors?.guardian_email !== undefined}
+                                        helperText={errors?.guardian_email?.message}
+                                        InputProps={{
+                                            disableUnderline: true,
+                                        }} />
+                                )}
+                                name="guardian_email"
+                                control={control}
+                            />
+                        ) : null}
 
-            <Controller
-              render={({ field }) => (
-                <TextField {...field} required label="Email Address" />
-              )}
-              name="email"
-              control={control}
-            />
-            {watchPersonalEmail.match(iitbhilaiEmailPattern) === null ? (
-              <Controller
-                required
-                defaultValue=""
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    required
-                    label="Guardian Email Address"
-                    error={errors?.guardian_email !== undefined}
-                    helperText={errors?.guardian_email?.message}
-                  />
-                )}
-                name="guardian_email"
-                control={control}
-              />
-            ) : null}
+                        <Controller
+                            render={({ field }) => (
+                                <TextField {...field} variant='filled' required label="Password"
+                                    error={errors?.password !== undefined}
+                                    helperText={errors?.password?.message}
+                                    InputProps={{
+                                        disableUnderline: true,
+                                    }} />
+                            )}
+                            name="password"
+                            control={control}
+                        />
 
-            <Controller
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  required
-                  label="Password"
-                  error={errors?.password !== undefined}
-                  helperText={errors?.password?.message}
-                />
-              )}
-              name="password"
-              control={control}
-            />
+                        <Controller
+                            render={({ field }) => (
+                                <TextField {...field} variant='filled' required label="DOB: DD/MM/YYYY"
+                                    error={errors?.dob !== undefined}
+                                    helperText={errors?.dob?.message}
+                                    InputProps={{
+                                        disableUnderline: true,
+                                    }} />
+                            )}
+                            name="dob"
+                            control={control}
+                        />
 
-            <Controller
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  required
-                  label="DOB: DD/MM/YYYY"
-                  error={errors?.dob !== undefined}
-                  helperText={errors?.dob?.message}
-                />
-              )}
-              name="dob"
-              control={control}
-            />
+                        <Controller
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    variant='filled'
+                                    required
+                                    label="Phone Number"
+                                    error={errors?.phone !== undefined}
+                                    helperText={errors?.phone?.message}
+                                    InputProps={{
+                                        disableUnderline: true,
+                                    }}
+                                />
+                            )}
+                            name="phone"
+                            control={control}
+                        />
 
-            <Controller
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  required
-                  label="Phone Number"
-                  error={errors?.phone !== undefined}
-                  helperText={errors?.phone?.message}
-                />
-              )}
-              name="phone"
-              control={control}
-            />
+                        {watchUserType === "patient" ?
+                            <Controller
+                                render={({ field }) => <TextField {...field}
+                                    variant='filled'
+                                    label="Allergies"
+                                    InputProps={{
+                                        disableUnderline: true,
+                                    }} />}
+                                name="allergy"
+                                control={control}
+                            />
 
-            {watchUserType === "patient" ? (
-              <Controller
-                render={({ field }) => (
-                  <TextField {...field} label="Allergies" />
-                )}
-                name="allergy"
-                control={control}
-              />
-            ) : (
-              <>
-                <FormLabel>Schedule</FormLabel>
-                <Controller
-                  defaultValue={false}
-                  name="schedule.days.sunday"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControlLabel
-                      control={<Checkbox {...field} />}
-                      label="Sunday"
-                    />
-                  )}
-                />
-                <Controller
-                  defaultValue={false}
-                  name="schedule.days.monday"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControlLabel
-                      control={<Checkbox {...field} />}
-                      label="Monday"
-                    />
-                  )}
-                />
-                <Controller
-                  defaultValue={false}
-                  name="schedule.days.tuesday"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControlLabel
-                      control={<Checkbox {...field} />}
-                      label="Tuesday"
-                    />
-                  )}
-                />
-                <Controller
-                  defaultValue={false}
-                  name="schedule.days.wednesday"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControlLabel
-                      control={<Checkbox {...field} />}
-                      label="Wednesday"
-                    />
-                  )}
-                />
-                <Controller
-                  defaultValue={false}
-                  name="schedule.days.thursday"
-                  control={control}
-                  StartTime
-                  render={({ field }) => (
-                    <FormControlLabel
-                      control={<Checkbox {...field} />}
-                      label="Thursday"
-                    />
-                  )}
-                />
-                <Controller
-                  defaultValue={false}
-                  name="schedule.days.friday"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControlLabel
-                      control={<Checkbox {...field} />}
-                      label="Friday"
-                    />
-                  )}
-                />
-                <Controller
-                  defaultValue={false}
-                  name="schedule.days.saturday"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControlLabel
-                      control={<Checkbox {...field} />}
-                      label="Saturday"
-                    />
-                  )}
-                />
-                <Typography variant="body1" component="span" color="error">
-                  {errors?.schedule?.message}
-                </Typography>
-                <LocalizationProvider dateAdapter={DateAdapter}>
-                  <TimePicker
-                    label="Start Time"
-                    value={startTime || ""}
-                    onChange={(startTime) => {
-                      setValue("schedule.start_time", startTime || "", {
-                        shouldValidate: true,
-                        shouldDirty: true,
-                      });
-                      setStartTime(startTime);
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        required
-                        {...params}
-                        error={errors?.schedule?.start_time}
-                        helperText={errors?.schedule?.start_time?.message}
-                      />
-                    )}
-                  />
-                  <TimePicker
-                    label="End Time"
-                    value={endTime || ""}
-                    onChange={(endTime) => {
-                      setValue("schedule.end_time", endTime || "", {
-                        shouldValidate: true,
-                        shouldDirty: true,
-                      });
-                      setEndTime(endTime);
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        required
-                        {...params}
-                        error={errors?.schedule?.end_time}
-                        helperText={errors?.schedule?.end_time?.message}
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
+                            :
+                            <>
+                                <FormLabel>Schedule</FormLabel>
+                                <Controller
+                                    defaultValue={false}
+                                    name="schedule.days.sunday"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormControlLabel
+                                            control={<Checkbox {...field} />}
+                                            label="Sunday"
+                                        />
+                                    )}
+                                />
+                                <Controller
+                                    defaultValue={false}
+                                    name="schedule.days.monday"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormControlLabel
+                                            control={<Checkbox {...field} />}
+                                            label="Monday"
+                                        />
+                                    )}
+                                />
+                                <Controller
+                                    defaultValue={false}
+                                    name="schedule.days.tuesday"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormControlLabel
+                                            control={<Checkbox {...field} />}
+                                            label="Tuesday"
+                                        />
+                                    )}
+                                />
+                                <Controller
+                                    defaultValue={false}
+                                    name="schedule.days.wednesday"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormControlLabel
+                                            control={<Checkbox {...field} />}
+                                            label="Wednesday"
+                                        />
+                                    )}
+                                />
+                                <Controller
+                                    defaultValue={false}
+                                    name="schedule.days.thursday"
+                                    control={control} StartTime
+                                    render={({ field }) => (
+                                        <FormControlLabel
+                                            control={<Checkbox {...field} />}
+                                            label="Thursday"
+                                        />
+                                    )}
+                                />
+                                <Controller
+                                    defaultValue={false}
+                                    name="schedule.days.friday"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormControlLabel
+                                            control={<Checkbox {...field} />}
+                                            label="Friday"
+                                        />
+                                    )}
+                                />
+                                <Controller
+                                    defaultValue={false}
+                                    name="schedule.days.saturday"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormControlLabel
+                                            control={<Checkbox {...field} />}
+                                            label="Saturday"
+                                        />
+                                    )}
+                                />
+                                <Typography variant="body1" component="span" color="error">
+                                    {errors?.schedule?.message}
+                                </Typography>
+                                <LocalizationProvider dateAdapter={DateAdapter}>
+                                    <TimePicker
+                                        label="Start Time"
+                                        value={startTime || ""}
+                                        onChange={(startTime) => {
+                                            setValue("schedule.start_time", startTime || "", {
+                                                shouldValidate: true,
+                                                shouldDirty: true,
+                                            });
+                                            setStartTime(startTime);
+                                        }}
+                                        renderInput={(params) => <TextField variant='filled' required {...params}
+                                            error={errors?.schedule?.start_time}
+                                            helperText={errors?.schedule?.start_time?.message}
+                                        />}
+                                    />
+                                    <TimePicker
+                                        label="End Time"
+                                        value={endTime || ""}
+                                        onChange={(endTime) => {
+                                            setValue("schedule.end_time", endTime || "", {
+                                                shouldValidate: true,
+                                                shouldDirty: true,
+                                            });
+                                            setEndTime(endTime);
+                                        }}
+                                        renderInput={(params) => <TextField variant='filled' required {...params}
+                                            error={errors?.schedule?.end_time}
+                                            helperText={errors?.schedule?.end_time?.message}
+                                        />}
+                                    />
+                                </LocalizationProvider>
 
-                <Controller
-                  defaultValue={10}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      required
-                      type="number"
-                      label="Each Slot Duration(mins)"
-                      error={errors?.slot_duration !== undefined}
-                      helperText={errors?.slot_duration?.message}
-                    />
-                  )}
-                  name="slot_duration"
-                  control={control}
-                />
-              </>
-            )}
+                                <Controller
+                                    defaultValue={10}
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            required
+                                            variant='filled'
+                                            type='number'
+                                            label="Each Slot Duration(mins)"
+                                            error={errors?.slot_duration !== undefined}
+                                            helperText={errors?.slot_duration?.message}
+                                            InputProps={{
+                                                disableUnderline: true,
+                                            }} />
+                                    )}
+                                    name="slot_duration"
+                                    control={control}
+                                />
+                            </>
+                        }
 
             <Button type="submit" variant="contained" color="primary">
               Submit

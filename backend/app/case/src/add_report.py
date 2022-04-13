@@ -48,7 +48,7 @@ class AddReport(Resource):
             if prescription_info['patient_id'] != user_id:
                 return {'message': 'Unauthorized'}, HTTPStatus.UNAUTHORIZED
 
-        file = request.files['report']
+        file = request.files.get('report')
         if not file:
             return {'message': 'No file'}, HTTPStatus.BAD_REQUEST
         file_uuid = self.s3.push(file=file)

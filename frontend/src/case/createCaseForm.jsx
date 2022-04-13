@@ -1,8 +1,9 @@
-import { Button, CircularProgress, TextField, Typography } from '@mui/material';
+import { Button, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../auth/AuthContext';
+import CenterCircularProgress from '../common/centerLoader';
 import { createCase } from './apis';
 
 const style = {
@@ -17,7 +18,7 @@ const style = {
     p: 4,
 };
 
-export const CreateCaseForm = React.forwardRef((props, ref) => {
+export const CreateCaseForm = React.forwardRef(function CreateCaseForm(props, ref) {
 
     const [problem, setProblem] = useState('');
     const [email, setEmail] = useState('');
@@ -50,7 +51,6 @@ export const CreateCaseForm = React.forwardRef((props, ref) => {
         setProblem('');
         setEmail('');
 
-        props.setopen(false);
         setIsLoading(true);
     };
 
@@ -67,7 +67,7 @@ export const CreateCaseForm = React.forwardRef((props, ref) => {
 
 
                     <TextField
-                        variant='outlined'
+                        variant='filled'
                         margin='normal'
                         required
                         fullWidth
@@ -75,11 +75,13 @@ export const CreateCaseForm = React.forwardRef((props, ref) => {
                         label="Problem"
                         value={problem}
                         onChange={(e) => setProblem(e.currentTarget.value)}
-                    />
+                        InputProps={{
+                            disableUnderline: true,
+                        }} />
 
 
                     <TextField
-                        variant='outlined'
+                        variant='filled'
                         required
                         fullWidth
                         id="patientEmail"
@@ -88,7 +90,9 @@ export const CreateCaseForm = React.forwardRef((props, ref) => {
                         value={email}
                         onChange={(e) => setEmail(e.currentTarget.value)}
                         autoComplete="off"
-                    />
+                        InputProps={{
+                            disableUnderline: true,
+                        }} />
 
                     <Button
                         type="submit"

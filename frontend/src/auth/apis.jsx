@@ -25,7 +25,7 @@ export const authLogin = (email, password, setUser) => {
                 name: res.data.name,
                 userId: res.data.user_id,
                 user_type: res.data.user_type,
-                expirationDate: new Date(new Date().getTime() + 24 * 60 * 60 * 60 * 1000)
+                expirationDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
             };
             console.log(user)
             localStorage.setItem("user", JSON.stringify(user));
@@ -61,6 +61,7 @@ export const authCheckState = (setUser) => {
     console.log("user= ", user);
     if (user) {
         const expirationDate = new Date(user.expirationDate);
+        console.log(expirationDate);
         if (expirationDate <= new Date()) {
             console.log("expired");
             authLogout(setUser);

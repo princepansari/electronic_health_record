@@ -46,6 +46,7 @@ class GetCase(Resource):
         data = {'id': case_id,
                 'patient_name': case['patient_name'],
                 'patient_allergy': case['patient_allergy'],
+                'patient_age': case['patient_age'],
                 'created_by': case['created_by'],
                 'problem': case['problem'],
                 'created_at': case['created_at'].isoformat(),

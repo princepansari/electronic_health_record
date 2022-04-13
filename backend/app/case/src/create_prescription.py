@@ -39,7 +39,7 @@ class CreatePrescription(Resource):
         if user_type == 'doctor' or user_type == 'nurse':
             if not self.rds.is_case_exists(case_id=data['case_id']):
                 return {'message': 'Case does not exists'}, HTTPStatus.NOT_FOUND
-            file = request.files['recording']
+            file = request.files.get('recording')
             if file:
                 file_uuid = self.s3.push(file=file)
                 data['prescription']['recording'] = Config.BUCKET_URL + file_uuid

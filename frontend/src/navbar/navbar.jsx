@@ -11,23 +11,13 @@ import { Box } from "@mui/system";
 import { authLogout } from "../auth/apis";
 
 const links = [
-  { children: "My Cases", to: "/myCases" },
-  { children: "Upcoming Appointments", to: "/appointments" },
-  { children: "Sign Up", to: "/signup" },
-  { children: "Home", to: "/" },
-  { children: "Case", to: "/case" },
+  { children: 'My Cases', to: '/myCases' },
+  { children: 'Upcoming Appointments', to: '/appointments' },
   { children: "Profile", to: "/profile" },
-  { children: "Profile2", to: "/profile2" },
-];
+  { children: "Profile2", to: "/profile2" }
+]
 
-const navLinkStyle = {
-  m: 2,
-  color: "white",
-  display: "block",
-  textTransform: "none",
-  fontSize: "1.01em",
-  "&.active": { color: "red" },
-};
+const navLinkStyle = { m: 2, color: 'rgb(6 69 63)', display: 'block', textTransform: 'none', fontSize: '1.01em', '&.active': { color: 'red' } }
 
 export default function NavBar() {
   const { setUser, user } = React.useContext(AuthContext);
@@ -48,17 +38,19 @@ export default function NavBar() {
   };
 
   return (
-    <AppBar position="fixed" elevation={0}>
+
+    <AppBar
+      position="fixed"
+      elevation={0}
+      sx={{ backgroundColor: "#14bdad" }}
+    >
       <Toolbar>
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{
-            marginRight: 15,
-            display: { xs: "none", md: "flex" },
-            fontWeight: "bold",
-          }}
-        >
+        <Typography variant="h6" component="div" sx={{
+          marginRight: 15,
+          display: { xs: 'none', md: 'flex' },
+          fontWeight: 'bold',
+          letterSpacing: '2px'
+        }} >
           LOGO
         </Typography>
 
@@ -103,42 +95,65 @@ export default function NavBar() {
           variant="h6"
           noWrap
           component="div"
-          sx={{
-            flexGrow: 1,
-            display: { xs: "flex", md: "none" },
-            fontWeight: "bold",
-          }}
+          sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, fontWeight: 'bold', letterSpacing: '2px' }}
         >
           LOGO
         </Typography>
 
-        <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-          {user ? <Button sx={navLinkStyle}>Hi, {user.name}</Button> : null}
-          {links.map((link) => (
+        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          {user ?
             <Button
-              key={link.to}
-              component={Link}
-              sx={navLinkStyle}
-              {...link}
-            />
-          ))}
-          {user ? (
-            <Button
-              onClick={() => {
-                authLogout(setUser);
-                console.log("in logout");
-                navigate("/login");
-                return;
-              }}
-              sx={navLinkStyle}
-            >
-              Logout
+              sx={navLinkStyle}>
+              Hi, {user.name}
             </Button>
-          ) : (
-            <Button component={Link} to="/login" sx={navLinkStyle}>
-              Login
-            </Button>
-          )}
+            :
+            null
+          }
+          <Button
+            component={Link}
+            to='/'
+            sx={navLinkStyle}>
+            Home
+          </Button>
+
+          {
+            user ?
+              <>
+                {links.map((link) => (
+                  <Button
+                    key={link.to}
+                    component={Link}
+                    sx={navLinkStyle}
+                    {...link}
+                  />
+                ))}
+                <Button
+                  onClick={() => {
+                    authLogout(setUser);
+                    console.log("in logout")
+                    navigate('/login');
+                    return;
+                  }}
+                  sx={navLinkStyle}>
+                  Logout
+                </Button>
+              </>
+              :
+              <>
+                <Button
+                  component={Link}
+                  to='/signup'
+                  sx={navLinkStyle}>
+                  Sign Up
+                </Button>
+                <Button
+                  component={Link}
+                  to='/login'
+                  sx={navLinkStyle}>
+                  Login
+                </Button>
+              </>
+          }
         </Box>
       </Toolbar>
     </AppBar>

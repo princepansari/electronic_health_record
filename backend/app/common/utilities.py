@@ -1,5 +1,7 @@
 import re
 import uuid
+import datetime
+
 
 class Utils:
 
@@ -37,3 +39,8 @@ class Utils:
     @staticmethod
     def get_uuid():
         return str(uuid.uuid4())
+
+    @staticmethod
+    def calculate_age(dob):
+        today = datetime.date.today()
+        return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
