@@ -1,78 +1,73 @@
-import { Button, Typography, Modal } from '@mui/material';
+import { Button, Typography, Modal, Paper, TableContainer, Table, TableBody, TableCell, TableRow } from '@mui/material';
 import { Box } from '@mui/system';
 import { React } from 'react';
 import { Link } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
 
 const boxStyle = {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
 };
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    backgroundColor: theme.palette.action.hover
+}));
+
+const dateTimeOptions = {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour12: false,
+    hour: 'numeric',
+    minute: 'numeric'
+}
 
 const CaseItem = ({ caseObj }) => {
 
     return (
-        <div>
-            <Box sx={boxStyle} >
-                <Typography variant='h6' component='div'
-                    sx={{
-                        ml: 2,
-                        fontWeight: 'bold'
-                    }}
-                >
-                    Case : {caseObj.case_id}
-                </Typography>
-            </Box>
+        <>
+            <Paper elevation={2} sx={{ padding: 3, marginBottom: 5, marginTop: 5, backgroundColor: "#fafafa" }} >
+                <TableContainer component={Paper} elevation={0}>
+                    <Table sx={{ minWidth: 700 }} >
+                        <TableBody>
+                            <StyledTableRow >
+                                <TableCell component="th" scope="row">
+                                    <b>Case Id:</b>&nbsp; {caseObj.case_id}
+                                </TableCell>
+                                <TableCell component="th" scope="row">
+                                    <b>Problem:</b>&nbsp; {caseObj.problem}
+                                </TableCell>
+                            </StyledTableRow>
 
-            <Box sx={{ mt: 1, ...boxStyle, justifyContent: 'start' }} >
-                <Typography variant='p' component='div' sx={{ ml: 5, fontSize: '1.1em' }} >
-                    <strong> Created by : </strong>
-                    {caseObj.created_by}
-                </Typography>
+                            <StyledTableRow >
+                                <TableCell component="th" scope="row">
+                                    <b>Last Modified On:</b>&nbsp; {new Date(caseObj.updated_at).toLocaleDateString('en-US', dateTimeOptions)}
+                                </TableCell>
+                                <TableCell ><b>Opened On:</b>&nbsp; {new Date(caseObj.created_at).toLocaleDateString('en-US', dateTimeOptions)}</TableCell>
 
-                <Typography variant='p' component='div' sx={{ ml: 5, fontSize: '1.1em' }} >
-                    <strong> Patient Name : </strong>
-                    {caseObj.patient_name}
-                </Typography>
-            </Box>
+                            </StyledTableRow>
 
-            <Box sx={{ mt: 1, ...boxStyle, justifyContent: 'start' }} >
-                <Typography variant='p' component='div' sx={{ ml: 5, fontSize: '1.1em' }} >
-                    <strong> Created at : </strong>
-                    {new Date(caseObj.created_at).toLocaleDateString()}
-                </Typography>
+                            <StyledTableRow >
+                                <TableCell component="th" scope="row">
+                                    <b>Patient Name:</b>&nbsp; {caseObj.patient_name}
+                                </TableCell>
+                                <TableCell ><b>Created By:</b>  &nbsp; {caseObj.created_by}</TableCell>
+                            </StyledTableRow>
 
-                <Typography variant='p' component='div' sx={{ ml: 5, fontSize: '1.1em' }} >
-                    <strong> updated_at : </strong>
-                    {new Date(caseObj.updated_at).toLocaleDateString()}
-                </Typography>
-            </Box>
-
-
-            <Box sx={boxStyle} >
-                <Typography variant='p' component='p'
-                    sx={{
-                        ml: 3,
-                        fontSize: '1.1em'
-                    }}
-                >
-                    <strong>Issue : </strong>
-                    {caseObj.problem}
-                </Typography>
-
+                        </TableBody>
+                    </Table>
+                </TableContainer>
                 <Button
-                    variant='contained'
-                    color='success'
+                    variant='text'
                     sx={{ mr: 4, fontSize: { xs: '0.6em', md: '1em' }, textTransform: 'none' }}
                     component={Link}
-                    to={`/case/${caseObj.case_id}`}
-                >
-                    See Details
+                    to={`/case/${caseObj.case_id}`}>
+                    SEE MORE
                 </Button>
-            </Box>
-
-
-        </div>
+            </Paper>
+        </>
     )
 }
 

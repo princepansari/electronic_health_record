@@ -16,18 +16,23 @@ export default function MedicineForm({ control, errors, ...props }) {
                 {fields.map((field, index) => (
                     <Stack key={field.id} direction="row" spacing={2}>
                         <Controller
-                            render={({ field }) => <TextField {...field} label="Enter Medicine"
+                            render={({ field }) => <TextField variant='filled' {...field} placeholder="Enter Medicine"
                                 error={errors?.medicines?.[index]?.medicine !== undefined}
-                                helperText={errors?.medicines?.[index]?.medicine?.message} />}
+                                helperText={errors?.medicines?.[index]?.medicine?.message}
+                                InputProps={{
+                                    disableUnderline: true,
+                                }} />}
                             name={`medicines.${index}.medicine`}
                             control={control}
 
                         />
                         <Controller
-                            render={({ field }) => <TextField {...field} label="Enter Dosage"
+                            render={({ field }) => <TextField variant='filled' {...field} placeholder="Enter Dosage"
                                 error={errors?.medicines?.[index]?.dosage !== undefined}
                                 helperText={errors?.medicines?.[index]?.dosage?.message}
-                            />}
+                                InputProps={{
+                                    disableUnderline: true,
+                                }} />}
                             name={`medicines.${index}.dosage`}
                             control={control}
                         />

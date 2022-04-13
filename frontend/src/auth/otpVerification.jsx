@@ -79,17 +79,20 @@ export default function OtpVerification(props) {
                     <form noValidate style={{ width: '100%' }} onSubmit={(e) => handleSubmit(e)}>
                         <Stack spacing={2}>
                             <TextField
-                                variant='outlined'
+                                variant='filled'
                                 required
                                 fullWidth
                                 id="email"
                                 label="Email"
                                 value={email}
                                 disabled
+                                InputProps={{
+                                    disableUnderline: true,
+                                }}
                             />
 
                             <TextField
-                                variant='outlined'
+                                variant='filled'
                                 required
                                 fullWidth
                                 id="email_otp"
@@ -97,21 +100,27 @@ export default function OtpVerification(props) {
                                 placeholder="Enter the OTP sent to your personal email"
                                 value={emailOTP || ''}
                                 onChange={(e) => setEmailOTP(e.currentTarget.value)}
+                                InputProps={{
+                                    disableUnderline: true,
+                                }}
                             />
                             {
                                 guardian_email ?
                                     <>
                                         <TextField
-                                            variant='outlined'
+                                            variant='filled'
                                             required
                                             fullWidth
                                             label="Guardian Email"
                                             id="guardian_email"
                                             value={guardian_email}
                                             disabled
+                                            InputProps={{
+                                                disableUnderline: true,
+                                            }}
                                         />
                                         <TextField
-                                            variant='outlined'
+                                            variant='filled'
                                             required
                                             fullWidth
                                             id="guardian_email_otp"
@@ -119,6 +128,9 @@ export default function OtpVerification(props) {
                                             placeholder="Enter OTP sent to your guardian email"
                                             value={guardianEmailOTP || ""}
                                             onChange={(e) => setGuardianEmailOTP(e.currentTarget.value)}
+                                            InputProps={{
+                                                disableUnderline: true,
+                                            }}
                                         />
                                     </>
                                     : null

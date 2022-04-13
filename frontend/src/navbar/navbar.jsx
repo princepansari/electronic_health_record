@@ -15,7 +15,7 @@ const links = [
   { children: 'Upcoming Appointments', to: '/appointments' },
 ]
 
-const navLinkStyle = { m: 2, color: 'white', display: 'block', textTransform: 'none', fontSize: '1.01em', '&.active': { color: 'red' } }
+const navLinkStyle = { m: 2, color: 'rgb(6 69 63)', display: 'block', textTransform: 'none', fontSize: '1.01em', '&.active': { color: 'red' } }
 
 export default function NavBar() {
   const { setUser, user } = React.useContext(AuthContext);
@@ -39,12 +39,14 @@ export default function NavBar() {
     <AppBar
       position="fixed"
       elevation={0}
+      sx={{ backgroundColor: "#14bdad" }}
     >
       <Toolbar>
         <Typography variant="h6" component="div" sx={{
           marginRight: 15,
           display: { xs: 'none', md: 'flex' },
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          letterSpacing: '2px'
         }} >
           LOGO
         </Typography>
@@ -90,7 +92,7 @@ export default function NavBar() {
           variant="h6"
           noWrap
           component="div"
-          sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, fontWeight: 'bold' }}
+          sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, fontWeight: 'bold', letterSpacing: '2px' }}
         >
           LOGO
         </Typography>

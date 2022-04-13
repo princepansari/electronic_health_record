@@ -16,21 +16,30 @@ export default function LabTestsForm({ control, errors, ...props }) {
                 {fields.map((field, index) => (
                     <Stack key={field.id} direction="row" spacing={2}>
                         <Controller
-                            render={({ field }) => <TextField {...field} label="Enter Test Name"
+                            render={({ field }) => <TextField {...field} variant='filled' placeholder="Enter Test Name"
                                 error={errors?.labtests?.[index]?.testname !== undefined}
-                                helperText={errors?.labtests?.[index]?.testname?.message} />}
+                                helperText={errors?.labtests?.[index]?.testname?.message}
+                                InputProps={{
+                                    disableUnderline: true,
+                                }} />}
                             name={`labtests.${index}.testname`}
                             control={control}
                         />
                         <Controller
                             defaultValue={index}
-                            render={({ field }) => <TextField type='number' sx={{ display: 'none' }} {...field} />}
+                            render={({ field }) => <TextField variant='filled' type='number' sx={{ display: 'none' }} {...field}
+                                InputProps={{
+                                    disableUnderline: true,
+                                }} />}
                             name={`labtests.${index}.id`}
                             control={control}
                         />
                         <Controller
                             defaultValue={''}
-                            render={({ field }) => <TextField sx={{ display: 'none' }} {...field} />}
+                            render={({ field }) => <TextField sx={{ display: 'none' }} {...field}
+                                InputProps={{
+                                    disableUnderline: true,
+                                }} />}
                             name={`labtests.${index}.reportLink`}
                             control={control}
                         />
