@@ -320,3 +320,12 @@ class RDS:
         cursor.close()
         return True
 
+    def get_doctors_schedule():
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT users.name as doctor_name, users.user_id as doctor_id, staff_schedule.schedule, "\
+                "staff_schedule.slot_duration FROM users INNER JOIN user_type ON user_type.id=users.user_type_id "\
+                "INNER JOIN staff_schedule ON users.user_id=staff_schedule.staff_id where user_type.type=%s"
+        cursor.execute(query, ['doctor'])
+        scheduled = cursor.fetchall()
+        cursor.close()
+        return scheduled
