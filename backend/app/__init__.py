@@ -13,6 +13,7 @@ from app.auth.routes import auth_routes
 from app.case.routes import case_routes
 from app.profile.routes import profile_routes
 from app.admin.routes import admin_routes
+from app.appointment.routes import appointment_routes
 
 app = Flask(__name__)
 
@@ -27,3 +28,4 @@ auth_routes(api)
 case_routes(api)
 profile_routes(api)
 admin_routes(api)
+appointment_routes(api)
