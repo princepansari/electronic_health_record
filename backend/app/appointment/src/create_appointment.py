@@ -7,7 +7,7 @@ import bleach
 import time
 import os
 import sys
-
+from datetime import datetime
 from datetime import date
 import calendar
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -37,14 +37,18 @@ class CreateAppointment(Resource):
         followup_prescription_id = data['followup_prescription_id']
         doctor_availability=self.rds.get_doctors_schedule_by_id(appointment_datetime)
         appointment_date=date.appointment_datetime
+        appointment_time=datetime.strptime(appointment_datetime, "%d%b%Y%H%M%S")
         day_name=calendar.day_name[appointment_date.weekday()]
         slot_availaibility=self.rds.get_slot_availaibility(doctor_id)
         if doctor_availability['days'][day_name]:
-            if (slot_availaibility):
-                appointment_id=self.rds.create_appointment(doctor_id=doctor_id ,patient_id=patient_id ,creation_time=creation_time ,appointment_datetime=appointment_datetime, followup_prescription_id=followup_prescription_id)
-                return appointment_id, HTTPStatus.OK
-            else :
-                return {'message': 'slot is booked'}, HTTPStatus.BAD_REQUEST
+            if(appointment_time>=doctor_availability['start_time'] and appointment_time < doctor_availability['end_time']):
+                if (slot_availaibility):
+                    appointment_id=self.rds.create_appointment(doctor_id=doctor_id ,patient_id=patient_id ,creation_time=creation_time ,appointment_datetime=appointment_datetime, followup_prescription_id=followup_prescription_id)
+                    return appointment_id, HTTPStatus.OK
+                else :
+                    return {'message': 'slot is booked'}, HTTPStatus.BAD_REQUEST
+            else:
+                return {'message': 'Doctor is not available'}, HTTPStatus.BAD_REQUEST 
         else :
           return {'message': 'Doctor is not available'}, HTTPStatus.BAD_REQUEST   
         
