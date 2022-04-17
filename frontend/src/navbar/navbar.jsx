@@ -17,6 +17,8 @@ const links = [
   { children: "Home", to: "/" },
   { children: "Case", to: "/case" },
   { children: "Profile", to: "/profile" },
+  { children: "Appointment", to: "/makeappointment/" },
+
 ]
 
 const navLinkStyle = {
