@@ -13,7 +13,7 @@ from app.common.rds import RDS
 from app.common.config import Config
 from app.common.utilities import Utils
 
-class Get_doctors(Resource):
+class GetDoctors(Resource):
     def __init__(self):
         self.rds = RDS()
     

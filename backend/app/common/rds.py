@@ -347,3 +347,23 @@ class RDS:
         appointment_id = cursor.fetchone()['id']
         cursor.close()
         return appointment_id
+
+    def get_doctors_schedule_by_id(self, *, doctor_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT schedule FROM staff_schedule WHERE staff_id=%s "
+        cursor.execute(query, [doctor_id])
+        schedule = cursor.fetchone()
+        cursor.close()
+        if not schedule:
+            return None
+        return schedule
+
+    def get_slot_availaibility(self, *, doctor_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT appointment_time FROM appointment_table WHERE staff_id=%s "
+        cursor.execute(query, [doctor_id])
+        slot = cursor.fetchone()
+        cursor.close()
+        if not slot:
+            return None
+        return slot
