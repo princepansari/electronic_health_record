@@ -358,12 +358,12 @@ class RDS:
             return None
         return schedule
 
-    def get_slot_availaibility(self, *, doctor_id):
+    def get_slot_availaibility(self, *, appointment_time):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
-        query = "SELECT appointment_time FROM appointment_table WHERE staff_id=%s "
-        cursor.execute(query, [doctor_id])
+        query = "SELECT appointment_time FROM appointment_table WHERE appointment_time=%s "
+        cursor.execute(query, [appointment_time])
         slot = cursor.fetchone()
         cursor.close()
         if not slot:
-            return None
-        return slot
+            return True
+        return False
