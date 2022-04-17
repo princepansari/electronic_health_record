@@ -1,4 +1,6 @@
 from datetime import datetime, timezone
+
+from requests import delete
 import boto3
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -367,3 +369,11 @@ class RDS:
         if not slot:
             return True
         return False
+
+    def delete_appointment(self , *, appointment_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "DELETE FROM appointment_table WHERE id = %s"
+        cursor.execute(query, [appointment_id])
+        self.connection.commit()
+        cursor.close()
+        return 
