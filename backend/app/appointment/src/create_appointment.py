@@ -35,16 +35,16 @@ class CreateAppointment(Resource):
         creation_time = time.time()
         appointment_datetime = data['appointment_datetime']
         followup_prescription_id = data['followup_prescription_id']
-        doctor_availability=self.rds.get_doctors_schedule_by_id(doctor_id)
+        doctor_availability=self.rds.get_doctors_schedule_by_id(appointment_datetime)
         appointment_date=date.appointment_datetime
         day_name=calendar.day_name[appointment_date.weekday()]
         slot_availaibility=self.rds.get_slot_availaibility(doctor_id)
-        if (day_name in doctor_availability.days):
-            if (appointment_datetime in slot_availaibility):
-                return {'message': 'slot is booked'}, HTTPStatus.BAD_REQUEST
-            else :
+        if doctor_availability['days'][day_name]:
+            if (slot_availaibility):
                 appointment_id=self.rds.create_appointment(doctor_id=doctor_id ,patient_id=patient_id ,creation_time=creation_time ,appointment_datetime=appointment_datetime, followup_prescription_id=followup_prescription_id)
                 return appointment_id, HTTPStatus.OK
+            else :
+                return {'message': 'slot is booked'}, HTTPStatus.BAD_REQUEST
         else :
           return {'message': 'Doctor is not available'}, HTTPStatus.BAD_REQUEST   
         
