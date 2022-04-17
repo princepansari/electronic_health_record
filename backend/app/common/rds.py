@@ -329,3 +329,21 @@ class RDS:
         scheduled = cursor.fetchall()
         cursor.close()
         return scheduled
+
+    # def get_booked_slots(self, *, doctor_id, from_date)
+    #     cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+    #     query = "SELECT appointment_time as date, patient_id as booked_by_id, "
+    #     cursor.execute(query, ['doctor'])
+    #     booked = cursor.fetchall()
+    #     cursor.close()
+    #     return booked
+
+    def create_appointment(self, *,doctor_id ,patient_id ,creation_time ,appointment_datetime, followup_prescription_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "INSERT INTO appointment_table(doctor_id ,patient_id ,created_at ,appointment_time, followup_case_id)"\
+                " VALUES (%s, %s, %s, %s, %s) RETURNING id"
+        cursor.execute(query, [doctor_id ,patient_id ,creation_time ,appointment_datetime, followup_prescription_id])
+        self.connection.commit()
+        appointment_id = cursor.fetchone()['id']
+        cursor.close()
+        return appointment_id
