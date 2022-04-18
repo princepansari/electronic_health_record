@@ -330,13 +330,14 @@ class RDS:
         cursor.close()
         return scheduled
 
-    # def get_booked_slots(self, *, doctor_id, from_date)
-    #     cursor = self.connection.cursor(cursor_factory=RealDictCursor)
-    #     query = "SELECT appointment_time as date, patient_id as booked_by_id, "
-    #     cursor.execute(query, ['doctor'])
-    #     booked = cursor.fetchall()
-    #     cursor.close()
-    #     return booked
+    def get_booked_slots(self, *, doctor_id, from_date, last_date):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT appointment_time as date, patient_id as booked_by_id, users.name FROM appointment_table INNER JOIN users ON appointment_table.booked_by_id=users.user_id WHERE "\
+                "appointment_time > %s AND appointment_time < %s And doctor_id = %s "
+        cursor.execute(query, [from_date, last_date, doctor_id])
+        booked = cursor.fetchall()
+        cursor.close()
+        return booked
 
     def create_appointment(self, *, doctor_id, patient_id, appointment_datetime, followup_prescription_id):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
