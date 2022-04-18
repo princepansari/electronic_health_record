@@ -369,10 +369,13 @@ class RDS:
             return True
         return False
 
-    def delete_appointment(self, *, appointment_id):
+    def delete_appointment(self, *, user_id, appointment_id):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
-        query = "DELETE FROM appointment_table WHERE id = %s"
-        cursor.execute(query, [appointment_id])
+        query = "DELETE FROM appointment_table WHERE id = %s and patient_id=%s"
+        cursor.execute(query, [appointment_id, user_id])
         self.connection.commit()
+        if cursor.rowcount == 0:
+            cursor.close()
+            return False
         cursor.close()
-        return 
+        return True
