@@ -11,4 +11,4 @@ def appointment_routes(api):
     api.add_resource(GetDoctors, '/api/appointment/get_doctors')
     api.add_resource(GetBookedSlots, '/api/appointment/get_booked_slots')
     api.add_resource(CreateAppointment, '/api/appointment/create_appointment')
-    api.add_resource(DeleteAppointment, '/api/appointment/delete_appointment')
+    api.add_resource(DeleteAppointment, '/api/appointment/delete_appointment/<appointment_id>')

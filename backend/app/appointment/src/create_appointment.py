@@ -1,5 +1,5 @@
 from flask import request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from flask_restful import Resource
 from http import HTTPStatus
 from schema import Schema, And, Use, Optional
@@ -37,6 +37,10 @@ class CreateAppointment(Resource):
         patient_id = get_jwt_identity()
         appointment_datetime = data['appointment_datetime']
         followup_prescription_id = data.get('followup_prescription_id')
+
+        user_type = get_jwt()['user_type']
+        if user_type != 'patient':
+            return {'message': 'You are not authorized to create appointments'}, HTTPStatus.UNAUTHORIZED
 
         appointment_date = appointment_datetime.date()
         day_name = calendar.day_name[appointment_date.weekday()].lower()

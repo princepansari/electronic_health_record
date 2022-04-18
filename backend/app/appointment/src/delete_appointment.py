@@ -13,18 +13,15 @@ from app.common.rds import RDS
 from app.common.config import Config
 from app.common.utilities import Utils
 
+
 class DeleteAppointment(Resource):
     def __init__(self):
         self.rds = RDS()
-        self.schema = Schema({
-            'appointment_id': And(str, Use(bleach.clean))
-        })
 
     @jwt_required()
-    def post(self):
-        if not self.schema.is_valid(request.get_json()):
-            return {'message': 'Invalid data'}, HTTPStatus.BAD_REQUEST
-        
-        data = self.schema.validate(request.get_json())
-        appointment_id = data['appointment_id']
-        return self.rds.delete_appointment(appointment_id), HTTPStatus.OK
+    def delete(self, appointment_id):
+        user_id = get_jwt_identity()
+        status = self.rds.delete_appointment(user_id=user_id, appointment_id=appointment_id)
+        if status:
+            return HTTPStatus.OK
+        return {'message': 'Error!!'}, HTTPStatus.BAD_REQUEST
