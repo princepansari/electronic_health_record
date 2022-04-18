@@ -1,6 +1,4 @@
 from datetime import datetime, timezone
-
-from requests import delete
 import boto3
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -322,9 +320,9 @@ class RDS:
         cursor.close()
         return True
 
-    def get_doctors_schedule():
+    def get_doctors_schedule(self):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
-        query = "SELECT users.name as doctor_name, users.user_id as doctor_id, staff_schedule.schedule, "\
+        query = "SELECT users.name as name, users.user_id as id, staff_schedule.schedule, "\
                 "staff_schedule.slot_duration FROM users INNER JOIN user_type ON user_type.id=users.user_type_id "\
                 "INNER JOIN staff_schedule ON users.user_id=staff_schedule.staff_id where user_type.type=%s"
         cursor.execute(query, ['doctor'])
@@ -340,11 +338,12 @@ class RDS:
     #     cursor.close()
     #     return booked
 
-    def create_appointment(self, *,doctor_id ,patient_id ,creation_time ,appointment_datetime, followup_prescription_id):
+    def create_appointment(self, *, doctor_id, patient_id, appointment_datetime, followup_prescription_id):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
         query = "INSERT INTO appointment_table(doctor_id ,patient_id ,created_at ,appointment_time, followup_case_id)"\
                 " VALUES (%s, %s, %s, %s, %s) RETURNING id"
-        cursor.execute(query, [doctor_id ,patient_id ,creation_time ,appointment_datetime, followup_prescription_id])
+        cursor.execute(query, [doctor_id, patient_id, datetime.now(timezone.utc), appointment_datetime,
+                               followup_prescription_id])
         self.connection.commit()
         appointment_id = cursor.fetchone()['id']
         cursor.close()
@@ -358,9 +357,9 @@ class RDS:
         cursor.close()
         if not schedule:
             return None
-        return schedule
+        return schedule['schedule']
 
-    def get_slot_availaibility(self, *, appointment_time):
+    def get_slot_availability(self, *, appointment_time):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
         query = "SELECT appointment_time FROM appointment_table WHERE appointment_time=%s "
         cursor.execute(query, [appointment_time])
@@ -370,7 +369,7 @@ class RDS:
             return True
         return False
 
-    def delete_appointment(self , *, appointment_id):
+    def delete_appointment(self, *, appointment_id):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
         query = "DELETE FROM appointment_table WHERE id = %s"
         cursor.execute(query, [appointment_id])

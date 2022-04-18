@@ -1,6 +1,7 @@
 import re
 import uuid
 import datetime
+from dateutil import parser
 
 
 class Utils:
@@ -44,3 +45,7 @@ class Utils:
     def calculate_age(dob):
         today = datetime.date.today()
         return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+
+    @staticmethod
+    def convert_to_datetime(date):
+        return parser.parse(date)
