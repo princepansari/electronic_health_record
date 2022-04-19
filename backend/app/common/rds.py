@@ -94,12 +94,36 @@ class RDS:
         cursor.close()
         return user_id
 
+    def update_user(self, *, user_id, name, dob, phone, allergy=None):
+        cursor = self.connection.cursor()
+        query = "UPDATE users SET name=%s, dob=%s, phone_number=%s, allergy=%s WHERE user_id=%s"
+        cursor.execute(query, [name, dob, phone, allergy, user_id])
+        self.connection.commit()
+        cursor.close()
+        return True
+
     def create_schedule(self, *, user_id, schedule, slot_duration):
         cursor = self.connection.cursor()
         query = "INSERT INTO staff_schedule(staff_id, slot_duration, schedule) VALUES (%s, %s, %s)"
         cursor.execute(query, [user_id, slot_duration, json.dumps(schedule)])
         self.connection.commit()
         cursor.close()
+
+    def get_staff_schedule_by_user_id(self, *, user_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT * FROM staff_schedule WHERE staff_id=%s"
+        cursor.execute(query, [user_id])
+        schedule = cursor.fetchone()
+        cursor.close()
+        return schedule
+
+    def update_schedule(self, *, user_id, schedule, slot_duration):
+        cursor = self.connection.cursor()
+        query = "UPDATE staff_schedule SET schedule=%s, slot_duration=%s WHERE staff_id=%s"
+        cursor.execute(query, [json.dumps(schedule), slot_duration, user_id])
+        self.connection.commit()
+        cursor.close()
+        return True
 
     def save_otp(self, *, user_id, email_otp, guardian_email_otp):
         cursor = self.connection.cursor()
@@ -263,3 +287,4 @@ class RDS:
         cursor.execute(query, [json.dumps(prescription), prescription_id, case_id])
         self.connection.commit()
         cursor.close()
+
