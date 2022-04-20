@@ -64,7 +64,7 @@ class RDS:
         self.connection.commit()
         cursor.close()
 
-    def get_user_otp(self, *, user_id): 
+    def get_user_otp(self, *, user_id):
         cursor = self.connection.cursor()
         query = "SELECT email_otp, guardian_email_otp FROM signup_verification WHERE user_id=%s"
         cursor.execute(query, [user_id])
@@ -287,4 +287,36 @@ class RDS:
         cursor.execute(query, [json.dumps(prescription), prescription_id, case_id])
         self.connection.commit()
         cursor.close()
+
+    def get_not_verified_users(self):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT user_id, name, email, user_type.type FROM users INNER JOIN user_type ON " \
+                "users.user_type_id=user_type.id WHERE (user_type.type=%s OR user_type.type=%s) AND " \
+                "user_type_verification=%s"
+        cursor.execute(query, ['doctor', 'nurse', False])
+        users = cursor.fetchall()
+        cursor.close()
+        return users;
+
+    def update_user_type_verification(self, user_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "UPDATE users SET user_type_verification=%s WHERE user_id=%s"
+        cursor.execute(query, [True, user_id])
+        self.connection.commit()
+        if cursor.rowcount == 0:
+            cursor.close()
+            return False
+        cursor.close()
+        return True
+
+    def delete_user(self, user_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "DELETE FROM users WHERE user_id=%s"
+        cursor.execute(query, [user_id])
+        self.connection.commit()
+        if cursor.rowcount == 0:
+            cursor.close()
+            return False
+        cursor.close()
+        return True
 
