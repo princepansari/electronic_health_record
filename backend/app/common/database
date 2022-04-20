@@ -12,6 +12,7 @@ CREATE TABLE user_type (
 INSERT INTO user_type (type) VALUES ('doctor');
 INSERT INTO user_type (type) VALUES ('nurse');
 INSERT INTO user_type (type) VALUES ('patient');
+INSERT INTO user_type (type) VALUES ('admin');
 
 CREATE TABLE users (
     user_id uuid DEFAULT uuid_generate_v4()  PRIMARY KEY,
@@ -31,19 +32,23 @@ CREATE TABLE users (
     FOREIGN KEY (user_type_id) REFERENCES user_type (id)
 );
 
+INSERT INTO users (user_type_id, email, name, password, phone_number, dob, account_verified) VALUES
+((SELECT id FROM user_type WHERE type = 'admin'), 'admin_ehr@iitbhilai.ac.in', 'ADMIN',
+'$2b$12$jDcW9ULXcBJjGMUnHgF2n.V1sAHONPjKTnbNuVDB1fQ3LsRteSOjq', '9876543210', '2000-01-01', TRUE);
+
 CREATE TABLE signup_verification(
     user_id uuid PRIMARY KEY,
     email_otp VARCHAR (6) NOT NULL,
     guardian_email_otp VARCHAR (6),
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (user_id)
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE staff_schedule(
     staff_id uuid PRIMARY KEY,
     slot_duration int NOT NULL,
     schedule json NOT NULL,
-    FOREIGN KEY (staff_id) REFERENCES users (user_id)
+    FOREIGN KEY (staff_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE leaves(
