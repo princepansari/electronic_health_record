@@ -7,6 +7,7 @@ from schema import Schema, And, Use
 from flask import request
 import os
 import sys
+import calendar
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
@@ -19,7 +20,7 @@ class GetBookedSlots(Resource):
         self.rds = RDS()
         self.schema = Schema({
             'doctor_id': And(str, Use(bleach.clean)),
-            from_date : And(str, Use(Utils.convert_to_datetime))
+            'from_date' : And(str, Use(Utils.convert_to_datetime))
         })
     @jwt_required()
     def get(self):
@@ -31,7 +32,9 @@ class GetBookedSlots(Resource):
         from_date = data['from_date']
         last_date= from_date+datetime.timedelta(days=8)
 
-        
+        schedule=self.rds.get_schedule(doctor_id=doctor_id)
+        start_date = from_date.date()
+        start_day_name = calendar.day_name[start_date.weekday()].lower()
         slot = self.rds.get_booked_slots(doctor_id=doctor_id, from_date=from_date, last_date=last_date)
 
         if not slot:
