@@ -34,6 +34,9 @@ class CreateCase(Resource):
             patient = self.rds.get_user_by_email(email=data['patient_email'])
             if patient is None:
                 return {'message': 'Patient not found'}, HTTPStatus.NOT_FOUND
+            check_user_type = self.rds.get_user_type(user_id=patient['user_id'])
+            if check_user_type != 'patient':
+                return {'message': 'Patient not found'}, HTTPStatus.NOT_FOUND
             patient_id = patient['user_id']
             case_id = self.rds.create_case(patient_id=patient_id,
                                            created_by_id=user_id,
