@@ -13,9 +13,6 @@ import { authLogout } from "../auth/apis";
 const links = [
   { children: "My Cases", to: "/myCases" },
   { children: "Upcoming Appointments", to: "/appointments" },
-  { children: "Sign Up", to: "/signup" },
-  { children: "Home", to: "/" },
-  { children: "Case", to: "/case" },
   { children: "Profile", to: "/profile" },
   { children: "Appointment", to: "/makeappointment/" },
 
@@ -64,7 +61,7 @@ export default function NavBar() {
           LOGO
         </Typography>
 
-        <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
           <IconButton
             size="large"
             aria-label="account of current user"
@@ -79,18 +76,18 @@ export default function NavBar() {
             id="menu-appbar"
             anchorEl={anchorElNav}
             anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
+              vertical: 'bottom',
+              horizontal: 'left',
             }}
             keepMounted
             transformOrigin={{
-              vertical: "top",
-              horizontal: "left",
+              vertical: 'top',
+              horizontal: 'left',
             }}
             open={Boolean(anchorElNav)}
             onClose={handleCloseNavMenu}
             sx={{
-              display: { xs: "block", md: "none" },
+              display: { xs: 'block', md: 'none' },
             }}
           >
             {links.map((link) => (
@@ -166,6 +163,6 @@ export default function NavBar() {
           }
         </Box>
       </Toolbar>
-    </AppBar>
+    </AppBar >
   );
 }
