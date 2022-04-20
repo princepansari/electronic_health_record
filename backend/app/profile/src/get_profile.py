@@ -32,11 +32,13 @@ class GetProfile(Resource):
                     'dob': user['dob'].strftime('%d/%m/%Y'),
                     'phone': user['phone_number'],
                     'schedule': staff_schedule['schedule'],
-                    'slot_duration': staff_schedule['slot_duration']}, HTTPStatus.OK
+                    'slot_duration': staff_schedule['slot_duration'],
+                    'user_type': user_type}, HTTPStatus.OK
 
         return {'email': user['email'],
                 'guardian_email': user['guardian_email'],
                 'name': user['name'],
                 'dob': user['dob'].strftime('%d/%m/%Y'),
                 'phone': user['phone_number'],
-                'allergy': user['allergy']}, HTTPStatus.OK
+                'allergy': user['allergy'],
+                'user_type': user_type}, HTTPStatus.OK
