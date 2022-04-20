@@ -339,6 +339,14 @@ class RDS:
         cursor.close()
         return booked
 
+    def get_schedule(self, *,doctor_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT slot_duration, schedule FROM staff_schedule WHERE staff_id=%s "
+        cursor.execute(query, [doctor_id])
+        schedule = cursor.fetchall()
+        cursor.close()
+        return schedule
+
     def create_appointment(self, *, doctor_id, patient_id, appointment_datetime, followup_prescription_id):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
         query = "INSERT INTO appointment_table(doctor_id ,patient_id ,created_at ,appointment_time, followup_case_id)"\
@@ -359,6 +367,7 @@ class RDS:
         if not schedule:
             return None
         return schedule['schedule']
+
 
     def get_slot_availability(self, *, appointment_time):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
