@@ -119,7 +119,8 @@ export default function AppointmentTable(props) {
     };
 
     useEffect(() => {
-        const today = new Date().toISOString();
+
+        const today = new Date().setHours(0, 0, 0, 0).toISOString();
         // getBookedSlots(user.token, props.doctor.id, today).then((bookedSlotsList) => {
         //     setBookedSlots(getBookedSlots(bookedSlotsList));
         //     if (user.user_type === "doctor" || user.user_type === "nurse") {
