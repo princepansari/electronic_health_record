@@ -27,6 +27,8 @@ import AuthContext from "../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 import CenterCircularProgress from '../common/centerLoader'
 import moment from "moment";
+import { editUser, getUser } from "./apis";
+
 
 const iitbhilaiEmailPattern = /@iitbhilai.ac.in$/;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
@@ -34,26 +36,31 @@ const phoneRegExp = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
 const dobRegex = /^(?:0[1-9]|[12]\d|3[01])([\/.-])(?:0[1-9]|1[012])\1(?:19|20)\d\d$/
 const startTimeRegex = /^(1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm])$/
 
-// const schema = yup.object({
-//     guardian_email: yup
-//         .string()
-//         .email()
-//         .matches(
-//             iitbhilaiEmailPattern,
-//             "Please enter email address within IIT Bhilai's domain"
-//         ),
-//     phone: yup.string().matches(phoneRegExp, "Phone number is not valid"),
-//     schedule: yup
-//         .object()
-//         .test(
-//             "test-atleast-one-selected",
-//             "Should select atleast one day",
-//             (schedule) => schedule === undefined || Object.values(schedule?.days).filter(Boolean).length > 0
-//         ),
-//     dob: yup.string().matches(dobRegex, "Enter the date in the format of DD/MM/YYYY"),
-//     slot_duration: yup.number().min(1, "Duration should be atleast 1 minute"),
-//     password: yup.string().matches(passwordRegex, "Password should contain Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"),
-// });
+const schema = yup.object({
+    guardian_email: yup
+        .string()
+        .email()
+        .matches(
+            iitbhilaiEmailPattern,
+            "Please enter email address within IIT Bhilai's domain"
+        ),
+    phone: yup.string().matches(phoneRegExp, "Phone number is not valid"),
+    schedule: yup
+        .object()
+        .test(
+            "test-atleast-one-selected",
+            "Should select atleast one day",
+            (schedule) => schedule === undefined || Object.values(schedule?.days).filter(Boolean).length > 0
+        ),
+    dob: yup.string().matches(dobRegex, "Enter the date in the format of DD/MM/YYYY"),
+    slot_duration: yup.number().min(1, "Duration should be atleast 1 minute"),
+    password: yup.string().matches(passwordRegex, "Password should contain Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"),
+});
+
+
+
+
+
 
 export default function ProfilePage() {
     const {
@@ -87,7 +94,7 @@ export default function ProfilePage() {
                 }
             },
         },
-        // resolver: yupResolver(schema),
+        resolver: yupResolver(schema),
     });
 
     const watchUserType = watch("user_type");
@@ -101,7 +108,10 @@ export default function ProfilePage() {
 
     const populateForm = (user) => {
         return getUser(user.token).then(userProfileData => {
+            if (userProfileData['guardian_email'] === null)
+                delete userProfileData['guardian_email']
             reset(userProfileData);
+            console.log(userProfileData);
             if (userProfileData.schedule?.start_time && userProfileData.schedule?.end_time) {
                 const startTimeObj = moment(userProfileData.schedule?.start_time, ["hh:mm a"]);
                 const endTimeObj = moment(userProfileData.schedule?.end_time, ["hh:mm a"]);
@@ -117,48 +127,8 @@ export default function ProfilePage() {
                 });
             }
         });
+    };
 
-        // for testing
-        // const userProfileData = {
-        //     user_type: "doctor",
-        //     name: "Dr. Pranav",
-        //     email: "pranav@gmail.com",
-        //     guardian_email: "pranavSiram@iitbhilai.ac.in",
-        //     dob: "08/09/1996",
-        //     phone: "+91 9381993819",
-        //     allergy: "eye allergy",
-        //     password: "Hello@123",
-        //     schedule: {
-        //         days: {
-        //             monday: true,
-        //             tuesday: true,
-        //             wednesday: false,
-        //             thursday: false,
-        //             friday: false,
-        //             saturday: false,
-        //             sunday: false,
-        //         },
-        //         start_time: "10:00 AM",
-        //         end_time: "11:00 AM",
-        //     },
-        //     slot_duration: 30,
-        // };
-        // reset(userProfileData);
-        // if (userProfileData.schedule?.start_time && userProfileData.schedule?.end_time) {
-        //     const startTimeObj = moment(userProfileData.schedule?.start_time, ["hh:mm a"]);
-        //     const endTimeObj = moment(userProfileData.schedule?.end_time, ["hh:mm a"]);
-        //     setStartTime(startTimeObj);
-        //     setEndTime(endTimeObj);
-        //     setValue("schedule.start_time", startTimeObj, {
-        //         shouldValidate: true,
-        //         shouldDirty: true,
-        //     });
-        //     setValue("schedule.end_time", endTimeObj, {
-        //         shouldValidate: true,
-        //         shouldDirty: true,
-        //     });
-        // }
-    }
 
     useEffect(() => {
         setIsLoading(true);
@@ -195,6 +165,12 @@ export default function ProfilePage() {
     const preprocessData = (data) => {
         console.log("in process data= ", data)
         data = cloneDeep(data)
+
+        //removing the uneditable fields 
+        delete data['email']
+        delete data['guardian_email']
+        delete data['user_type']
+        console.log("after removing= ", data);
         if ("schedule" in data) {
             data.schedule.start_time = data.schedule.start_time.format("hh:mm a").toString();
             data.schedule.end_time = data.schedule.end_time.format("hh:mm a").toString();
@@ -209,11 +185,11 @@ export default function ProfilePage() {
     const [signupSuccessMsg, setSignupSuccessMsg] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const navigate = useNavigate();
+
     const handleSubmit = (data) => {
         const userObj = preprocessData(data)
         console.log(userObj)
-        editUser(userObj).then((message) => {
+        editUser(user.token, userObj).then((message) => {
             setSignupSuccessMsg(message);
             populateForm(user).then(() => { setIsLoading(false) });
             return;
@@ -237,10 +213,10 @@ export default function ProfilePage() {
                 <CenterCircularProgress />
                 :
                 <form onSubmit={RHFhandleSubmit(handleSubmit)}>
+                    {console.log(errors)}
                     <Stack spacing={2} sx={{ marginBottom: 20 }}>
                         <Typography variant="h3">Sign Up</Typography>
                         <Controller
-                            rules={{ required: true }}
                             control={control}
                             name="user_type"
                             render={({ field }) => (
@@ -283,7 +259,7 @@ export default function ProfilePage() {
 
                         <Controller
                             render={({ field }) => (
-                                <TextField {...field} required variant='filled' label="Email Address"
+                                <TextField {...field} disabled={true} variant='filled' label="Email Address"
                                     InputProps={{
                                         disableUnderline: true,
                                     }}
@@ -299,9 +275,9 @@ export default function ProfilePage() {
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
-                                        required
                                         variant='filled'
                                         label="Guardian Email Address"
+                                        disabled={true}
                                         error={errors?.guardian_email !== undefined}
                                         helperText={errors?.guardian_email?.message}
                                         InputProps={{
@@ -312,19 +288,6 @@ export default function ProfilePage() {
                                 control={control}
                             />
                         ) : null}
-
-                        <Controller
-                            render={({ field }) => (
-                                <TextField {...field} variant='filled' required label="Password"
-                                    error={errors?.password !== undefined}
-                                    helperText={errors?.password?.message}
-                                    InputProps={{
-                                        disableUnderline: true,
-                                    }} />
-                            )}
-                            name="password"
-                            control={control}
-                        />
 
                         <Controller
                             render={({ field }) => (
