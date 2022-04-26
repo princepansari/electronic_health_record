@@ -16,6 +16,7 @@ import RequireAuth from "./auth/requireAuth";
 import OtpVerification from "./auth/otpVerification";
 import { authCheckState } from "./auth/apis";
 import AppointmentTable from "./AppointmentSystem/AppointmentTable";
+import UserVerification from "./UserVerification/UserVerification";
 const theme = createTheme({ palette: { mode: "light" } });
 
 function App() {
@@ -56,6 +57,7 @@ function App() {
               <Route path="/profile/" element={<ProfilePage />} />
               <Route path="/profile2/" element={<ProfilePage2 />} />
               <Route path="/makeappointment/" element={<AppointmentTable />} />
+              <Route path="/userverification/" element={<UserVerification />} />
             </Routes>
           </Layout>
         </BrowserRouter>
