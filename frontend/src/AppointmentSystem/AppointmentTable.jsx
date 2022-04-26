@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Modal,
   Paper,
   Table,
@@ -7,6 +8,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
+  Typography,
 } from "@mui/material";
 import React, { useState } from "react";
 import CenterCircularProgress from "../common/centerLoader";
@@ -93,10 +96,30 @@ for (let i = start_time; i <= end_time; i = addMinutes(i, duration)) {
   slots.push(i);
 }
 
+const doctorList = [
+  "Dr. M.J. Memon",
+  "Dr. Anshu Gupta",
+  "Psychological Counsellor",
+];
+
+const cellStyles = {
+  activated: {
+    borderLeft: "1px solid #e9e9e9",
+    cursor: "pointer",
+    "&:hover": { bgcolor: "#686868cc" },
+  },
+  deactivated: {
+    // cursor: "none",
+    borderLeft: "1px solid #e9e9e9",
+    backgroundColor: "#d5d5d5",
+  },
+};
+
 const AppointmentTable = () => {
   const [openModal, setOpenModal] = useState(false);
   const [appointmentDate, setAppointmentDate] = useState(null);
   const [appointmentSlot, setAppointmentSlot] = useState(null);
+  const [doctor, setDoctor] = useState(null);
 
   const handleOpenModal = (date, slot) => {
     setAppointmentDate(date);
@@ -112,58 +135,83 @@ const AppointmentTable = () => {
 
   return (
     <>
-      <TableContainer component={Paper} sx={{ my: 5 }}>
-        <Table sx={{ minWidth: 850 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell
-                align="center"
-                sx={{ borderRight: "1px solid #e9e9e9", width: "130px" }}
-              >
-                Time
-              </TableCell>
-              {days.map((day, ind) => (
-                <TableCell key={ind} align="center">
-                  {printableDate(day)}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {slots.map((slot, ind) => (
-              <TableRow key={ind}>
+      <Autocomplete
+        disablePortal
+        // id="combo-box-demo"
+        options={doctorList}
+        onChange={(_, value) => setDoctor(value)}
+        // sx={{ width: 300 }}
+        renderInput={(params) => (
+          <TextField {...params} label="Select a Doctor" />
+        )}
+      />
+      {doctor !== null ? (
+        <TableContainer component={Paper} sx={{ my: 5 }}>
+          <Table sx={{ minWidth: 850 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
                 <TableCell
-                  component="th"
-                  scope="row"
                   align="center"
-                  sx={{ border: 0 }}
+                  sx={{ borderRight: "1px solid #e9e9e9", width: "130px" }}
                 >
-                  {printableTime(slot)}
+                  Time
                 </TableCell>
                 {days.map((day, ind) => (
-                  <TableCell
-                    key={ind}
-                    align="center"
-                    sx={{
-                      borderLeft: "1px solid #e9e9e9",
-                      cursor: "pointer",
-                      "&:hover": { bgcolor: "#d3d1d1" },
-                    }}
-                    onClick={() => handleOpenModal(day, slot)}
-                  >
-                    {" "}
+                  <TableCell key={ind} align="center">
+                    {printableDate(day)}
                   </TableCell>
                 ))}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+
+            <TableBody>
+              {slots.map((slot, ind) => (
+                <TableRow key={ind}>
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    align="center"
+                    sx={{ border: 0 }}
+                  >
+                    {printableTime(slot)}
+                  </TableCell>
+                  {days.map((day, ind) => (
+                    <TableCell
+                      key={ind}
+                      align="center"
+                      // sx={{
+                      //   borderLeft: "1px solid #e9e9e9",
+                      // }}
+                      sx={
+                        cellStyles[
+                          day >= new Date() ? "activated" : "deactivated"
+                        ]
+                      }
+                      onClick={() => handleOpenModal(day, slot)}
+                    >
+                      {" "}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <Typography
+          variant="h3"
+          textAlign="center"
+          sx={{ pt: 4, color: "gray" }}
+        >
+          Kindly select any Doctor
+        </Typography>
+      )}
 
       <Modal open={openModal} onClose={handleCloseModal}>
         <AppointmentModal
           appointmentDate={appointmentDate}
           appointmentSlot={appointmentSlot}
+          doctor={doctor}
         />
       </Modal>
     </>

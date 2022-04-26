@@ -1,5 +1,16 @@
-import { Button, Paper, TextField, Typography } from "@mui/material";
-import React from "react";
+import {
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Paper,
+  Radio,
+  RadioGroup,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Box } from "@mui/system";
+import React, { useState } from "react";
 import CenterCircularProgress from "../common/centerLoader";
 
 const modalBodyStyle = {
@@ -7,12 +18,17 @@ const modalBodyStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%,-50%)",
-  height: "50%",
+  height: { xs: "75%", md: "70%" },
   width: { xs: "96%", md: "55%" },
   p: 5,
 };
 
 const slotStyle = { color: "gray", fontSize: "1.2em" };
+const detailsDivStyle = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+};
 
 const printableDate = (fullDate) => {
   //   console.log(date.getDate());
@@ -73,7 +89,11 @@ const printableTime = (time) => {
 };
 
 const AppointmentModal = React.forwardRef((props, ref) => {
-  const { appointmentDate, appointmentSlot } = props;
+  const { appointmentDate, appointmentSlot, doctor } = props;
+  const userName = JSON.parse(localStorage.user).name;
+
+  const [radioValue, setRadioValue] = useState("newCase");
+
   return (
     <div ref={ref}>
       <Paper sx={modalBodyStyle}>
@@ -84,8 +104,20 @@ const AppointmentModal = React.forwardRef((props, ref) => {
             <Typography variant="h4" component="div" textAlign="center">
               Booking Appointment
             </Typography>
-            <p style={slotStyle}>{"On " + printableDate(appointmentDate)}</p>
-            <p style={slotStyle}>{"At " + printableTime(appointmentSlot)}</p>
+            <div style={detailsDivStyle}>
+              <p style={slotStyle}>{"On " + printableDate(appointmentDate)}</p>
+              <p style={{ fontSize: "1.2em" }}>
+                <strong>Doctor : </strong>
+                {doctor}
+              </p>
+            </div>
+            <div style={detailsDivStyle}>
+              <p style={slotStyle}>{"At " + printableTime(appointmentSlot)}</p>
+              <p style={{ fontSize: "1.2em" }}>
+                <strong>Patient : </strong>
+                {userName}
+              </p>
+            </div>
 
             <form>
               <TextField
@@ -95,6 +127,46 @@ const AppointmentModal = React.forwardRef((props, ref) => {
                 required
                 label="Issue"
               />
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  py: 3,
+                }}
+              >
+                <FormControl>
+                  <FormLabel>Type of Case</FormLabel>
+                  <RadioGroup
+                    row
+                    name="caseRadioButtons"
+                    value={radioValue}
+                    onChange={(e) => setRadioValue(e.currentTarget.value)}
+                  >
+                    <FormControlLabel
+                      value="newCase"
+                      control={<Radio />}
+                      label="New Case"
+                    />
+                    <FormControlLabel
+                      value="followUp"
+                      control={<Radio />}
+                      label="Follow-up"
+                    />
+                  </RadioGroup>
+                </FormControl>
+
+                {radioValue === "followUp" && (
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    required
+                    label="Case ID of original case"
+                  />
+                )}
+              </Box>
 
               <Button type="submit" variant="contained" fullWidth>
                 Submit
