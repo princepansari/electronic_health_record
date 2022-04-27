@@ -7,6 +7,8 @@ from app.case.src.create_case import CreateCase
 from app.case.src.create_prescription import CreatePrescription
 from app.case.src.add_correction import AddCorrection
 from app.case.src.add_report import AddReport
+from app.case.src.download_case import DownloadCase
+from app.case.src.download_prescription import DownloadPrescription
 
 
 def case_routes(api):
@@ -16,4 +18,6 @@ def case_routes(api):
     api.add_resource(CreatePrescription, '/api/case/create_prescription')
     api.add_resource(AddCorrection, '/api/case/add_correction')
     api.add_resource(AddReport, '/api/case/add_report')
+    api.add_resource(DownloadCase, '/api/case/download_case')
+    api.add_resource(DownloadPrescription, '/api/case/download_prescription')
 
