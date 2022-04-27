@@ -25,11 +25,12 @@ class GetUpcomingAppointment(Resource):
         user_id = get_jwt_identity()
         user_type = get_jwt()['user_type']
         response = []
+        current_datetime = datetime.now()
         if user_type == 'doctor':
-            upcoming_appointment = self.rds.get_upcoming_appointment_for_doctor(user_id=user_id)
+            upcoming_appointment = self.rds.get_upcoming_appointment_for_doctor(user_id=user_id, current_datetime = current_datetime)
             doctor_id = upcoming_appointment["doctor_id"]
             doctor_name = self.rds.get_doctor_name(doctor_id=doctor_id)
-            if upcoming_appointment["followup_case_id"]==None:
+            if upcoming_appointment["followup_case_id"] is None:
                 followup_type="New"
             else:
                 followup_type="Followup"
@@ -43,10 +44,10 @@ class GetUpcomingAppointment(Resource):
                     'type' : followup_type,
                     'datetime' : upcoming_appointment['appointment_time']})
         else:
-            upcoming_appointment = self.rds.get_upcoming_appointment_for_patient(user_id=user_id)
+            upcoming_appointment = self.rds.get_upcoming_appointment_for_patient(user_id=user_id, current_datetime = current_datetime)
             doctor_id = upcoming_appointment["doctor_id"]
             doctor_name = self.rds.get_doctor_name(doctor_id=doctor_id)
-            if upcoming_appointment["followup_case_id"]==None:
+            if upcoming_appointment["followup_case_id"] is None:
                 followup_type="New"
             else:
                 followup_type="Followup"
