@@ -50,7 +50,9 @@ class GetBookedSlots(Resource):
                     'slot': slot_num,
                     'date': slot['appointment_time'].isoformat(),
                     'booked_by_id': slot['patient_id'],
-                    'booked_by_name': slot['name']})
+                    'booked_by_name': slot['name'],
+                    'appointment_id' : slot['id']})
+                    
             else:
                 response.append({
                     'slot': slot_num,

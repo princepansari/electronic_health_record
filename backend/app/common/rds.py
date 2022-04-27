@@ -332,7 +332,7 @@ class RDS:
 
     def get_booked_slots(self, *, doctor_id, from_date, last_date):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
-        query = "SELECT appointment_time, patient_id, users.name FROM appointment_table INNER JOIN users ON " \
+        query = "SELECT id, appointment_time, patient_id, users.name FROM appointment_table INNER JOIN users ON " \
                 "appointment_table.patient_id=users.user_id WHERE "\
                 "appointment_time > %s AND appointment_time < %s And doctor_id = %s "
         cursor.execute(query, [from_date, last_date, doctor_id])
@@ -389,3 +389,16 @@ class RDS:
             return False
         cursor.close()
         return True
+
+    def get_upcoming_appointment(self, *, user_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT doctor_id, patient_id, appointment_time, users.name, users.email,"\
+                "id as case_id , followup_case_id FROM appointment_table INNER JOIN users ON " \
+                "appointment_table.patient_id=users.user_id WHERE "\
+                "appointment_time > %s  And patient_id = %s "
+        cursor.execute(query, [,user_id])
+        slot = cursor.fetchone()
+        cursor.close()
+        if not slot:
+            return True
+        return False
