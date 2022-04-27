@@ -392,8 +392,8 @@ class RDS:
 
     def get_upcoming_appointment_for_patient(self, *, user_id, current_datetime):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
-        query = "SELECT doctor_id, patient_id, appointment_time, users.name, users.email,"\
-                "id as case_id , followup_case_id FROM appointment_table INNER JOIN users ON " \
+        query = "SELECT doctor_id, patient_id, appointment_time, users.name as patient_name, users.email as " \
+                "patient_email, followup_case_id FROM appointment_table INNER JOIN users ON " \
                 "appointment_table.patient_id=users.user_id WHERE "\
                 "appointment_time > %s  And patient_id = %s "
         cursor.execute(query, [current_datetime, user_id])
@@ -403,8 +403,8 @@ class RDS:
 
     def get_upcoming_appointment_for_doctor(self, *, user_id, current_datetime):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
-        query = "SELECT doctor_id, patient_id, appointment_time, users.name as patient_name, users.email as patient_email,"\
-                "id as case_id , followup_case_id FROM appointment_table INNER JOIN users ON " \
+        query = "SELECT doctor_id, patient_id, appointment_time, users.name as patient_name, users.email as " \
+                "patient_email, followup_case_id FROM appointment_table INNER JOIN users ON " \
                 "appointment_table.patient_id=users.user_id WHERE "\
                 "appointment_time > %s  And doctor_id = %s "
         cursor.execute(query, [current_datetime, user_id])
