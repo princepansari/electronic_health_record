@@ -390,15 +390,15 @@ class RDS:
         cursor.close()
         return True
 
-    def get_upcoming_appointment(self, *, user_id):
-        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
-        query = "SELECT doctor_id, patient_id, appointment_time, users.name, users.email,"\
-                "id as case_id , followup_case_id FROM appointment_table INNER JOIN users ON " \
-                "appointment_table.patient_id=users.user_id WHERE "\
-                "appointment_time > %s  And patient_id = %s "
-        cursor.execute(query, [,user_id])
-        slot = cursor.fetchone()
-        cursor.close()
-        if not slot:
-            return True
-        return False
+    # def get_upcoming_appointment(self, *, user_id):
+    #     cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+    #     query = "SELECT doctor_id, patient_id, appointment_time, users.name, users.email,"\
+    #             "id as case_id , followup_case_id FROM appointment_table INNER JOIN users ON " \
+    #             "appointment_table.patient_id=users.user_id WHERE "\
+    #             "appointment_time > %s  And patient_id = %s "
+    #     cursor.execute(query, [,user_id])
+    #     slot = cursor.fetchone()
+    #     cursor.close()
+    #     if not slot:
+    #         return True
+    #     return False
