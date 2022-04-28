@@ -13,7 +13,9 @@ import { authLogout } from "../auth/apis";
 const links = [
   { children: "My Cases", to: "/myCases" },
   { children: "Upcoming Appointments", to: "/appointments" },
-  { children: "Appointment", to: "/makeappointment" }
+  { children: "Appointment", to: "/makeappointment" },
+  { children: "Profile", to: "/profile" },
+
 ]
 
 const navLinkStyle = {
@@ -137,14 +139,6 @@ export default function NavBar() {
           {
             user ?
               <>
-                {links.map((link) => (
-                  <Button
-                    key={link.to}
-                    component={Link}
-                    sx={navLinkStyle}
-                    {...link}
-                  />
-                ))}
                 {
                   user.user_type === 'admin' ?
                     <Button
@@ -155,12 +149,14 @@ export default function NavBar() {
                       User Verification
                     </Button>
                     :
-                    <Button
-                      component={Link}
-                      to="/profile"
-                      sx={navLinkStyle}>
-                      Profile
-                    </Button>
+                    (links.map((link) => (
+                      <Button
+                        key={link.to}
+                        component={Link}
+                        sx={navLinkStyle}
+                        {...link}
+                      />
+                    )))
                 }
                 <Button
                   onClick={() => {
