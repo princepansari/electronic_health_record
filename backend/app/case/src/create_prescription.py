@@ -71,6 +71,10 @@ class CreatePrescription(Resource):
         filename = 'prescription_' + str(prescription['prescription_id']) + '.pdf'
         email = Email()
         email.login()
-        body = email.create_msg_with_attachment(message_text="Prescription", to=[patient_email], subject="Prescription",
+        subject = 'Prescription ' + str(prescription['prescription_id']) + ' for case ' + str(case_info['case_id'])
+        message_text = 'Dear ' + case_info['patient_name'] + ',\n\n' + \
+                       'A new prescription for your case is created\n' + \
+                       'Your new prescription is attached.\n\n'
+        body = email.create_msg_with_attachment(message_text=message_text, to=[patient_email], subject=subject,
                                                 pdf_file=pdf_file, filename=filename)
         email.send_msg(message=body)
