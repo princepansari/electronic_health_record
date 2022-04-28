@@ -8,6 +8,7 @@ import time
 import os
 import sys
 from datetime import datetime
+from pytz import timezone
 from datetime import date
 import calendar
 
@@ -16,6 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 from app.common.rds import RDS
 from app.common.config import Config
 from app.common.utilities import Utils
+from app.common.mail import Email
 
 
 class CreateAppointment(Resource):
@@ -35,6 +37,9 @@ class CreateAppointment(Resource):
         data = self.schema.validate(request.get_json())
         doctor_id = data['doctor_id']
         patient_id = get_jwt_identity()
+        email  = get_jwt()['email']
+        name = get_jwt()['name']
+
         appointment_datetime = data['appointment_datetime']
         followup_prescription_id = data.get('followup_prescription_id')
 
@@ -45,7 +50,7 @@ class CreateAppointment(Resource):
         appointment_date = appointment_datetime.date()
         day_name = calendar.day_name[appointment_date.weekday()].lower()
         appointment_time = appointment_datetime.time()
-
+        ist_appointment_time = appointment_time.astimezone(timezone('Asia/Kolkata'))
         doctor_availability = self.rds.get_doctors_schedule_by_id(doctor_id=doctor_id)
         slot_availability = self.rds.get_slot_availability(appointment_time=appointment_datetime)
         if doctor_availability['days'][day_name]:
@@ -56,6 +61,10 @@ class CreateAppointment(Resource):
                     appointment_id = self.rds.create_appointment(doctor_id=doctor_id, patient_id=patient_id,
                                                                  appointment_datetime=appointment_datetime,
                                                                  followup_prescription_id=followup_prescription_id)
+                    doctor_name = self.rds.get_doctor_name(doctor_id=doctor_id)
+                    CreateAppointment.send_email(to=[email],
+                                 subject='Appointment Booked',
+                                 message=f'Dear {name},\nYour appointment booked with {doctor_name}\nAppointment ID is {appointment_id}.\nAppointment time is {ist_appointment_time.strftime(format)}')
                     return appointment_id, HTTPStatus.OK
                 else:
                     return {'message': 'slot is booked'}, HTTPStatus.BAD_REQUEST
@@ -63,3 +72,12 @@ class CreateAppointment(Resource):
                 return {'message': 'Doctor is not available'}, HTTPStatus.BAD_REQUEST
         else:
             return {'message': 'Doctor is not available'}, HTTPStatus.BAD_REQUEST
+
+
+
+    @staticmethod
+    def send_email(*, to, subject, message):
+        email = Email()
+        email.login()
+        body = email.create_msg(message_text=message, to=to, subject=subject)
+        email.send_msg(message=body)
