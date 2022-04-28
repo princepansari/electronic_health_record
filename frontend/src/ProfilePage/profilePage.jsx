@@ -219,7 +219,7 @@ export default function ProfilePage() {
                 <form onSubmit={RHFhandleSubmit(handleSubmit)}>
                     {console.log(errors)}
                     <Stack spacing={2} sx={{ marginBottom: 20 }}>
-                        <Typography variant="h3">Sign Up</Typography>
+                        <Typography variant="h3">Profile Page</Typography>
                         <Controller
                             control={control}
                             name="user_type"

@@ -64,7 +64,8 @@ export default function Prescription({ prescription, caseId, ...rest }) {
     return (
         <Card sx={{
             flexGrow: 1,
-            backgroundColor: "#fafafa"
+            backgroundColor: "#fafafa",
+            marginBottom: 5
         }}>
             <CardHeader
                 action={
