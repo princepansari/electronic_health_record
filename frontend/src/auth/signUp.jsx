@@ -121,11 +121,11 @@ export default function Signup() {
 		data = cloneDeep(data);
 		if ("schedule" in data) {
 			data.schedule.start_time = data.schedule.start_time
-				.format("hh:mm a")
-				.toString();
+				.utc()
+				.format("hh:mm a");
 			data.schedule.end_time = data.schedule.end_time
-				.format("hh:mm a")
-				.toString();
+				.utc()
+				.format("hh:mm a");
 		}
 		for (let key in data) {
 			if (data[key] === null || data[key] === undefined) data.key = "";
@@ -167,6 +167,34 @@ export default function Signup() {
 				<form onSubmit={RHFhandleSubmit(handleSubmit)}>
 					<Stack spacing={2}>
 						<Typography variant="h3">Sign Up</Typography>
+						<Controller
+							rules={{ required: true }}
+							control={control}
+							name="user_type"
+							render={({ field }) => (
+								<RadioGroup
+									style={{ display: "inline" }}
+									label="User Type"
+									{...field}
+								>
+									<FormControlLabel
+										value="patient"
+										control={<Radio />}
+										label="Patient"
+									/>
+									<FormControlLabel
+										value="doctor"
+										control={<Radio />}
+										label="Doctor"
+									/>
+									<FormControlLabel
+										value="nurse"
+										control={<Radio />}
+										label="Nurse"
+									/>
+								</RadioGroup>
+							)}
+						/>
 						<Controller
 							render={({ field }) => <TextField {...field} variant='filled' required label="Name"
 								InputProps={{

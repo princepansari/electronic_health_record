@@ -6,7 +6,7 @@ import PrescriptionForm from "./prescriptionForm";
 import AuthContext from "../auth/AuthContext";
 import DownloadIcon from '@mui/icons-material/Download';
 import { useParams } from "react-router-dom";
-import { getCase } from "./apis";
+import { downloadCase, getCase } from "./apis";
 import CenterCircularProgress from "../common/centerLoader";
 import { styled } from '@mui/material/styles';
 
@@ -68,7 +68,14 @@ export default function Case(props) {
                         <>
                             <Stack direction="row" spacing={2} sx={{ marginTop: 12 }}>
                                 <Typography variant="h3" > CASE </Typography>
-                                <IconButton onClick={() => { }}>
+                                <IconButton onClick={() => {
+                                    downloadCase(user.token, caseObj.id).then((data) => {
+                                        const file = new Blob([data], { type: "application/pdf" });
+                                        const fileURL = URL.createObjectURL(file);
+                                        const pdfWindow = window.open();
+                                        pdfWindow.location.href = fileURL;
+                                    });
+                                }}>
                                     <DownloadIcon />
                                 </IconButton>
                             </Stack>

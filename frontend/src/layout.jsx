@@ -23,7 +23,6 @@ export default function Layout({ children }) {
 
     return (
         <div sx={classes.root}>
-            <NavBar />
             <div sx={classes.page}>
                 <div sx={classes.toolbar}></div>
                 <Container sx={{ marginTop: 10 }}>

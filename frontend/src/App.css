@@ -40,3 +40,29 @@
 button {
   font-size: calc(10px + 2vmin);
 }
+
+.parallax {
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8)), url('/bgimage2.jpg');
+  height: calc(100vh);
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.parallax_center{
+  position: absolute;
+  left: 0;
+  top: 30%;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+}
+
+.white-text{
+  color: #fff !important;
+}
+
+.caption{
+  width: fit-content;
+}

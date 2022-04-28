@@ -15,6 +15,11 @@ import RequireAuth from "./auth/requireAuth";
 import OtpVerification from "./auth/otpVerification";
 import { authCheckState } from "./auth/apis";
 import AppointmentTable from "./AppointmentSystem/AppointmentTable";
+import Appointment from "./AppointmentSystem/Appointment";
+import UserVerification from "./userVerification/userVerification";
+import NavBar from "./navbar/navbar";
+import Home from "./Home/home";
+import { ParallaxProvider } from 'react-scroll-parallax';
 
 const theme = createTheme({
   palette: {
@@ -44,19 +49,20 @@ function App() {
       <CssBaseline />
       <AuthContext.Provider value={{ "user": user, "setUser": setUser }}>
         <BrowserRouter>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<h1>Home Page</h1>} />
-              <Route path="/otpVerification" element={<OtpVerification />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/login" element={<SignIn />} />
-              <Route path="/myCases" element={<RequireAuth children={<MyCases />} />} />
-              <Route path="/appointments" element={<RequireAuth children={<UpcomingAppointments />} />} />
-              <Route path="/case/:caseId" element={<RequireAuth children={<Case />} />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/makeappointment/" element={<AppointmentTable />} />
-            </Routes>
-          </Layout>
+          <NavBar />
+          <Routes>
+            {/* <Route path="/" element={<h2>Home Page</h2>} /> */}
+            <Route path="/" element={<Home />} />
+            <Route path="/otpVerification" element={<Layout><OtpVerification /></Layout>} />
+            <Route path="/signup" element={<Layout><SignUp /></Layout>} />
+            <Route path="/login" element={<Layout><SignIn /></Layout>} />
+            <Route path="/myCases" element={<Layout><RequireAuth children={<MyCases />} /></Layout>} />
+            <Route path="/appointments" element={<Layout><RequireAuth children={<UpcomingAppointments />} /></Layout>} />
+            <Route path="/case/:caseId" element={<Layout><RequireAuth children={<Case />} /></Layout>} />
+            <Route path="/profile" element={<Layout><RequireAuth children={<ProfilePage />} /> </Layout>} />
+            <Route path="/makeappointment" element={<Layout><RequireAuth children={<Appointment />} /></Layout>} />
+            <Route path="/userVerification" element={<Layout><RequireAuth children={<UserVerification />} /></Layout>} />
+          </Routes>
         </BrowserRouter>
       </AuthContext.Provider>
     </ThemeProvider>

@@ -13,9 +13,7 @@ import { authLogout } from "../auth/apis";
 const links = [
   { children: "My Cases", to: "/myCases" },
   { children: "Upcoming Appointments", to: "/appointments" },
-  { children: "Profile", to: "/profile" },
-  { children: "Appointment", to: "/makeappointment/" },
-
+  { children: "Appointment", to: "/makeappointment" }
 ]
 
 const navLinkStyle = {
@@ -25,6 +23,13 @@ const navLinkStyle = {
   textTransform: "none",
   fontSize: "1.01em",
   "&.active": { color: "red" },
+};
+
+const navLogoStyle = {
+  m: 2,
+  color: "black",
+  display: "block",
+  textTransform: "none",
 };
 
 export default function NavBar() {
@@ -52,14 +57,20 @@ export default function NavBar() {
       sx={{ backgroundColor: "#14bdad" }}
     >
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{
-          marginRight: 15,
-          display: { xs: 'none', md: 'flex' },
-          fontWeight: 'bold',
-          letterSpacing: '2px'
-        }} >
-          LOGO
-        </Typography>
+        <Button
+          component={Link}
+          to="/"
+          sx={navLogoStyle}
+        >
+          <Typography variant="h5" component="div" sx={{
+            marginRight: 15,
+            display: { xs: 'none', md: 'flex' },
+            fontWeight: 'bold',
+            letterSpacing: '2px'
+          }} >
+            EHR
+          </Typography>
+        </Button>
 
         <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
           <IconButton
@@ -104,7 +115,7 @@ export default function NavBar() {
           component="div"
           sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, fontWeight: 'bold', letterSpacing: '2px' }}
         >
-          LOGO
+          EHR
         </Typography>
 
         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
@@ -116,12 +127,12 @@ export default function NavBar() {
             :
             null
           }
-          <Button
+          {/* <Button
             component={Link}
             to='/'
             sx={navLinkStyle}>
             Home
-          </Button>
+          </Button> */}
 
           {
             user ?
@@ -134,6 +145,23 @@ export default function NavBar() {
                     {...link}
                   />
                 ))}
+                {
+                  user.user_type === 'admin' ?
+                    <Button
+                      component={Link}
+                      to="/userVerification"
+                      sx={navLinkStyle}
+                    >
+                      User Verification
+                    </Button>
+                    :
+                    <Button
+                      component={Link}
+                      to="/profile"
+                      sx={navLinkStyle}>
+                      Profile
+                    </Button>
+                }
                 <Button
                   onClick={() => {
                     authLogout(setUser);

@@ -126,3 +126,35 @@ export const getMyCases = (token) => {
 
 };
 
+export const downloadCase = (token, caseId) => {
+    axios.defaults.headers = {
+        Authorization: `Bearer ${token}`
+    };
+    return axios
+        .get(`/api/case/download_case?case_id=${caseId}`)
+        .then(res => {
+            console.log(res.headers);
+            console.log(res.data);
+            console.log(res)
+            return res.data;
+        })
+
+};
+
+export const downloadPrescription = (token, caseId, prescriptionId) => {
+    axios.defaults.headers = {
+        Authorization: `Bearer ${token}`
+    };
+    return axios
+        .get(`/api/case/download_prescription?case_id=${caseId}&prescription_id=${prescriptionId}`)
+        .then(res => {
+            console.log(res.headers);
+            console.log(res.data);
+            console.log(res)
+            return res.data;
+        })
+
+};
+
+
+

@@ -1,11 +1,10 @@
 import { Box, Button, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
+import AuthContext from '../auth/AuthContext';
 import { CreateCaseForm } from '../case/createCaseForm';
 
-const user = 'doctor';
-const newCase = false;
 const boxStyle = {
     display: 'flex',
     justifyContent: 'space-between',
@@ -16,11 +15,21 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     backgroundColor: theme.palette.action.hover
 }));
 
-
+const dateTimeOptions = {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour12: false,
+    hour: 'numeric',
+    minute: 'numeric'
+}
 
 const AppointmentItem = ({ appointment }) => {
+    console.log(appointment);
     const [openModal, setOpenModal] = useState(false);
     const [patientEmail, setPatientEmail] = useState('');
+    const { user } = useContext(AuthContext);
 
     return (
         <div>
@@ -37,45 +46,45 @@ const AppointmentItem = ({ appointment }) => {
                         <TableBody>
                             <StyledTableRow >
                                 <TableCell component="th" scope="row">
-                                    <b>Patient Name:</b>&nbsp; {appointment.patientName}
+                                    <b>Patient Name:</b>&nbsp; {appointment.patient_name}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                    <b>Doctor Name:</b>&nbsp; {appointment.doctorName}
+                                    <b>Doctor Name:</b>&nbsp; {appointment.doctor_name}
                                 </TableCell>
                             </StyledTableRow>
 
                             <StyledTableRow >
                                 <TableCell component="th" scope="row">
-                                    <b>Type:</b>&nbsp; {appointment.type} + {appointment.type === 'new' ? '' : `  (Case Id: ${appointment.followUpCaseId})`}
+                                    <b>Type:</b>&nbsp; {`${appointment.type}` + (appointment.type === 'New' ? '' : ` (Case Id: ${appointment.case_id})`)}
                                 </TableCell>
-                                <TableCell ><b>Date:</b>&nbsp; {appointment.date}</TableCell>
+                                <TableCell ><b>Date:</b>&nbsp;  {new Date(appointment.datetime).toLocaleDateString('en-US', dateTimeOptions)}</TableCell>
                             </StyledTableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
                 {
-                    appointment.type === 'new' ?
-                        <Button
-                            variant='text'
-                            sx={{ mr: 4, fontSize: { xs: '0.6em', md: '1em' }, textTransform: 'none' }}
-                            onClick={(e) => { setOpenModal(true); setPatientEmail(appointment.patientEmail) }}
-                        >
-                            Create New Case
-                        </Button>
+                    appointment.type === 'New' ?
+                        (user.user_type === "patient" ?
+                            null
+                            :
+                            <Button
+                                variant='text'
+                                sx={{ mr: 4, fontSize: { xs: '0.6em', md: '1em' }, textTransform: 'none' }}
+                                onClick={(e) => { setOpenModal(true); setPatientEmail(appointment.patient_email) }}
+                            >
+                                Create New Case
+                            </Button>)
                         :
                         <Button
                             variant='text'
                             sx={{ mr: 4, fontSize: { xs: '0.6em', md: '1em' }, textTransform: 'none' }}
                             component={Link}
-                            to={`/case/${appointment.followUpCaseId}`}>
+                            to={`/case/${appointment.case_id}`}>
                             See Case Study
                         </Button>
                 }
 
             </Paper>
-
-
-
         </div>
     )
 }

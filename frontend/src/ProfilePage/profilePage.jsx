@@ -113,10 +113,11 @@ export default function ProfilePage() {
             reset(userProfileData);
             console.log(userProfileData);
             if (userProfileData.schedule?.start_time && userProfileData.schedule?.end_time) {
-                const startTimeObj = moment(userProfileData.schedule?.start_time, ["hh:mm a"]);
-                const endTimeObj = moment(userProfileData.schedule?.end_time, ["hh:mm a"]);
-                setStartTime(moment(userProfileData.schedule?.start_time, ["hh:mm a"]));
-                setEndTime(moment(userProfileData.schedule?.end_time, ["hh:mm a"]));
+                const startTimeObj = moment.utc(userProfileData.schedule?.start_time, ["hh:mm a"]).local();
+                console.log(startTimeObj);
+                const endTimeObj = moment.utc(userProfileData.schedule?.end_time, ["hh:mm a"]).local();
+                setStartTime(startTimeObj);
+                setEndTime(endTimeObj);
                 setValue("schedule.start_time", startTimeObj, {
                     shouldValidate: true,
                     shouldDirty: true,
@@ -172,8 +173,8 @@ export default function ProfilePage() {
         delete data['user_type']
         console.log("after removing= ", data);
         if ("schedule" in data) {
-            data.schedule.start_time = data.schedule.start_time.format("hh:mm a").toString();
-            data.schedule.end_time = data.schedule.end_time.format("hh:mm a").toString();
+            data.schedule.start_time = data.schedule.start_time.utc().format("hh:mm a").toString();
+            data.schedule.end_time = data.schedule.end_time.utc().format("hh:mm a").toString();
         }
         for (let key in data) {
             if (data[key] === null || data[key] === undefined)
@@ -191,7 +192,10 @@ export default function ProfilePage() {
         console.log(userObj)
         editUser(user.token, userObj).then((message) => {
             setSignupSuccessMsg(message);
-            populateForm(user).then(() => { setIsLoading(false) });
+            populateForm(user).then(() => {
+                setIsLoading(false);
+                setWantToEdit(false);
+            });
             return;
         }).catch((err) => {
             console.log(err?.response?.data?.message);
@@ -249,6 +253,7 @@ export default function ProfilePage() {
 
                         <Controller
                             render={({ field }) => <TextField {...field} variant='filled' required label="Name"
+                                disabled={!wantToEdit}
                                 InputProps={{
                                     disableUnderline: true,
                                 }}
@@ -292,6 +297,7 @@ export default function ProfilePage() {
                         <Controller
                             render={({ field }) => (
                                 <TextField {...field} variant='filled' required label="DOB: DD/MM/YYYY"
+                                    disabled={!wantToEdit}
                                     error={errors?.dob !== undefined}
                                     helperText={errors?.dob?.message}
                                     InputProps={{
@@ -306,6 +312,7 @@ export default function ProfilePage() {
                             render={({ field }) => (
                                 <TextField
                                     {...field}
+                                    disabled={!wantToEdit}
                                     variant='filled'
                                     required
                                     label="Phone Number"
@@ -324,6 +331,7 @@ export default function ProfilePage() {
                             <Controller
                                 render={({ field }) => <TextField {...field}
                                     variant='filled'
+                                    disabled={!wantToEdit}
                                     label="Allergies"
                                     InputProps={{
                                         disableUnderline: true,
@@ -340,7 +348,7 @@ export default function ProfilePage() {
                                     control={control}
                                     render={({ field }) => (
                                         <FormControlLabel
-                                            control={<Checkbox checked={field?.value || false} {...field} />}
+                                            control={<Checkbox disabled={!wantToEdit} checked={field?.value || false} {...field} />}
                                             label="Sunday"
                                         />
                                     )}
@@ -349,7 +357,7 @@ export default function ProfilePage() {
                                     name="schedule.days.monday"
                                     control={control}
                                     render={({ field }) => (<FormControlLabel
-                                        control={<Checkbox checked={field?.value || false} {...field} />}
+                                        control={<Checkbox disabled={!wantToEdit} checked={field?.value || false} {...field} />}
                                         label="Monday"
                                     />
                                     )}
@@ -359,7 +367,7 @@ export default function ProfilePage() {
                                     control={control}
                                     render={({ field }) => (
                                         <FormControlLabel
-                                            control={<Checkbox checked={field?.value || false} {...field} />}
+                                            control={<Checkbox disabled={!wantToEdit} checked={field?.value || false} {...field} />}
                                             label="Tuesday"
                                         />
                                     )}
@@ -369,7 +377,7 @@ export default function ProfilePage() {
                                     control={control}
                                     render={({ field }) => (
                                         <FormControlLabel
-                                            control={<Checkbox checked={field?.value || false} {...field} />}
+                                            control={<Checkbox disabled={!wantToEdit} checked={field?.value || false} {...field} />}
                                             label="Wednesday"
                                         />
                                     )}
@@ -379,7 +387,7 @@ export default function ProfilePage() {
                                     control={control} StartTime
                                     render={({ field }) => (
                                         <FormControlLabel
-                                            control={<Checkbox checked={field?.value || false} {...field} />}
+                                            control={<Checkbox disabled={!wantToEdit} checked={field?.value || false} {...field} />}
                                             label="Thursday"
                                         />
                                     )}
@@ -389,7 +397,7 @@ export default function ProfilePage() {
                                     control={control}
                                     render={({ field }) => (
                                         <FormControlLabel
-                                            control={<Checkbox checked={field?.value || false} {...field} />}
+                                            control={<Checkbox disabled={!wantToEdit} checked={field?.value || false} {...field} />}
                                             label="Friday"
                                         />
                                     )}
@@ -399,7 +407,7 @@ export default function ProfilePage() {
                                     control={control}
                                     render={({ field }) => (
                                         <FormControlLabel
-                                            control={<Checkbox checked={field?.value || false} {...field} />}
+                                            control={<Checkbox disabled={!wantToEdit} checked={field?.value || false} {...field} />}
                                             label="Saturday"
                                         />
                                     )}
@@ -411,12 +419,14 @@ export default function ProfilePage() {
                                     <TimePicker
                                         label="Start Time"
                                         value={startTime || ""}
+                                        disabled={!wantToEdit}
                                         onChange={(startTime) => {
                                             setValue("schedule.start_time", startTime || "", {
                                                 shouldValidate: true,
                                                 shouldDirty: true,
                                             });
                                             setStartTime(startTime);
+                                            // console.log("type of start time=", typeof startTime, startTime, startTime.utc().format("hh:mm a"));
                                         }}
                                         renderInput={(params) => <TextField variant='filled' required {...params}
                                             error={errors?.schedule?.start_time}
@@ -426,6 +436,7 @@ export default function ProfilePage() {
                                     <TimePicker
                                         label="End Time"
                                         value={endTime || ""}
+                                        disabled={!wantToEdit}
                                         onChange={(endTime) => {
                                             setValue("schedule.end_time", endTime || "", {
                                                 shouldValidate: true,
@@ -444,6 +455,7 @@ export default function ProfilePage() {
                                     defaultValue={10}
                                     render={({ field }) => (
                                         <TextField
+                                            disabled={!wantToEdit}
                                             {...field}
                                             required
                                             variant='filled'
