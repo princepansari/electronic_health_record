@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 from app.common.rds import RDS
 from app.common.s3 import S3
 from app.common.config import Config
-from app.case.tools.pdf_generator_for_mail import PdfGenerator
+from app.case.tools.pdf_generator_for_mail import PdfGeneratorForMail
 from app.common.mail import Email
 
 
@@ -51,16 +51,24 @@ class CreatePrescription(Resource):
 
             case_info = self.rds.get_case_by_staff(case_id=data['case_id'])
             patient_email = self.rds.get_patient_email_by_case(case_id=data['case_id'])
-            self.send_prescription_mail(case_info=case_info, prescription=prescription, patient_email=patient_email)
+            CreatePrescription.send_prescription_mail(case_info=case_info, prescription=prescription, patient_email=patient_email)
             self.rds.update_case_updated_at(case_id=data['case_id'])
-            return prescription, HTTPStatus.OK
+            prescription_info = {
+                'prescription_id': prescription['prescription_id'],
+                'case_id': prescription['case_id'],
+                'prescription': prescription['prescription'],
+                'created_at': prescription['created_at'].isoformat(),
+                'updated_at': prescription['updated_at'].isoformat(),
+            }
+            return prescription_info, HTTPStatus.OK
         else:
             return {'message': 'Unauthorized'}, HTTPStatus.UNAUTHORIZED
 
-    def send_prescription_mail(self, *, case_info, prescription, patient_email):
-        pdf_generator = PdfGenerator(case_info, prescription)
+    @staticmethod
+    def send_prescription_mail(*, case_info, prescription, patient_email):
+        pdf_generator = PdfGeneratorForMail(case_info, prescription)
         pdf_file = pdf_generator.generate_pdf()
-        filename = 'prescription_' + str(prescription['prescription']) + '.pdf'
+        filename = 'prescription_' + str(prescription['prescription_id']) + '.pdf'
         email = Email()
         email.login()
         body = email.create_msg_with_attachment(message_text="Prescription", to=[patient_email], subject="Prescription",
