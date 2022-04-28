@@ -1,71 +1,92 @@
-import { Box, Button, Typography } from '@mui/material';
-import React from 'react';
+import { Box, Button, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { useContext, useState } from 'react';
+import { Link } from 'react-router-dom';
+import AuthContext from '../auth/AuthContext';
+import { CreateCaseForm } from '../case/createCaseForm';
 
-const user = 'doctor';
-const newCase = false;
 const boxStyle = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center'
 };
 
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    backgroundColor: theme.palette.action.hover
+}));
+
+const dateTimeOptions = {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour12: false,
+    hour: 'numeric',
+    minute: 'numeric'
+}
+
 const AppointmentItem = ({ appointment }) => {
-  return (
-    <div>
-        <Box sx={boxStyle}>
-            <Typography variant='h6' component='div' sx={{ ml: 2, fontSize: '1.1rem' }}>
-                <strong>Patient Name : </strong>
-                {appointment.patientName}
-            </Typography>
+    console.log(appointment);
+    const [openModal, setOpenModal] = useState(false);
+    const [patientEmail, setPatientEmail] = useState('');
+    const { user } = useContext(AuthContext);
 
-            <Typography variant='h6' component='div' sx={{ mr: 3, fontSize: '1.1rem' }}>
-                <strong>Doctor Name : </strong>
-                {appointment.doctorName}
-            </Typography>
-
-            <Typography variant='h6' component='div' sx={{ mr: 4, fontWeight: 'bold' }}>
-                Case : {appointment.case}
-            </Typography>
-        </Box>
-
-        <Box
-            sx={{ mt: 3, ...boxStyle }}
-        >
-            <Typography variant='p' component='p'
-                sx={{
-                    ml: 3,
-                    fontSize: '1.1em'
-                }}
+    return (
+        <div>
+            <Modal
+                open={openModal}
+                onClose={() => setOpenModal(false)}
             >
-                {new Date(appointment.startTime).toLocaleTimeString()}
-                {'-'}
-                {new Date(appointment.endTime).toLocaleTimeString()}
-            </Typography>
+                <CreateCaseForm setopen={setOpenModal} patientEmail={patientEmail} />
+            </Modal>
 
-            <Typography variant='p' component='p'
-                sx={{
-                    mr: 5,
-                    fontSize: '1.1em'
-                }}
-            >
-                {new Date(appointment.date).toLocaleDateString()}
-            </Typography>
+            <Paper elevation={2} sx={{ padding: 3, marginBottom: 1, marginTop: 1, backgroundColor: "#fafafa" }} >
+                <TableContainer component={Paper} elevation={0}>
+                    <Table sx={{ minWidth: 700 }} >
+                        <TableBody>
+                            <StyledTableRow >
+                                <TableCell component="th" scope="row">
+                                    <b>Patient Name:</b>&nbsp; {appointment.patient_name}
+                                </TableCell>
+                                <TableCell component="th" scope="row">
+                                    <b>Doctor Name:</b>&nbsp; {appointment.doctor_name}
+                                </TableCell>
+                            </StyledTableRow>
 
-            {
-                user === 'doctor' && (
-                <Button
-                    variant='contained'
-                    color='success'
-                    sx={{ mr: 4, fontSize: {xs: '0.6em', md: '1em' }, textTransform: 'none' }}
-                >
-                    {newCase ? 'Create New Case' : 'View Case Study'}
-                </Button>
-                )
-            }
-            
-        </Box>
-    </div>
-  )
+                            <StyledTableRow >
+                                <TableCell component="th" scope="row">
+                                    <b>Type:</b>&nbsp; {`${appointment.type}` + (appointment.type === 'New' ? '' : ` (Case Id: ${appointment.case_id})`)}
+                                </TableCell>
+                                <TableCell ><b>Date:</b>&nbsp;  {new Date(appointment.datetime).toLocaleDateString('en-US', dateTimeOptions)}</TableCell>
+                            </StyledTableRow>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                {
+                    appointment.type === 'New' ?
+                        (user.user_type === "patient" ?
+                            null
+                            :
+                            <Button
+                                variant='text'
+                                sx={{ mr: 4, fontSize: { xs: '0.6em', md: '1em' }, textTransform: 'none' }}
+                                onClick={(e) => { setOpenModal(true); setPatientEmail(appointment.patient_email) }}
+                            >
+                                Create New Case
+                            </Button>)
+                        :
+                        <Button
+                            variant='text'
+                            sx={{ mr: 4, fontSize: { xs: '0.6em', md: '1em' }, textTransform: 'none' }}
+                            component={Link}
+                            to={`/case/${appointment.case_id}`}>
+                            See Case Study
+                        </Button>
+                }
+
+            </Paper>
+        </div>
+    )
 }
 
 export default AppointmentItem;

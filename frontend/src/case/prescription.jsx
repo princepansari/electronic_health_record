@@ -14,6 +14,8 @@ import { Button, Paper, Table, TableBody, TableContainer, TableRow } from '@mui/
 import LabTests from "./labtests"
 import Medicines from "./medicines"
 import Corrections from "./corrections"
+import { downloadPrescription } from './apis';
+import AuthContext from '../auth/AuthContext';
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -53,6 +55,7 @@ export default function Prescription({ prescription, caseId, ...rest }) {
 
 
     const [expanded, setExpanded] = React.useState(false);
+    const { user } = React.useContext(AuthContext);
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -65,7 +68,14 @@ export default function Prescription({ prescription, caseId, ...rest }) {
         }}>
             <CardHeader
                 action={
-                    <IconButton aria-label="download">
+                    <IconButton onClick={() => {
+                        downloadPrescription(user.token, caseId, prescription.id).then((data) => {
+                            const file = new Blob([data], { type: "application/pdf" });
+                            const fileURL = URL.createObjectURL(file);
+                            const pdfWindow = window.open();
+                            pdfWindow.location.href = fileURL;
+                        });
+                    }}>
                         <DownloadIcon />
                     </IconButton>
                 }
