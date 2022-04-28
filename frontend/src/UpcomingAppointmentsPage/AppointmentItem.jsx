@@ -1,8 +1,5 @@
-import { Box, Button, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { CreateCaseForm } from '../case/createCaseForm';
+import { Box, Button, Typography } from '@mui/material';
+import React from 'react';
 
 const user = 'doctor';
 const newCase = false;
@@ -12,72 +9,63 @@ const boxStyle = {
     alignItems: 'center'
 };
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    backgroundColor: theme.palette.action.hover
-}));
-
-
-
 const AppointmentItem = ({ appointment }) => {
-    const [openModal, setOpenModal] = useState(false);
-    const [patientEmail, setPatientEmail] = useState('');
+  return (
+    <div>
+        <Box sx={boxStyle}>
+            <Typography variant='h6' component='div' sx={{ ml: 2, fontSize: '1.1rem' }}>
+                <strong>Patient Name : </strong>
+                {appointment.patientName}
+            </Typography>
 
-    return (
-        <div>
-            <Modal
-                open={openModal}
-                onClose={() => setOpenModal(false)}
+            <Typography variant='h6' component='div' sx={{ mr: 3, fontSize: '1.1rem' }}>
+                <strong>Doctor Name : </strong>
+                {appointment.doctorName}
+            </Typography>
+
+            <Typography variant='h6' component='div' sx={{ mr: 4, fontWeight: 'bold' }}>
+                Case : {appointment.case}
+            </Typography>
+        </Box>
+
+        <Box
+            sx={{ mt: 3, ...boxStyle }}
+        >
+            <Typography variant='p' component='p'
+                sx={{
+                    ml: 3,
+                    fontSize: '1.1em'
+                }}
             >
-                <CreateCaseForm setopen={setOpenModal} patientEmail={patientEmail} />
-            </Modal>
+                {new Date(appointment.startTime).toLocaleTimeString()}
+                {'-'}
+                {new Date(appointment.endTime).toLocaleTimeString()}
+            </Typography>
 
-            <Paper elevation={2} sx={{ padding: 3, marginBottom: 1, marginTop: 1, backgroundColor: "#fafafa" }} >
-                <TableContainer component={Paper} elevation={0}>
-                    <Table sx={{ minWidth: 700 }} >
-                        <TableBody>
-                            <StyledTableRow >
-                                <TableCell component="th" scope="row">
-                                    <b>Patient Name:</b>&nbsp; {appointment.patientName}
-                                </TableCell>
-                                <TableCell component="th" scope="row">
-                                    <b>Doctor Name:</b>&nbsp; {appointment.doctorName}
-                                </TableCell>
-                            </StyledTableRow>
+            <Typography variant='p' component='p'
+                sx={{
+                    mr: 5,
+                    fontSize: '1.1em'
+                }}
+            >
+                {new Date(appointment.date).toLocaleDateString()}
+            </Typography>
 
-                            <StyledTableRow >
-                                <TableCell component="th" scope="row">
-                                    <b>Type:</b>&nbsp; {appointment.type} + {appointment.type === 'new' ? '' : `  (Case Id: ${appointment.followUpCaseId})`}
-                                </TableCell>
-                                <TableCell ><b>Date:</b>&nbsp; {appointment.date}</TableCell>
-                            </StyledTableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                {
-                    appointment.type === 'new' ?
-                        <Button
-                            variant='text'
-                            sx={{ mr: 4, fontSize: { xs: '0.6em', md: '1em' }, textTransform: 'none' }}
-                            onClick={(e) => { setOpenModal(true); setPatientEmail(appointment.patientEmail) }}
-                        >
-                            Create New Case
-                        </Button>
-                        :
-                        <Button
-                            variant='text'
-                            sx={{ mr: 4, fontSize: { xs: '0.6em', md: '1em' }, textTransform: 'none' }}
-                            component={Link}
-                            to={`/case/${appointment.followUpCaseId}`}>
-                            See Case Study
-                        </Button>
-                }
-
-            </Paper>
-
-
-
-        </div>
-    )
+            {
+                user === 'doctor' && (
+                <Button
+                    variant='contained'
+                    color='success'
+                    sx={{ mr: 4, fontSize: {xs: '0.6em', md: '1em' }, textTransform: 'none' }}
+                >
+                    {newCase ? 'Create New Case' : 'View Case Study'}
+                </Button>
+                )
+            }
+            
+        </Box>
+    </div>
+  )
 }
 
 export default AppointmentItem;
