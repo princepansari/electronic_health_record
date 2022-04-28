@@ -13,6 +13,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 from app.common.rds import RDS
 from app.common.s3 import S3
 from app.common.config import Config
+from app.case.tools.pdf_generator_for_mail import PdfGenerator
+from app.common.mail import Email
 
 
 class CreatePrescription(Resource):
@@ -46,7 +48,21 @@ class CreatePrescription(Resource):
             prescription = self.rds.create_prescription(created_by_id=user_id,
                                                         case_id=data['case_id'],
                                                         prescription=data['prescription'])
+
+            case_info = self.rds.get_case_by_staff(case_id=data['case_id'])
+            patient_email = self.rds.get_patient_email_by_case(case_id=data['case_id'])
+            self.send_prescription_mail(case_info=case_info, prescription=prescription, patient_email=patient_email)
             self.rds.update_case_updated_at(case_id=data['case_id'])
             return prescription, HTTPStatus.OK
         else:
             return {'message': 'Unauthorized'}, HTTPStatus.UNAUTHORIZED
+
+    def send_prescription_mail(self, *, case_info, prescription, patient_email):
+        pdf_generator = PdfGenerator(case_info, prescription)
+        pdf_file = pdf_generator.generate_pdf()
+        filename = 'prescription_' + str(prescription['prescription']) + '.pdf'
+        email = Email()
+        email.login()
+        body = email.create_msg_with_attachment(message_text="Prescription", to=[patient_email], subject="Prescription",
+                                                pdf_file=pdf_file, filename=filename)
+        email.send_msg(message=body)

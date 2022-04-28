@@ -141,6 +141,14 @@ class RDS:
         cursor.close()
         return user_type
 
+    def get_patient_email_by_case(self, *, case_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT email FROM users INNER JOIN cases ON cases.patient_id=users.user_id WHERE cases.case_id=%s"
+        cursor.execute(query, [case_id])
+        email = cursor.fetchone()['email']
+        cursor.close()
+        return email
+
     def get_all_cases_by_patient(self, *, patient_id):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
         query = "SELECT cases.case_id, users.name as created_by, cases.problem, cases.created_at, cases.updated_at " \
