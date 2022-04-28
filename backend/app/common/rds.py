@@ -263,14 +263,7 @@ class RDS:
         self.connection.commit()
         prescription = cursor.fetchone()
         cursor.close()
-        prescription_info = {
-            'prescription_id': prescription['prescription_id'],
-            'case_id': prescription['case_id'],
-            'prescription': prescription['prescription'],
-            'created_at': prescription['created_at'].isoformat(),
-            'updated_at': prescription['updated_at'].isoformat(),
-        }
-        return prescription_info
+        return prescription
 
     def add_correction(self, *, case_id, prescription_id, correction, created_by_id):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
@@ -283,9 +276,10 @@ class RDS:
             prescription['corrections'] = []
         prescription['corrections'].append(correction)
         query = "UPDATE prescriptions SET prescription=%s, updated_at=now() WHERE prescription_id=%s and " \
-                "created_by_id=%s and case_id=%s"
+                "created_by_id=%s and case_id=%s RETURNING *"
         cursor.execute(query, [json.dumps(prescription), prescription_id, created_by_id, case_id])
         self.connection.commit()
+        prescription = cursor.fetchone()
         cursor.close()
         return True, prescription
 

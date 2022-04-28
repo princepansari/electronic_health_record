@@ -1,4 +1,3 @@
-import time
 from io import BytesIO
 
 from reportlab.graphics.shapes import Drawing, Line
@@ -6,10 +5,9 @@ from reportlab.lib.enums import TA_JUSTIFY, TA_RIGHT
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from flask import make_response
 
 
-class PdfGenerator:
+class PdfGeneratorForMail:
     def __init__(self, case, prescription):
         self.case = case
         self.prescription = prescription
@@ -38,8 +36,6 @@ class PdfGenerator:
         self.story.append(Spacer(1, 12))
 
         self.add_case_details(styles)
-
-
         self.add_prescriptions_details(self.prescription, styles, doc.width)
 
         doc.build(self.story)
@@ -53,8 +49,7 @@ class PdfGenerator:
         problem = self.case['problem']
         self.story.append(Paragraph("<strong> Problem: </strong>" + problem, styles["Justify"]))
         created_at_date = self.case['created_at'].date().isoformat()
-        created_at_time = self.case['created_at'].strftime("%H:%M:%S %p")
-        self.story.append(Paragraph("<strong> Case Created Time: </strong>" + created_at_date + " " + created_at_time, styles["Justify"]))
+        self.story.append(Paragraph("<strong> Case Created On: </strong>" + created_at_date, styles["Justify"]))
         self.story.append(Spacer(1, 12))
 
         self.story.append(Paragraph("Doctor Info", styles["Bold"]))
@@ -85,7 +80,7 @@ class PdfGenerator:
         self.story.append(d)
         self.story.append(Spacer(1, 12))
 
-        date = prescription['created_at'][:10]
+        date = prescription['created_at'].date().isoformat()
         self.story.append(Paragraph("<strong> Date: </strong>" + date, styles["RightAligned"]))
 
         prescription_id = prescription['prescription_id']
