@@ -69,7 +69,7 @@ export default function Filters(props) {
 
     return (
         <>
-            <Paper elevation={3} sx={{ padding: 2, width: "50%" }}>
+            <Paper elevation={3} sx={{ padding: 2 }}>
                 <Typography variant="h6">Filters</Typography>
                 <Stack spacing={2}>
                     <LocalizationProvider dateAdapter={AdapterDateFns}>

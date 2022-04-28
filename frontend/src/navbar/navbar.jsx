@@ -6,26 +6,16 @@ import Typography from "@mui/material/Typography";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../auth/AuthContext";
 import { Button, IconButton, Menu, MenuItem } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import MenuIcon from '@mui/icons-material/Menu';
 import { Box } from "@mui/system";
 import { authLogout } from "../auth/apis";
 
 const links = [
-  { children: "My Cases", to: "/myCases" },
-  { children: "Upcoming Appointments", to: "/appointments" },
-  { children: "Profile", to: "/profile" },
-  { children: "Appointment", to: "/makeappointment/" },
-
+  { children: 'My Cases', to: '/myCases' },
+  { children: 'Upcoming Appointments', to: '/appointments' },
 ]
 
-const navLinkStyle = {
-  m: 2,
-  color: "white",
-  display: "block",
-  textTransform: "none",
-  fontSize: "1.01em",
-  "&.active": { color: "red" },
-};
+const navLinkStyle = { m: 2, color: 'rgb(6 69 63)', display: 'block', textTransform: 'none', fontSize: '1.01em', '&.active': { color: 'red' } }
 
 export default function NavBar() {
   const { setUser, user } = React.useContext(AuthContext);
