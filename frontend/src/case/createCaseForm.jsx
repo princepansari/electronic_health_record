@@ -21,7 +21,7 @@ const style = {
 export const CreateCaseForm = React.forwardRef(function CreateCaseForm(props, ref) {
 
     const [problem, setProblem] = useState('');
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState(props.patientEmail || '');
 
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
