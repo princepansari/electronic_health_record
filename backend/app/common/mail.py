@@ -1,5 +1,9 @@
 from __future__ import print_function
 import base64
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+
 import googleapiclient.discovery
 from httplib2 import Http
 from oauth2client.client import GoogleCredentials
@@ -35,6 +39,26 @@ class Email:
         message['to'] = ','.join(to)
         message['from'] = self.FROM_EMAIL
         message['subject'] = subject
+        raw = base64.urlsafe_b64encode(message.as_bytes())
+        raw = raw.decode()
+
+        return {'raw': raw}
+
+    def create_msg_with_attachment(self, *, message_text, to, subject, pdf_file, filename):
+        message = MIMEMultipart()
+        message['to'] = ','.join(to)
+        message['from'] = self.FROM_EMAIL
+        message['subject'] = subject
+
+        msg = MIMEText(message_text)
+        message.attach(msg)
+
+        part = MIMEBase('application', 'pdf')
+        part.set_payload(pdf_file)
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', 'attachment', filename=filename)
+        message.attach(part)
+
         raw = base64.urlsafe_b64encode(message.as_bytes())
         raw = raw.decode()
 
