@@ -204,6 +204,16 @@ class RDS:
         cursor.close()
         return prescriptions
 
+    def get_prescriptions_by_case_and_prescription_id(self, *, case_id, prescription_id):
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        query = "SELECT prescriptions.prescription_id , prescriptions.prescription, prescriptions.created_at, " \
+                "prescriptions.updated_at, users.name as created_by from prescriptions INNER JOIN users ON " \
+                "prescriptions.created_by_id=users.user_id WHERE case_id=%s AND prescription_id=%s"
+        cursor.execute(query, [case_id, prescription_id])
+        prescription = cursor.fetchone()
+        cursor.close()
+        return prescription
+
     def create_case(self, *, patient_id, created_by_id, problem):
         cursor = self.connection.cursor(cursor_factory=RealDictCursor)
         query = "INSERT INTO cases (patient_id, created_by_id, problem) VALUES (%s, %s, %s) RETURNING case_id"
